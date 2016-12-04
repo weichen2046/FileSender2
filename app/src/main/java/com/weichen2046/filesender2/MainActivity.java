@@ -8,18 +8,20 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
+import com.weichen2046.filesender2.service.IBroadcastMonitor;
+import com.weichen2046.filesender2.service.INetworkDefs;
 import com.weichen2046.filesender2.service.IPCDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
@@ -29,11 +31,10 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
 
-    private static final int PC_LISTEN_PORT = 4555;
-
     private boolean mBoundToService = false;
     private IServiceManager mServiceManager = null;
     private IPCDiscoverer mPCDiscoverer = null;
+    private IBroadcastMonitor mBroadcastMonitor = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +94,30 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
+        if (id == R.id.action_start_bmonitor) {
+            if (mBroadcastMonitor != null) {
+                try {
+                    boolean res = mBroadcastMonitor.start();
+                    Log.d(TAG, "start broadcast monitor: " + res);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            return true;
+        }
+
+        if (id == R.id.action_stop_bmonitor) {
+            if (mBroadcastMonitor != null) {
+                try {
+                    boolean res = mBroadcastMonitor.stop();
+                    Log.d(TAG, "stop broadcast monitor: " + res);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            return true;
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -141,7 +166,10 @@ public class MainActivity extends AppCompatActivity
             try {
                 IBinder binder = mServiceManager.getService(ServiceManager.SERVICE_PC_DISCOVERER);
                 mPCDiscoverer = IPCDiscoverer.Stub.asInterface(binder);
-                mPCDiscoverer.sayHello(1, PC_LISTEN_PORT);
+                mPCDiscoverer.sayHello(1, INetworkDefs.PC_LISTEN_PORT);
+
+                binder = mServiceManager.getService(ServiceManager.SERVICE_BROADCAST_MONITOR);
+                mBroadcastMonitor = IBroadcastMonitor.Stub.asInterface(binder);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

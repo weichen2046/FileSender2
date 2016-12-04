@@ -11,7 +11,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
 /**
@@ -21,8 +20,6 @@ import java.nio.ByteBuffer;
 public class PCDiscoverer extends IPCDiscoverer.Stub {
 
     private static final String TAG = "PCDiscoverer";
-
-    private static final int DATA_VERSION = 1;
 
     @Override
     public void sayHello(int times, final int pcPort) throws RemoteException {
@@ -38,22 +35,26 @@ public class PCDiscoverer extends IPCDiscoverer.Stub {
                 }
 
                 // send broadcast to local network
+                DatagramSocket socket = null;
                 try {
-                    ByteBuffer bb = ByteBuffer.allocate(Integer.SIZE / 8 * 2);
-                    bb.putInt(DATA_VERSION);
-                    bb.putInt(4555);
+                    ByteBuffer bb = ByteBuffer.allocate(Integer.SIZE / 8 * 3);
+                    bb.putInt(INetworkDefs.DATA_VERSION);
+                    bb.putInt(INetworkDefs.CMD_REPORT_PHONE_BROAD_MONITOR_PORT);
+                    bb.putInt(INetworkDefs.BROAD_MONITOR_LISTEN_PORT);
                     byte[] buf = bb.array();
                     InetAddress group = InetAddress.getByName(broadcastAddress);
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, pcPort);
-                    DatagramSocket socket = new DatagramSocket();
+                    socket = new DatagramSocket();
                     socket.send(packet);
                     res = true;
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
                 } catch (SocketException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } finally {
+                    if (null != socket) {
+                        socket.close();
+                    }
                 }
                 return res;
             }

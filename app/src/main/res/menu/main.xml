@@ -6,4 +6,15 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_start_bmonitor"
+        android:orderInCategory="100"
+        android:title="@string/action_start_broadcast_monitor"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_stop_bmonitor"
+        android:orderInCategory="100"
+        android:title="@string/action_stop_broadcast_monitor"
+        app:showAsAction="never" />
 </menu>

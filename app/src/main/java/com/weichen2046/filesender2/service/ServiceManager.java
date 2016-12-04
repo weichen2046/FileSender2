@@ -4,17 +4,17 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
+import android.util.SparseArray;
 
-import java.util.HashMap;
 
 public class ServiceManager extends Service {
 
     private static final String TAG = "ServiceManager";
 
-    private HashMap<Integer, IBinder> mSubServices = new HashMap<>();
+    private SparseArray<IBinder> mSubServices = new SparseArray<>();
 
     public static final int SERVICE_PC_DISCOVERER = 1;
+    public static final int SERVICE_BROADCAST_MONITOR = 2;
 
     public ServiceManager() {
     }
@@ -26,18 +26,20 @@ public class ServiceManager extends Service {
 
     private IBinder mBinder = new IServiceManager.Stub() {
         @Override
-        public IBinder getService(int serviceId) throws RemoteException {
-            if (mSubServices.containsKey(serviceId)) {
-                return mSubServices.get(serviceId);
-            }
+        public synchronized IBinder getService(int serviceId) throws RemoteException {
+            IBinder binder = mSubServices.get(serviceId);
+            if (binder == null) {
+                if (serviceId == SERVICE_PC_DISCOVERER) {
+                    binder = new PCDiscoverer();
+                    mSubServices.put(SERVICE_PC_DISCOVERER, binder);
+                }
 
-            if (serviceId == SERVICE_PC_DISCOVERER) {
-                IBinder binder = new PCDiscoverer();
-                mSubServices.put(SERVICE_PC_DISCOVERER, binder);
-                return binder;
+                if (serviceId == SERVICE_BROADCAST_MONITOR) {
+                    binder = new BroadcastMonitor();
+                    mSubServices.put(SERVICE_BROADCAST_MONITOR, binder);
+                }
             }
-
-            return null;
+            return binder;
         }
     };
 }
