@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.weichen2046.filesender2.networkutils.NetworkAddressHelper;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -17,10 +19,10 @@ import java.nio.ByteBuffer;
  */
 
 public class PCDiscoverer extends IPCDiscoverer.Stub {
+
     private static final String TAG = "PCDiscoverer";
 
     private static final int DATA_VERSION = 1;
-
 
     @Override
     public void sayHello(int times, final int pcPort) throws RemoteException {
@@ -29,13 +31,19 @@ public class PCDiscoverer extends IPCDiscoverer.Stub {
             @Override
             protected Boolean doInBackground(Void... params) {
                 boolean res = false;
-                // send broadcast
+                String broadcastAddress = NetworkAddressHelper.getBroadcastAddress();
+                if (null == broadcastAddress) {
+                    Log.w(TAG, "Can not get broadcast address");
+                    return res;
+                }
+
+                // send broadcast to local network
                 try {
                     ByteBuffer bb = ByteBuffer.allocate(Integer.SIZE / 8 * 2);
                     bb.putInt(DATA_VERSION);
                     bb.putInt(4555);
                     byte[] buf = bb.array();
-                    InetAddress group = InetAddress.getByName("192.168.31.255");
+                    InetAddress group = InetAddress.getByName(broadcastAddress);
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, pcPort);
                     DatagramSocket socket = new DatagramSocket();
                     socket.send(packet);
