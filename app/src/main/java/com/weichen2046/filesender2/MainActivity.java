@@ -20,8 +20,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.service.IBroadcastMonitor;
-import com.weichen2046.filesender2.service.INetworkDefs;
 import com.weichen2046.filesender2.service.IPCDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
@@ -164,12 +164,13 @@ public class MainActivity extends AppCompatActivity
             mServiceManager = IServiceManager.Stub.asInterface(service);
 
             try {
-                IBinder binder = mServiceManager.getService(ServiceManager.SERVICE_PC_DISCOVERER);
+                IBinder binder = mServiceManager.getService(ServiceManager.SERVICE_BROADCAST_MONITOR);
+                mBroadcastMonitor = IBroadcastMonitor.Stub.asInterface(binder);
+                mBroadcastMonitor.start();
+
+                binder = mServiceManager.getService(ServiceManager.SERVICE_PC_DISCOVERER);
                 mPCDiscoverer = IPCDiscoverer.Stub.asInterface(binder);
                 mPCDiscoverer.sayHello(1, INetworkDefs.PC_LISTEN_PORT);
-
-                binder = mServiceManager.getService(ServiceManager.SERVICE_BROADCAST_MONITOR);
-                mBroadcastMonitor = IBroadcastMonitor.Stub.asInterface(binder);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

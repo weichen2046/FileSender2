@@ -1,4 +1,4 @@
-package com.weichen2046.filesender2.networkutils;
+package com.weichen2046.filesender2.networklib;
 
 import java.net.InetAddress;
 import java.net.InterfaceAddress;

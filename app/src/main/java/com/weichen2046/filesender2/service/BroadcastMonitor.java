@@ -1,10 +1,14 @@
 package com.weichen2046.filesender2.service;
 
 import android.os.AsyncTask;
+import android.os.HandlerThread;
+import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.weichen2046.filesender2.networkutils.NetworkAddressHelper;
+import com.weichen2046.filesender2.network.BroadcastCmdHandler;
+import com.weichen2046.filesender2.network.INetworkDefs;
+import com.weichen2046.filesender2.networklib.NetworkAddressHelper;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -12,6 +16,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 /**
  * Created by chenwei on 12/4/16.
@@ -23,6 +28,8 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
     private boolean mStared = false;
 
     private Thread mWorker = null;
+    private HandlerThread mCmdThread = null;
+    private BroadcastCmdHandler mCmdHandler = null;
 
     @Override
     public synchronized boolean start() throws RemoteException {
@@ -35,6 +42,10 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
             Log.w(TAG, "Can not get broadcast address");
             return false;
         }
+
+        mCmdThread = new HandlerThread("broadcast-cmd-thread");
+        mCmdThread.start();
+        mCmdHandler = new BroadcastCmdHandler(mCmdThread.getLooper());
 
         mWorker = new Thread(new Runnable() {
             @Override
@@ -53,11 +64,27 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
                             break;
                         }
 
-                        byte[] recvData = packet.getData();
-                        Log.d(TAG, "recv data length: " + packet.getLength());
+                        int dataLength = packet.getLength();
+                        if (dataLength < INetworkDefs.MIN_DATA_LENGTH) {
+                            Log.d(TAG, "recv data length less than 8 bytes, ignore");
+                            continue;
+                        }
+
+                        Log.d(TAG, "recv data length: " + dataLength);
                         // 4 bytes -> version
+                        ByteBuffer recvBuf = ByteBuffer.wrap(buf, 0, dataLength);
+                        int version = recvBuf.getInt();
+                        Log.d(TAG, "recv data version: " + version);
                         // 4 bytes -> cmd
+                        int cmd = recvBuf.getInt();
+                        Log.d(TAG, "recv data cmd: " + version);
                         // other bytes -> cmd data
+                        byte[] cmdData = null;
+                        if (dataLength > INetworkDefs.MIN_DATA_LENGTH) {
+                            cmdData = Arrays.copyOfRange(buf, INetworkDefs.MIN_DATA_LENGTH, dataLength);
+                        }
+                        Message msg = mCmdHandler.obtainMessage(cmd, cmdData);
+                        msg.sendToTarget();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -110,6 +137,7 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
                     return true;
                 }
             }.execute();
+            mCmdThread.getLooper().quit();
             return true;
         }
         return false;

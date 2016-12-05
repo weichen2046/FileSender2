@@ -4,7 +4,8 @@ import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.weichen2046.filesender2.networkutils.NetworkAddressHelper;
+import com.weichen2046.filesender2.network.INetworkDefs;
+import com.weichen2046.filesender2.networklib.NetworkAddressHelper;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
