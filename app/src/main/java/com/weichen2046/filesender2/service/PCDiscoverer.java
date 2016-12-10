@@ -40,7 +40,7 @@ public class PCDiscoverer extends IPCDiscoverer.Stub {
                 try {
                     ByteBuffer bb = ByteBuffer.allocate(Integer.SIZE / 8 * 3);
                     bb.putInt(INetworkDefs.DATA_VERSION);
-                    bb.putInt(INetworkDefs.CMD_REPORT_PHONE_BROAD_MONITOR_PORT);
+                    bb.putInt(INetworkDefs.CMD_PHONE_ONLINE);
                     bb.putInt(INetworkDefs.BROAD_MONITOR_LISTEN_PORT);
                     byte[] buf = bb.array();
                     InetAddress group = InetAddress.getByName(broadcastAddress);

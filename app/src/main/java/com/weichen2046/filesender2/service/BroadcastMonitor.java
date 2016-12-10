@@ -7,6 +7,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.weichen2046.filesender2.network.BroadcastCmdHandler;
+import com.weichen2046.filesender2.network.BroadcastData;
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.networklib.NetworkAddressHelper;
 
@@ -81,9 +82,12 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
                         // other bytes -> cmd data
                         byte[] cmdData = null;
                         if (dataLength > INetworkDefs.MIN_DATA_LENGTH) {
-                            cmdData = Arrays.copyOfRange(buf, INetworkDefs.MIN_DATA_LENGTH, dataLength);
+                            cmdData = Arrays.copyOfRange(buf, INetworkDefs.MIN_DATA_LENGTH,
+                                    dataLength);
                         }
-                        Message msg = mCmdHandler.obtainMessage(cmd, cmdData);
+                        BroadcastData bd = new BroadcastData(packet.getAddress(), packet.getPort(),
+                                cmdData);
+                        Message msg = mCmdHandler.obtainMessage(cmd, bd);
                         msg.sendToTarget();
                     }
                 } catch (IOException e) {
@@ -119,7 +123,7 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
                     try {
                         ByteBuffer bb = ByteBuffer.allocate(Integer.SIZE / 8 * 2);
                         bb.putInt(INetworkDefs.DATA_VERSION);
-                        bb.putInt(INetworkDefs.CMD_MAKE_PHONE_BROAD_MONITOR_EXIT);
+                        bb.putInt(INetworkDefs.CMD_PHONE_OFFLINE);
                         byte[] buf = bb.array();
                         InetAddress group = InetAddress.getByName(broadcastAddress);
                         DatagramPacket packet = new DatagramPacket(buf, buf.length, group, INetworkDefs.BROAD_MONITOR_LISTEN_PORT);

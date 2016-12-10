@@ -16,9 +16,10 @@ public interface INetworkDefs {
     int MIN_DATA_LENGTH = 8;
 
     /////////////////// Phone -> PC ///////////////////
-    int CMD_REPORT_PHONE_BROAD_MONITOR_PORT = 1;
-    int CMD_MAKE_PHONE_BROAD_MONITOR_EXIT = 2;
+    int CMD_PHONE_ONLINE = 1;
+    int CMD_PHONE_OFFLINE = 2;
 
     /////////////////// PC -> Phone ///////////////////
-    int CMD_REPORT_PC_MONITOR_PORT = 1;
+    int CMD_PC_ONLINE = 1;
+    int CMD_PC_OFFLINE = 2;
 }
