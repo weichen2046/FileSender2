@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.Log;
 import android.util.SparseArray;
 
 
@@ -42,4 +43,16 @@ public class ServiceManager extends Service {
             return binder;
         }
     };
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy called.");
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d(TAG, "onUnbind called.");
+        return super.onUnbind(intent);
+    }
 }

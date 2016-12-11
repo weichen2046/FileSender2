@@ -25,6 +25,7 @@ import com.weichen2046.filesender2.service.IBroadcastMonitor;
 import com.weichen2046.filesender2.service.IPCDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
+import com.weichen2046.filesender2.ui.PcListActivity;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -63,6 +64,12 @@ public class MainActivity extends AppCompatActivity
 
         Intent intent = new Intent(this, ServiceManager.class);
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Log.d(TAG, "onNewIntent called.");
+        super.onNewIntent(intent);
     }
 
     @Override
@@ -127,8 +134,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
+        if (id == R.id.nav_pc_list) {
+            Intent pcListIntent = new Intent(this, PcListActivity.class);
+            startActivity(pcListIntent);
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
@@ -152,6 +160,14 @@ public class MainActivity extends AppCompatActivity
 
         if (mBoundToService) {
             mBoundToService = false;
+            try {
+                if (null != mBroadcastMonitor) {
+                    mBroadcastMonitor.stop();
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
             unbindService(mServiceConnection);
         }
     }

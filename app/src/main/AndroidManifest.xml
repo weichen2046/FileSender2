@@ -16,16 +16,23 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <service
             android:name=".service.ServiceManager"
-            android:process=":servicemanager"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.PcListActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.weichen2046.filesender2.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

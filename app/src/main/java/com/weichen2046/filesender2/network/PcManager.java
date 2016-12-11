@@ -74,6 +74,19 @@ public class PcManager {
         mPcs.clear();
     }
 
+    /**
+     * Get the pc's count.
+     *
+     * @return The pc's count.
+     */
+    public int getCount() {
+        return mPcs.size();
+    }
+
+    public PcData getPc(int position) {
+        return mPcs.get(position);
+    }
+
     private int findByAddr(InetAddress addr) {
         for (int i = 0; i < mPcs.size(); i++) {
             if (mPcs.get(i).addr.equals(addr)) {
