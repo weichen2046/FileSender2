@@ -9,4 +9,5 @@
     <string name="action_stop_broadcast_monitor">Stop BMonitor</string>
 
     <string name="pc_list">PC List</string>
+    <string name="choose_file">Choose File</string>
 </resources>

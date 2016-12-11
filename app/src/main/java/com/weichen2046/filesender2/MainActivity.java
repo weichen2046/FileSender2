@@ -137,11 +137,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_pc_list) {
             Intent pcListIntent = new Intent(this, PcListActivity.class);
             startActivity(pcListIntent);
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_choose_file) {
 
         } else if (id == R.id.nav_share) {
 
