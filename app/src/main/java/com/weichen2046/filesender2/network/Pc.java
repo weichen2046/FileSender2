@@ -6,16 +6,16 @@ import java.net.InetAddress;
  * Created by chenwei on 12/10/16.
  */
 
-public class PcData {
+public class Pc {
     public InetAddress addr;
     public int listenPort;
     public String name;
 
-    public PcData(InetAddress addr, int listenPort) {
+    public Pc(InetAddress addr, int listenPort) {
         this(addr, listenPort, null);
     }
 
-    public PcData(InetAddress addr, int listenPort, String name) {
+    public Pc(InetAddress addr, int listenPort, String name) {
         this.addr = addr;
         this.listenPort = listenPort;
         if (null == name) {
@@ -27,10 +27,10 @@ public class PcData {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof PcData)) {
+        if (!(obj instanceof Pc)) {
             return false;
         }
 
-        return this.addr.equals(((PcData) obj).addr);
+        return this.addr.equals(((Pc) obj).addr);
     }
 }

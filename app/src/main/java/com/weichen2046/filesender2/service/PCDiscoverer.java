@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.networklib.NetworkAddressHelper;
+import com.weichen2046.filesender2.utils.Utils;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -53,9 +54,7 @@ public class PCDiscoverer extends IPCDiscoverer.Stub {
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
-                    if (null != socket) {
-                        socket.close();
-                    }
+                    Utils.silenceClose(socket);
                 }
                 return res;
             }

@@ -32,7 +32,7 @@ public class BroadcastCmdHandler extends Handler {
                 }
                 int port = ByteBuffer.wrap(bd.data).getInt();
                 Log.d(TAG, "PC listen port: " + port);
-                manager.add(new PcData(bd.addr, port));
+                manager.add(new Pc(bd.addr, port));
                 break;
             case INetworkDefs.CMD_PC_OFFLINE:
                 manager.remove(bd.addr);

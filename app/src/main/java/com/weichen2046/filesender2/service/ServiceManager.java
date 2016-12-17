@@ -14,8 +14,9 @@ public class ServiceManager extends Service {
 
     private SparseArray<IBinder> mSubServices = new SparseArray<>();
 
-    public static final int SERVICE_PC_DISCOVERER = 1;
-    public static final int SERVICE_BROADCAST_MONITOR = 2;
+    public static final int SERVICE_PC_DISCOVERER       = 1;
+    public static final int SERVICE_BROADCAST_MONITOR   = 2;
+    public static final int SERVICE_DATA_TRANSFER       = 3;
 
     public ServiceManager() {
     }
@@ -38,6 +39,11 @@ public class ServiceManager extends Service {
                 if (serviceId == SERVICE_BROADCAST_MONITOR) {
                     binder = new BroadcastMonitor();
                     mSubServices.put(SERVICE_BROADCAST_MONITOR, binder);
+                }
+
+                if (serviceId == SERVICE_DATA_TRANSFER) {
+                    binder = new DataTransfer(ServiceManager.this);
+                    mSubServices.put(SERVICE_DATA_TRANSFER, binder);
                 }
             }
             return binder;

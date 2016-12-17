@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class PcManager {
 
-    private ArrayList<PcData> mPcs = new ArrayList<>();
+    private ArrayList<Pc> mPcs = new ArrayList<>();
 
     private static class SingletonHolder {
         public static PcManager INSTANCE = new PcManager();
@@ -25,13 +25,13 @@ public class PcManager {
      * @param pc The new pc to add.
      * @return The new added pc or the replaced pc.
      */
-    public PcData add(PcData pc) {
+    public Pc add(Pc pc) {
         int index = this.mPcs.indexOf(pc);
         if (index == -1) {
             mPcs.add(pc);
             return pc;
         } else {
-            PcData old = mPcs.get(index);
+            Pc old = mPcs.get(index);
             mPcs.set(index, pc);
             return old;
         }
@@ -43,8 +43,8 @@ public class PcManager {
      * @param addr {@code InetAddress} format address.
      * @return The removed pc or null.
      */
-    public PcData remove(InetAddress addr) {
-        PcData pc = null;
+    public Pc remove(InetAddress addr) {
+        Pc pc = null;
         int index = findByAddr(addr);
         if (index != -1) {
             pc = mPcs.get(index);
@@ -58,8 +58,8 @@ public class PcManager {
      * @param addr {@code String} format address.
      * @return The removed pc or null.
      */
-    public PcData remove(String addr) {
-        PcData pc = null;
+    public Pc remove(String addr) {
+        Pc pc = null;
         int index = findByAddr(addr);
         if (index != -1) {
             pc = mPcs.get(index);
@@ -83,7 +83,7 @@ public class PcManager {
         return mPcs.size();
     }
 
-    public PcData getPc(int position) {
+    public Pc getPc(int position) {
         return mPcs.get(position);
     }
 
