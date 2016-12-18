@@ -52,13 +52,15 @@ public class DataTransfer extends IDataTransfer.Stub {
         Cursor cursor = null;
         try {
             String fileName = UUID.randomUUID().toString();
+            long fileSize = 0;
             ContentResolver cr = mContext.getContentResolver();
             // get file name
             cursor = cr.query(fileUri, null, null, null, null);
             if (cursor != null && cursor.moveToFirst()) {
                 fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                fileSize = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE));
             }
-            Log.d(TAG, "file to be sent: " + fileName);
+            Log.d(TAG, "file to be sent: " + fileName + ", file size: " + fileSize);
             byte[] nameBytes = fileName.getBytes();
 
             // connect to PC
@@ -68,13 +70,23 @@ public class DataTransfer extends IDataTransfer.Stub {
 
             // write data length
             ByteBuffer bBuf = ByteBuffer.allocate(Integer.SIZE / 8);
-            bBuf.putInt(4 + nameBytes.length);
+            bBuf.putInt(16 + nameBytes.length);
             bufOutputStream.write(bBuf.array());
 
-            // write network data version
-            bBuf = ByteBuffer.allocate(Integer.SIZE / 8);
+            // write network data version, 4 bytes
+            bBuf.rewind();
             bBuf.putInt(INetworkDefs.DATA_VERSION);
             bufOutputStream.write(bBuf.array());
+
+            // write cmd, 4 bytes
+            bBuf.rewind();
+            bBuf.putInt(INetworkDefs.CMD_SEND_FILE);
+            bufOutputStream.write(bBuf.array());
+
+            // send file size, 8 bytes
+            ByteBuffer bBufLong = ByteBuffer.allocate(Long.SIZE / 8);
+            bBufLong.putLong(fileSize);
+            bufOutputStream.write(bBufLong.array());
 
             // send file name
             bufOutputStream.write(nameBytes);
@@ -86,6 +98,9 @@ public class DataTransfer extends IDataTransfer.Stub {
             byte[] buf = new byte[2046];
             int read = fis.read(buf);
             while (read > 0) {
+                bBuf.rewind();
+                bBuf.putInt(read);
+                bufOutputStream.write(bBuf.array());
                 bufOutputStream.write(buf, 0, read);
                 read = fis.read(buf);
             }

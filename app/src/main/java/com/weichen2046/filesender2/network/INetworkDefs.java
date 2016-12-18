@@ -16,10 +16,11 @@ public interface INetworkDefs {
     int MIN_DATA_LENGTH = 8;
 
     /////////////////// Phone -> PC ///////////////////
-    int CMD_PHONE_ONLINE = 1;
-    int CMD_PHONE_OFFLINE = 2;
+    int CMD_PHONE_ONLINE    = 1;
+    int CMD_PHONE_OFFLINE   = 2;
+    int CMD_SEND_FILE       = 3;
 
     /////////////////// PC -> Phone ///////////////////
-    int CMD_PC_ONLINE = 1;
-    int CMD_PC_OFFLINE = 2;
+    int CMD_PC_ONLINE       = 1;
+    int CMD_PC_OFFLINE      = 2;
 }
