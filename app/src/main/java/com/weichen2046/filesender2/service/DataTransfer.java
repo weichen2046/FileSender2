@@ -68,13 +68,8 @@ public class DataTransfer extends IDataTransfer.Stub {
             DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
             BufferedOutputStream bufOutputStream = new BufferedOutputStream(outputStream);
 
-            // write data length
+            // write data version, 4 bytes
             ByteBuffer bBuf = ByteBuffer.allocate(Integer.SIZE / 8);
-            bBuf.putInt(16 + nameBytes.length);
-            bufOutputStream.write(bBuf.array());
-
-            // write network data version, 4 bytes
-            bBuf.rewind();
             bBuf.putInt(INetworkDefs.DATA_VERSION);
             bufOutputStream.write(bBuf.array());
 
@@ -83,24 +78,26 @@ public class DataTransfer extends IDataTransfer.Stub {
             bBuf.putInt(INetworkDefs.CMD_SEND_FILE);
             bufOutputStream.write(bBuf.array());
 
-            // send file size, 8 bytes
+            // write file name length, 4 bytes
+            bBuf.rewind();
+            bBuf.putInt(nameBytes.length);
+            bufOutputStream.write(bBuf.array());
+
+            // write file name
+            bufOutputStream.write(nameBytes);
+
+            // write file content length, 8 bytes
             ByteBuffer bBufLong = ByteBuffer.allocate(Long.SIZE / 8);
             bBufLong.putLong(fileSize);
             bufOutputStream.write(bBufLong.array());
 
-            // send file name
-            bufOutputStream.write(nameBytes);
-
-            // send file content
+            // write file content
             pfd = cr.openFileDescriptor(fileUri, "r");
             FileDescriptor fd = pfd.getFileDescriptor();
             FileInputStream fis = new FileInputStream(fd);
             byte[] buf = new byte[2046];
             int read = fis.read(buf);
             while (read > 0) {
-                bBuf.rewind();
-                bBuf.putInt(read);
-                bufOutputStream.write(bBuf.array());
                 bufOutputStream.write(buf, 0, read);
                 read = fis.read(buf);
             }
