@@ -15,10 +15,14 @@ public interface INetworkDefs {
     // The second 4 bytes -> cmd
     int MIN_DATA_LENGTH = 8;
 
+    byte HAS_NOT_THUMBNAIL  = 0;
+    byte HAS_THUMBNAIL      = 1;
+
     /////////////////// Phone -> PC ///////////////////
     int CMD_PHONE_ONLINE    = 1;
     int CMD_PHONE_OFFLINE   = 2;
     int CMD_SEND_FILE       = 3;
+    int CMD_SEND_FILE_REQ   = 4;
 
     /////////////////// PC -> Phone ///////////////////
     int CMD_PC_ONLINE       = 1;

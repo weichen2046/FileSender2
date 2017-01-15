@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -75,14 +76,20 @@ public class PcListActivity extends AppCompatActivity {
         public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
             mSelectedPc = PcManager.getInstance().getPc(pos);
 
-            Intent openFile = new Intent(Intent.ACTION_GET_CONTENT);
+            Intent openFile;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                openFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            } else {
+                openFile = new Intent(Intent.ACTION_GET_CONTENT);
+            }
             openFile.setType("*/*");
+            openFile.addCategory(Intent.CATEGORY_OPENABLE);
             startActivityForResult(openFile, 1);
         }
     };
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Activity.RESULT_CANCELED) {
             return;
@@ -93,7 +100,9 @@ public class PcListActivity extends AppCompatActivity {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    mTransfer.sendFileToPc(resultIntent.getData(), mSelectedPc.addr.getHostAddress(), mSelectedPc.listenPort);
+                    Uri uri = resultIntent.getData();
+                    // TODO: store uri to local database, store selected pc information also
+                    mTransfer.requestToSendFile(uri, mSelectedPc.addr.getHostAddress(), mSelectedPc.listenPort);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

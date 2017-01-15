@@ -111,4 +111,63 @@ public class DataTransfer extends IDataTransfer.Stub {
             Utils.silenceClose(socket);
         }
     }
+
+    @Override
+    public void requestToSendFile(Uri fileUri, String destHost, int destPort) throws RemoteException {
+        Socket socket = null;
+        ParcelFileDescriptor pfd = null;
+        Cursor cursor = null;
+        try {
+            String fileName = UUID.randomUUID().toString();
+            long fileSize = 0;
+            ContentResolver cr = mContext.getContentResolver();
+            // get file name
+            cursor = cr.query(fileUri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                fileSize = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE));
+            }
+            Log.d(TAG, "file to be sent: " + fileName + ", file size: " + fileSize);
+            byte[] nameBytes = fileName.getBytes();
+
+            // connect to PC
+            socket = new Socket(destHost, destPort);
+            DataOutputStream outputStream = new DataOutputStream(socket.getOutputStream());
+            BufferedOutputStream bufOutputStream = new BufferedOutputStream(outputStream);
+
+            // write data version, 4 bytes
+            ByteBuffer bBuf = ByteBuffer.allocate(Integer.SIZE / 8);
+            bBuf.putInt(INetworkDefs.DATA_VERSION);
+            bufOutputStream.write(bBuf.array());
+
+            // write cmd, 4 bytes
+            bBuf.rewind();
+            bBuf.putInt(INetworkDefs.CMD_SEND_FILE_REQ);
+            bufOutputStream.write(bBuf.array());
+
+            // write file name length, 4 bytes
+            bBuf.rewind();
+            bBuf.putInt(nameBytes.length);
+            bufOutputStream.write(bBuf.array());
+
+            // write file name
+            bufOutputStream.write(nameBytes);
+
+            // write thumbnail indicate, 1 byte
+            ByteBuffer bBufByte = ByteBuffer.allocate(Byte.SIZE / 8);
+            bBufByte.put(INetworkDefs.HAS_NOT_THUMBNAIL);
+            bufOutputStream.write(bBufByte.array());
+
+            // TODO: write thumbnail total length
+            // TODO: write thumbnail content
+
+            bufOutputStream.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            Utils.silenceClose(cursor);
+            Utils.silenceClose(pfd);
+            Utils.silenceClose(socket);
+        }
+    }
 }
