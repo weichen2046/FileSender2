@@ -9,6 +9,7 @@ import android.os.RemoteException;
 import android.provider.OpenableColumns;
 import android.util.Log;
 
+import com.weichen2046.filesender2.db.FileSendingDataSource;
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.utils.Utils;
 
@@ -19,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.sql.SQLException;
 import java.util.UUID;
 
 
@@ -119,6 +121,12 @@ public class DataTransfer extends IDataTransfer.Stub {
         Cursor cursor = null;
         try {
             String fileName = UUID.randomUUID().toString();
+
+            FileSendingDataSource dataSource = new FileSendingDataSource(mContext);
+            dataSource.open();
+            dataSource.add(fileName, fileUri.toString());
+            dataSource.close();
+
             long fileSize = 0;
             ContentResolver cr = mContext.getContentResolver();
             // get file name
@@ -162,7 +170,11 @@ public class DataTransfer extends IDataTransfer.Stub {
             // TODO: write thumbnail content
 
             bufOutputStream.flush();
+
+
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             Utils.silenceClose(cursor);
