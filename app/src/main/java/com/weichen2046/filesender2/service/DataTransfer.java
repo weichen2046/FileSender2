@@ -120,14 +120,16 @@ public class DataTransfer extends IDataTransfer.Stub {
         ParcelFileDescriptor pfd = null;
         Cursor cursor = null;
         try {
-            String fileName = UUID.randomUUID().toString();
-
+            String uuid = UUID.randomUUID().toString().replace("-", "");
             FileSendingDataSource dataSource = new FileSendingDataSource(mContext);
             dataSource.open();
-            dataSource.add(fileName, fileUri.toString());
+            long id = dataSource.add(uuid, fileUri.toString());
             dataSource.close();
 
+            // use uuid as default file name
+            String fileName = uuid;
             long fileSize = 0;
+
             ContentResolver cr = mContext.getContentResolver();
             // get file name
             cursor = cr.query(fileUri, null, null, null, null);
@@ -135,7 +137,8 @@ public class DataTransfer extends IDataTransfer.Stub {
                 fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                 fileSize = cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE));
             }
-            Log.d(TAG, "file to be sent: " + fileName + ", file size: " + fileSize);
+            Log.d(TAG, "file to be sent: " + fileName + ", file size: " + fileSize + ", id:" + id
+                    + ", uuid: " + uuid);
             byte[] nameBytes = fileName.getBytes();
 
             // connect to PC
@@ -161,6 +164,11 @@ public class DataTransfer extends IDataTransfer.Stub {
             // write file name
             bufOutputStream.write(nameBytes);
 
+            // write file id
+            ByteBuffer longBuf = ByteBuffer.allocate(Long.SIZE / 8);
+            longBuf.putLong(id);
+            bufOutputStream.write(longBuf.array());
+
             // write thumbnail indicate, 1 byte
             ByteBuffer bBufByte = ByteBuffer.allocate(Byte.SIZE / 8);
             bBufByte.put(INetworkDefs.HAS_NOT_THUMBNAIL);
@@ -170,8 +178,6 @@ public class DataTransfer extends IDataTransfer.Stub {
             // TODO: write thumbnail content
 
             bufOutputStream.flush();
-
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (SQLException e) {
