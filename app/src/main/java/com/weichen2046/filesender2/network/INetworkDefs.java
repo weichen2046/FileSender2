@@ -25,6 +25,7 @@ public interface INetworkDefs {
     int CMD_SEND_FILE_REQ   = 4;
 
     /////////////////// PC -> Phone ///////////////////
-    int CMD_PC_ONLINE       = 1;
-    int CMD_PC_OFFLINE      = 2;
+    int CMD_PC_ONLINE           = 1;
+    int CMD_PC_OFFLINE          = 2;
+    int CMD_CONFIRM_RECV_FILE   = 3;
 }

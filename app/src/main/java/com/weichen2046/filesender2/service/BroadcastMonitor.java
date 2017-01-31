@@ -6,8 +6,8 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.weichen2046.filesender2.network.BroadcastCmdHandler;
-import com.weichen2046.filesender2.network.BroadcastData;
+import com.weichen2046.filesender2.network.udp.BroadcastCmdDispatcher;
+import com.weichen2046.filesender2.network.udp.BroadcastData;
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.networklib.NetworkAddressHelper;
 
@@ -30,7 +30,7 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
 
     private Thread mWorker = null;
     private HandlerThread mCmdThread = null;
-    private BroadcastCmdHandler mCmdHandler = null;
+    private BroadcastCmdDispatcher mCmdDispatcher = null;
 
     @Override
     public synchronized boolean start() throws RemoteException {
@@ -46,7 +46,7 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
 
         mCmdThread = new HandlerThread("broadcast-cmd-thread");
         mCmdThread.start();
-        mCmdHandler = new BroadcastCmdHandler(mCmdThread.getLooper());
+        mCmdDispatcher = new BroadcastCmdDispatcher(mCmdThread.getLooper());
 
         mWorker = new Thread(new Runnable() {
             @Override
@@ -87,7 +87,7 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
                         }
                         BroadcastData bd = new BroadcastData(packet.getAddress(), packet.getPort(),
                                 cmdData);
-                        Message msg = mCmdHandler.obtainMessage(cmd, bd);
+                        Message msg = mCmdDispatcher.obtainMessage(cmd, bd);
                         msg.sendToTarget();
                     }
                 } catch (IOException e) {

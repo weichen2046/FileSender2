@@ -1,4 +1,4 @@
-package com.weichen2046.filesender2.network;
+package com.weichen2046.filesender2.network.udp;
 
 import java.net.InetAddress;
 
