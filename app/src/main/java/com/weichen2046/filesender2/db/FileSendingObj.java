@@ -13,6 +13,8 @@ public class FileSendingObj {
     public long id;
     public String uuid;
     public String uri;
+    public String host;
+    public int port;
     public long createtimestamp;
 
     private Uri mUri;
@@ -38,7 +40,7 @@ public class FileSendingObj {
         if (mDateFormat == null) {
             mDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         }
-        return String.format("id: %s, uuid: %s, uri: %s, createtime: %s", id, uuid, uri,
-                mDateFormat.format(getCreateDate()));
+        return String.format("id: %s, uuid: %s, uri: %s, host: %s, port: %s, createtime: %s", id,
+                uuid, uri, host, port, mDateFormat.format(getCreateDate()));
     }
 }

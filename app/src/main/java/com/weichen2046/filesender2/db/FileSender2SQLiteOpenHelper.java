@@ -34,6 +34,8 @@ public class FileSender2SQLiteOpenHelper extends SQLiteOpenHelper {
         public static final String COLUMN_CREATETIME    = "createtime";
         public static final String COLUMN_URI           = "uri";
         public static final String COLUMN_UUID          = "uuid";
+        public static final String COLUMN_HOST          = "host";
+        public static final String COLUMN_PORT          = "port";
 
         private static final String SQL_CREATE_DATABASE = "create table "
                 + TABLE_NAME
@@ -41,6 +43,8 @@ public class FileSender2SQLiteOpenHelper extends SQLiteOpenHelper {
                 + FileSendingTable._ID + " integer primary key autoincrement, "
                 + FileSendingTable.COLUMN_UUID + " text not null,"
                 + FileSendingTable.COLUMN_URI + " text not null,"
+                + FileSendingTable.COLUMN_HOST + " text not null,"
+                + FileSendingTable.COLUMN_PORT + " integer not null,"
                 + FileSendingTable.COLUMN_CREATETIME + " integer not null"
                 + ");";
 

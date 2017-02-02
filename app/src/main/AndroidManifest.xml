@@ -17,6 +17,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -34,6 +35,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.weichen2046.filesender2.MainActivity" />
         </activity>
+
+        <service
+            android:name=".service.SendFileService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

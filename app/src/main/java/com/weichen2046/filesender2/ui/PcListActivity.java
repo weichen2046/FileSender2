@@ -24,12 +24,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.R;
 import com.weichen2046.filesender2.network.Pc;
 import com.weichen2046.filesender2.network.PcManager;
 import com.weichen2046.filesender2.service.IDataTransfer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
+import com.weichen2046.filesender2.utils.FileSendUtils;
 
 public class PcListActivity extends AppCompatActivity {
 
@@ -99,13 +101,9 @@ public class PcListActivity extends AppCompatActivity {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                try {
-                    Uri uri = resultIntent.getData();
-                    // TODO: store uri to local database, store selected pc information also
-                    mTransfer.requestToSendFile(uri, mSelectedPc.addr.getHostAddress(), mSelectedPc.listenPort);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+                Uri uri = resultIntent.getData();
+                FileSendUtils.requestToSendFile(MyApplication.getInstance(), uri,
+                            mSelectedPc.addr.getHostAddress(), mSelectedPc.listenPort);
                 return null;
             }
         }.execute();

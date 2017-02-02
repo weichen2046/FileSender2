@@ -1,13 +1,14 @@
 package com.weichen2046.filesender2.network.udp;
 
+import android.database.SQLException;
 import android.util.Log;
 
 import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.db.FileSendingDataSource;
 import com.weichen2046.filesender2.db.FileSendingObj;
+import com.weichen2046.filesender2.service.SendFileService;
 
 import java.nio.ByteBuffer;
-import java.sql.SQLException;
 
 /**
  * Created by chenwei on 2017/1/31.
@@ -48,7 +49,9 @@ public class ConfirmRecvCmdHandler extends UdpCmdHandler {
     }
 
     private void handleConfirm(FileSendingObj fsObj) {
-        //Log.d(TAG, "FileSendingObj: " + fsObj);
+        Log.d(TAG, "confirm file sending obj: " + fsObj);
+        SendFileService.startActionSendFile(MyApplication.getInstance(), fsObj.getUri(), fsObj.host,
+                fsObj.port);
         deleteFileSendingObject(fsObj);
     }
 
@@ -58,6 +61,6 @@ public class ConfirmRecvCmdHandler extends UdpCmdHandler {
 
     private void deleteFileSendingObject(FileSendingObj fsObj) {
         int del = mFileSendingDataSource.delete(fsObj);
-        //Log.d(TAG, "delete " + del + " row(s) by id " + (fsObj == null ? -1 : fsObj.id));
+        Log.d(TAG, "delete " + del + " row(s) by id " + (fsObj == null ? -1 : fsObj.id));
     }
 }

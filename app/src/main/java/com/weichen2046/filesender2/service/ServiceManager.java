@@ -7,7 +7,6 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.util.SparseArray;
 
-
 public class ServiceManager extends Service {
 
     private static final String TAG = "ServiceManager";

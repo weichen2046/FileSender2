@@ -6,6 +6,8 @@ package com.weichen2046.filesender2.network;
 
 public interface INetworkDefs {
 
+    int DEFAULT_PC_TCP_PORT = 6852;
+
     int PC_LISTEN_PORT = 4555;
     int BROAD_MONITOR_LISTEN_PORT = 4556;
 
