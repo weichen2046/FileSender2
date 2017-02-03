@@ -48,12 +48,12 @@ public class SendFileService extends IntentService {
             if (ACTION_SEND_FILE.equals(action)) {
                 final Uri uri = intent.getParcelableExtra(EXTRA_FILE_URI);
                 final String host = intent.getStringExtra(EXTRA_DEST_HOST);
-                final int port = intent.getIntExtra(EXTRA_DEST_PORT, INetworkDefs.DEFAULT_PC_TCP_PORT);
+                final int port = intent.getIntExtra(EXTRA_DEST_PORT, INetworkDefs.DEFAULT_DESKTOP_TCP_PORT);
                 handleActionSendFile(uri, host, port);
             } else if (ACTION_REQEST_SEND_FILE.equals(action)) {
                 final Uri uri = intent.getParcelableExtra(EXTRA_FILE_URI);
                 final String host = intent.getStringExtra(EXTRA_DEST_HOST);
-                final int port = intent.getIntExtra(EXTRA_DEST_PORT, INetworkDefs.DEFAULT_PC_TCP_PORT);
+                final int port = intent.getIntExtra(EXTRA_DEST_PORT, INetworkDefs.DEFAULT_DESKTOP_TCP_PORT);
                 handleActionRequestSendFile(uri, host, port);
             }
         }

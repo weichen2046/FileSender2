@@ -6,10 +6,10 @@ package com.weichen2046.filesender2.network;
 
 public interface INetworkDefs {
 
-    int DEFAULT_PC_TCP_PORT = 6852;
+    int DEFAULT_DESKTOP_TCP_PORT    = 6852;
 
-    int PC_LISTEN_PORT = 4555;
-    int BROAD_MONITOR_LISTEN_PORT = 4556;
+    int DESKTOP_UDP_LISTEN_PORT     = 4555;
+    int MOBILE_UDP_LISTEN_PORT      = 4556;
 
     int DATA_VERSION = 1;
 

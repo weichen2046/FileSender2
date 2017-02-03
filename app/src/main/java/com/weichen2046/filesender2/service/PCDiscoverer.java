@@ -42,7 +42,7 @@ public class PCDiscoverer extends IPCDiscoverer.Stub {
                     ByteBuffer bb = ByteBuffer.allocate(Integer.SIZE / 8 * 3);
                     bb.putInt(INetworkDefs.DATA_VERSION);
                     bb.putInt(INetworkDefs.CMD_PHONE_ONLINE);
-                    bb.putInt(INetworkDefs.BROAD_MONITOR_LISTEN_PORT);
+                    bb.putInt(INetworkDefs.MOBILE_UDP_LISTEN_PORT);
                     byte[] buf = bb.array();
                     InetAddress group = InetAddress.getByName(broadcastAddress);
                     DatagramPacket packet = new DatagramPacket(buf, buf.length, group, pcPort);

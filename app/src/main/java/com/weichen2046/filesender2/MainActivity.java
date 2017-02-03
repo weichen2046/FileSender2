@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity
 
                 binder = mServiceManager.getService(ServiceManager.SERVICE_PC_DISCOVERER);
                 mPCDiscoverer = IPCDiscoverer.Stub.asInterface(binder);
-                mPCDiscoverer.sayHello(1, INetworkDefs.PC_LISTEN_PORT);
+                mPCDiscoverer.sayHello(1, INetworkDefs.DESKTOP_UDP_LISTEN_PORT);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

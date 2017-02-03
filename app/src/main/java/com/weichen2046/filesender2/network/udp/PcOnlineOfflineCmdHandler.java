@@ -35,11 +35,12 @@ public class PcOnlineOfflineCmdHandler extends UdpCmdHandler {
             return;
         }
         int port = ByteBuffer.wrap(data.data).getInt();
-        Log.d(TAG, "pc online, pc tcp listen port: " + port);
+        Log.d(TAG, "desktop online, pc tcp listen port: " + port);
         mManager.add(new Pc(data.addr, port));
     }
 
     private void handlePcOffline(BroadcastData data) {
+        Log.d(TAG, "desktop offline, desktop addr: " + data.addr);
         mManager.remove(data.addr);
     }
 }

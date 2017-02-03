@@ -47,7 +47,7 @@ public class PcManager {
         Pc pc = null;
         int index = findByAddr(addr);
         if (index != -1) {
-            pc = mPcs.get(index);
+            pc = mPcs.remove(index);
         }
         return pc;
     }
@@ -62,7 +62,7 @@ public class PcManager {
         Pc pc = null;
         int index = findByAddr(addr);
         if (index != -1) {
-            pc = mPcs.get(index);
+            pc = mPcs.remove(index);
         }
         return pc;
     }

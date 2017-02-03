@@ -55,7 +55,7 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
                 DatagramSocket socket = null;
                 DatagramPacket packet;
                 try {
-                    socket = new DatagramSocket(INetworkDefs.BROAD_MONITOR_LISTEN_PORT);
+                    socket = new DatagramSocket(INetworkDefs.MOBILE_UDP_LISTEN_PORT);
                     while (true) {
                         byte[] buf = new byte[256];
                         packet = new DatagramPacket(buf, buf.length);
@@ -78,7 +78,7 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
                         Log.d(TAG, "recv data version: " + version);
                         // 4 bytes -> cmd
                         int cmd = recvBuf.getInt();
-                        Log.d(TAG, "recv data cmd: " + version);
+                        Log.d(TAG, "recv data cmd: " + cmd);
                         // other bytes -> cmd data
                         byte[] cmdData = null;
                         if (dataLength > INetworkDefs.MIN_DATA_LENGTH) {
@@ -126,7 +126,7 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
                         bb.putInt(INetworkDefs.CMD_PHONE_OFFLINE);
                         byte[] buf = bb.array();
                         InetAddress group = InetAddress.getByName(broadcastAddress);
-                        DatagramPacket packet = new DatagramPacket(buf, buf.length, group, INetworkDefs.BROAD_MONITOR_LISTEN_PORT);
+                        DatagramPacket packet = new DatagramPacket(buf, buf.length, group, INetworkDefs.MOBILE_UDP_LISTEN_PORT);
                         socket = new DatagramSocket();
                         socket.send(packet);
                     } catch (SocketException e) {
