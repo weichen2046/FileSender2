@@ -26,10 +26,11 @@ import android.widget.TextView;
 
 import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.R;
-import com.weichen2046.filesender2.network.Pc;
-import com.weichen2046.filesender2.network.PcManager;
+import com.weichen2046.filesender2.network.DesktopMachine;
+import com.weichen2046.filesender2.network.DesktopManager;
 import com.weichen2046.filesender2.service.IDataTransfer;
 import com.weichen2046.filesender2.service.IServiceManager;
+import com.weichen2046.filesender2.service.SendFileService;
 import com.weichen2046.filesender2.service.ServiceManager;
 import com.weichen2046.filesender2.utils.FileSendUtils;
 
@@ -43,7 +44,7 @@ public class PcListActivity extends AppCompatActivity {
 
     private boolean mBoundToService;
 
-    private Pc mSelectedPc;
+    private DesktopMachine mSelectedDesktop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class PcListActivity extends AppCompatActivity {
     private AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-            mSelectedPc = PcManager.getInstance().getPc(pos);
+            mSelectedDesktop = DesktopManager.getInstance().getDesktopMachine(pos);
 
             Intent openFile;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -98,15 +99,9 @@ public class PcListActivity extends AppCompatActivity {
         }
 
         final Intent resultIntent = data;
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                Uri uri = resultIntent.getData();
-                FileSendUtils.requestToSendFile(MyApplication.getInstance(), uri,
-                            mSelectedPc.addr.getHostAddress(), mSelectedPc.listenPort);
-                return null;
-            }
-        }.execute();
+        Uri uri = resultIntent.getData();
+        SendFileService.startActionRequestSendFile(this, uri,
+                mSelectedDesktop.addr.getHostAddress(), mSelectedDesktop.listenPort);
     }
 
     @Override
@@ -120,7 +115,7 @@ public class PcListActivity extends AppCompatActivity {
 
     private static class PcAdapter extends BaseAdapter {
 
-        private PcManager mManager = PcManager.getInstance();
+        private DesktopManager mManager = DesktopManager.getInstance();
         private LayoutInflater mInflater = null;
         private int mResourceId = 0;
 
@@ -137,7 +132,7 @@ public class PcListActivity extends AppCompatActivity {
 
         @Override
         public Object getItem(int position) {
-            return mManager.getPc(position);
+            return mManager.getDesktopMachine(position);
         }
 
         @Override
@@ -160,11 +155,11 @@ public class PcListActivity extends AppCompatActivity {
                 view = convertView;
                 holder = (ViewHolder) view.getTag();
             }
-            Pc pc = (Pc) getItem(position);
+            DesktopMachine desktop = (DesktopMachine) getItem(position);
             holder.mIcon.setImageResource(R.drawable.ic_menu_share);
-            holder.mName.setText(pc.name);
-            holder.mIp.setText(pc.addr.toString());
-            Log.d(TAG, "getView called, pc.ip: " + holder.mName);
+            holder.mName.setText(desktop.name);
+            holder.mIp.setText(desktop.addr.toString());
+            Log.d(TAG, "getView called, desktop.ip: " + holder.mName);
             return view;
         }
 

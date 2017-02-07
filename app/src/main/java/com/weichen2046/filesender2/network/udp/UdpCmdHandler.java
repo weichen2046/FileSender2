@@ -20,7 +20,7 @@ public abstract class UdpCmdHandler {
         switch (cmd) {
             case INetworkDefs.CMD_PC_ONLINE:
             case INetworkDefs.CMD_PC_OFFLINE:
-                return new PcOnlineOfflineCmdHandler(cmd);
+                return new DesktopOnlineOfflineCmdHandler(cmd);
             case INetworkDefs.CMD_CONFIRM_RECV_FILE:
                 return new ConfirmRecvCmdHandler(cmd);
         }
