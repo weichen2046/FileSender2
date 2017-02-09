@@ -6,7 +6,9 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
-import com.weichen2046.filesender2.utils.FileSendUtils;
+import com.weichen2046.filesender2.utils.RequestSendFileDataSource;
+import com.weichen2046.filesender2.utils.SendFileDataSource;
+import com.weichen2046.filesender2.utils.UdpDataSender;
 
 public class SendFileService extends IntentService {
     private static final String ACTION_SEND_FILE
@@ -59,11 +61,14 @@ public class SendFileService extends IntentService {
         }
     }
 
-    private void handleActionSendFile(Uri fileUri, String host, int port) {
-        FileSendUtils.sendFileToPc(this, fileUri, host, port);
+    private void handleActionSendFile(Uri fileUri, String destHost, int destPort) {
+        SendFileDataSource dataSource = new SendFileDataSource(this, fileUri);
+        UdpDataSender.sendData(destHost, destPort, dataSource);
     }
 
-    private void handleActionRequestSendFile(Uri fileUri, String host, int port) {
-        FileSendUtils.requestToSendFile(this, fileUri, host, port);
+    private void handleActionRequestSendFile(Uri fileUri, String destHost, int destPort) {
+        RequestSendFileDataSource dataSource =
+                new RequestSendFileDataSource(this, fileUri, destHost, destPort);
+        UdpDataSender.sendData(destHost, destPort, dataSource);
     }
 }

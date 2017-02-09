@@ -24,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.R;
 import com.weichen2046.filesender2.network.DesktopMachine;
 import com.weichen2046.filesender2.network.DesktopManager;
@@ -32,7 +31,6 @@ import com.weichen2046.filesender2.service.IDataTransfer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.SendFileService;
 import com.weichen2046.filesender2.service.ServiceManager;
-import com.weichen2046.filesender2.utils.FileSendUtils;
 
 public class PcListActivity extends AppCompatActivity {
 
