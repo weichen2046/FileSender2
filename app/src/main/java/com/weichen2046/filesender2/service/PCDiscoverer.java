@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.networklib.NetworkAddressHelper;
+import com.weichen2046.filesender2.networklib.TokenHelper;
 import com.weichen2046.filesender2.utils.Utils;
 
 import java.io.IOException;
@@ -23,6 +24,8 @@ public class PCDiscoverer extends IPCDiscoverer.Stub {
 
     private static final String TAG = "PCDiscoverer";
 
+    private String mTempAccessToken;
+
     @Override
     public void sayHello(int times, final int pcPort) throws RemoteException {
         // main thread can not have network operation
@@ -39,9 +42,13 @@ public class PCDiscoverer extends IPCDiscoverer.Stub {
                 // send broadcast to local network
                 DatagramSocket socket = null;
                 try {
-                    ByteBuffer bb = ByteBuffer.allocate(Integer.SIZE / 8 * 3);
+                    String token = getTempToken();
+                    byte[] tokenBytes = token.getBytes();
+                    ByteBuffer bb = ByteBuffer.allocate(Integer.SIZE / 8 * 4 + tokenBytes.length);
                     bb.putInt(INetworkDefs.DATA_VERSION);
                     bb.putInt(INetworkDefs.CMD_PHONE_ONLINE);
+                    bb.putInt(tokenBytes.length);
+                    bb.put(tokenBytes);
                     bb.putInt(INetworkDefs.MOBILE_UDP_LISTEN_PORT);
                     byte[] buf = bb.array();
                     InetAddress group = InetAddress.getByName(broadcastAddress);
@@ -59,5 +66,12 @@ public class PCDiscoverer extends IPCDiscoverer.Stub {
                 return res;
             }
         }.execute();
+    }
+
+    private String getTempToken() {
+        if (null == mTempAccessToken) {
+            mTempAccessToken = TokenHelper.generateTempToken();
+        }
+        return mTempAccessToken;
     }
 }
