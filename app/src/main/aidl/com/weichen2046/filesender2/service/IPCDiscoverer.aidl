@@ -12,4 +12,6 @@ interface IPCDiscoverer {
      * @param pcPort The PC side broadcast listen port.
      */
     void sayHello(int times, int pcPort);
+
+    boolean checkTempAccessToken(String token);
 }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FileSender2</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">设置</string>
+    <string name="action_start_broadcast_monitor">启动广播监听</string>
+    <string name="action_stop_broadcast_monitor">停止广播监听</string>
+
+    <string name="pc_list">电脑列表</string>
+    <string name="choose_file">选择文件</string>
+    <string name="auth_request_title">鉴权请求</string>
+    <string name="auth_request_text">鉴权请求来自 IP: %1$s</string>
+    <string name="auth_request_accept">接受</string>
+    <string name="auth_request_denial">拒绝</string>
+</resources>

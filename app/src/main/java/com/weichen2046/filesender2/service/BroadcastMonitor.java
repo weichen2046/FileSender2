@@ -23,10 +23,12 @@ import java.util.Arrays;
  * Created by chenwei on 12/4/16.
  */
 
-public class BroadcastMonitor extends IBroadcastMonitor.Stub {
+public class BroadcastMonitor extends IBroadcastMonitor.Stub implements IServiceManagerHolder {
 
     private static final String TAG = "BroadcastMonitor";
     private boolean mStared = false;
+
+    private IServiceManager mServiceManager;
 
     private Thread mWorker = null;
     private HandlerThread mCmdThread = null;
@@ -47,6 +49,7 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
         mCmdThread = new HandlerThread("broadcast-cmd-thread");
         mCmdThread.start();
         mCmdDispatcher = new BroadcastCmdDispatcher(mCmdThread.getLooper());
+        mCmdDispatcher.attach(mServiceManager);
 
         mWorker = new Thread(new Runnable() {
             @Override
@@ -141,9 +144,25 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub {
                     return true;
                 }
             }.execute();
+            mCmdDispatcher.detach();
             mCmdThread.getLooper().quit();
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void attach(IServiceManager manager) {
+        mServiceManager = manager;
+    }
+
+    @Override
+    public void detach() {
+        mServiceManager = null;
+    }
+
+    @Override
+    public IServiceManager get() {
+        return mServiceManager;
     }
 }

@@ -10,4 +10,8 @@
 
     <string name="pc_list">PC List</string>
     <string name="choose_file">Choose File</string>
+    <string name="auth_request_title">Authentication Request</string>
+    <string name="auth_request_text">Authentication from IP: %1$s</string>
+    <string name="auth_request_accept">Accept</string>
+    <string name="auth_request_denial">Denial</string>
 </resources>

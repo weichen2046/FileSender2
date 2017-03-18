@@ -68,10 +68,16 @@ public class PCDiscoverer extends IPCDiscoverer.Stub {
         }.execute();
     }
 
+    @Override
+    public boolean checkTempAccessToken(String token) throws RemoteException {
+        return mTempAccessToken.equals(token);
+    }
+
     private String getTempToken() {
         if (null == mTempAccessToken) {
             mTempAccessToken = TokenHelper.generateTempToken();
         }
+        Log.d(TAG, "temp access token: " + mTempAccessToken);
         return mTempAccessToken;
     }
 }

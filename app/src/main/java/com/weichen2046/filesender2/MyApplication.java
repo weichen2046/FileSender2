@@ -3,13 +3,16 @@ package com.weichen2046.filesender2;
 import android.app.Application;
 import android.content.Context;
 
+import com.weichen2046.filesender2.service.IServiceManager;
+
 /**
  * Created by chenwei on 2017/1/31.
  */
 
 public class MyApplication extends Application {
 
-    private static Context sInstance;
+    private static MyApplication sInstance;
+    private IServiceManager mServiceManager;
 
     @Override
     public void onCreate() {
@@ -17,7 +20,15 @@ public class MyApplication extends Application {
         sInstance = this;
     }
 
-    public static Context getInstance() {
+    public static MyApplication getInstance() {
         return sInstance;
+    }
+
+    public void setServiceManager(IServiceManager manager) {
+        mServiceManager = manager;
+    }
+
+    public IServiceManager getServiceManager() {
+       return mServiceManager;
     }
 }

@@ -16,6 +16,7 @@ public class ServiceManager extends Service {
     public static final int SERVICE_PC_DISCOVERER       = 1;
     public static final int SERVICE_BROADCAST_MONITOR   = 2;
     public static final int SERVICE_DATA_TRANSFER       = 3;
+    public static final int SERVICE_DESKTOP_MANAGER     = 4;
 
     public ServiceManager() {
     }
@@ -36,13 +37,20 @@ public class ServiceManager extends Service {
                 }
 
                 if (serviceId == SERVICE_BROADCAST_MONITOR) {
-                    binder = new BroadcastMonitor();
+                    BroadcastMonitor broadcastMonitor = new BroadcastMonitor();
+                    broadcastMonitor.attach(IServiceManager.Stub.asInterface(this));
+                    binder = broadcastMonitor;
                     mSubServices.put(SERVICE_BROADCAST_MONITOR, binder);
                 }
 
                 if (serviceId == SERVICE_DATA_TRANSFER) {
                     binder = new DataTransfer(ServiceManager.this);
                     mSubServices.put(SERVICE_DATA_TRANSFER, binder);
+                }
+
+                if (serviceId == SERVICE_DESKTOP_MANAGER) {
+                    binder = new DesktopManager();
+                    mSubServices.put(SERVICE_DESKTOP_MANAGER, binder);
                 }
             }
             return binder;

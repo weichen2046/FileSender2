@@ -176,6 +176,8 @@ public class MainActivity extends AppCompatActivity
             mBoundToService = true;
             mServiceManager = IServiceManager.Stub.asInterface(service);
 
+            MyApplication.getInstance().setServiceManager(mServiceManager);
+
             try {
                 IBinder binder = mServiceManager.getService(ServiceManager.SERVICE_BROADCAST_MONITOR);
                 mBroadcastMonitor = IBroadcastMonitor.Stub.asInterface(binder);
@@ -192,6 +194,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.d(TAG, "onServiceDisconnected");
+            MyApplication.getInstance().setServiceManager(null);
         }
     };
 }

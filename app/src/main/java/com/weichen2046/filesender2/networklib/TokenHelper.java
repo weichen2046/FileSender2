@@ -10,4 +10,8 @@ public class TokenHelper {
     public static String generateTempToken() {
         return UUID.randomUUID().toString().replace("-", "");
     }
+
+    public static String generateToken() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
 }
