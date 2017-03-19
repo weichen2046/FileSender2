@@ -77,9 +77,6 @@ public class RequestAuthHandler extends UdpCmdHandler {
             e.printStackTrace();
         }
 
-        // TODO: send notification to let user confirm the auth request
-        // TODO: if user confirmed, send auth token back to desktop to confirm the auth request
-        //desktop.authToken = TokenHelper.generateToken();
         NotificationHelper.makeAuthRequestNotification(MyApplication.getInstance(), desktop);
     }
 }

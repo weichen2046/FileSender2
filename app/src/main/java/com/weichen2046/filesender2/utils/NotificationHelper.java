@@ -13,6 +13,9 @@ import com.weichen2046.filesender2.R;
 import com.weichen2046.filesender2.service.AuthenticationHandleService;
 import com.weichen2046.filesender2.service.Desktop;
 
+import static com.weichen2046.filesender2.service.AuthenticationHandleService.EXTRA_ACCEPT_STATE;
+import static com.weichen2046.filesender2.service.AuthenticationHandleService.EXTRA_AUTH_DESKTOP;
+
 /**
  * Created by chenwei on 2017/3/18.
  */
@@ -22,8 +25,8 @@ public class NotificationHelper {
 
     public static final int NOTIFICATION_DESKTOP_AUTH_REQ = 1;
 
-    public static final String EXTRA_ACCEPT_STATE = "extra_access_state";
-    public static final String EXTRA_AUTH_DESKTOP = "extra_auth_desktop";
+    public static final int NOTIFICATION_DESKTOP_AUTH_ACCEPT = 1;
+    public static final int NOTIFICATION_DESKTOP_AUTH_DENIAL = 2;
 
     public static void makeAuthRequestNotification(Context context, Desktop desktop) {
         if (context == null) {
@@ -42,14 +45,14 @@ public class NotificationHelper {
         service.putExtra(EXTRA_ACCEPT_STATE, true);
         service.putExtra(EXTRA_AUTH_DESKTOP, desktop);
         PendingIntent pendingIntent = PendingIntent.getService(context,
-                NOTIFICATION_DESKTOP_AUTH_REQ, service, PendingIntent.FLAG_UPDATE_CURRENT);
+                NOTIFICATION_DESKTOP_AUTH_ACCEPT, service, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.addAction(R.drawable.ic_check_black_32dp, rs.getString(R.string.auth_request_accept), pendingIntent);
 
         service = new Intent(context, AuthenticationHandleService.class);
         service.putExtra(EXTRA_ACCEPT_STATE, false);
         service.putExtra(EXTRA_AUTH_DESKTOP, desktop);
         pendingIntent = PendingIntent.getService(context,
-                NOTIFICATION_DESKTOP_AUTH_REQ, service, PendingIntent.FLAG_UPDATE_CURRENT);
+                NOTIFICATION_DESKTOP_AUTH_DENIAL, service, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.addAction(R.drawable.ic_close_black_32dp, rs.getString(R.string.auth_request_denial), pendingIntent);
 
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

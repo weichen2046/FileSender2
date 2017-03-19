@@ -50,4 +50,28 @@ public class Desktop implements Parcelable {
         dest.writeString(accessToken);
         dest.writeString(authToken);
     }
+
+    public void update(Desktop desktop) {
+        address = desktop.address;
+        udpPort = desktop.udpPort;
+        tcpPort = desktop.tcpPort;
+        accessToken = desktop.accessToken;
+        authToken = desktop.authToken;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        Desktop right = (Desktop) o;
+        return udpPort == right.udpPort && address.equals(right.address);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "Desktop [ address: %s, udpPort: %d, tcpPort: %d, accessToken: %s, authToken: %s ]",
+                address, udpPort, tcpPort, accessToken, authToken);
+    }
 }
