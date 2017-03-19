@@ -151,6 +151,9 @@ public class AuthenticationHandleService extends Service {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_HANDLE_AUTH_REQUEST:
+                    if (mServiceManager == null) {
+                        return;
+                    }
                     if (mDelayedMessages.size() > 0) {
                         int lastReqId = -1;
                         for (Bundle bundle : mDelayedMessages) {

@@ -36,7 +36,7 @@ public class NotificationHelper {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Resources rs = context.getResources();
-        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setSmallIcon(R.drawable.ic_statusbar_notify_auth_req);
         builder.setLargeIcon(BitmapFactory.decodeResource(rs, R.mipmap.ic_launcher));
         builder.setContentTitle(rs.getString(R.string.auth_request_title));
         builder.setContentText(String.format(rs.getString(R.string.auth_request_text), desktop.address));
