@@ -15,6 +15,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.networklib.TokenHelper;
 import com.weichen2046.filesender2.utils.NotificationHelper;
 
@@ -101,14 +102,9 @@ public class AuthenticationHandleService extends Service {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        // TODO: send auth request confirm message to desktop
-        // TODO: send auth token back and use access token to auth with desktop
-        // 4 bytes -> cmd version
-        // 4 bytes -> cmd
-        // 4 bytes -> access token length
-        // x bytes -> access token
-        // 4 bytes -> auth token length
-        // x bytes -> auth token
+        // send auth request confirm message to desktop
+        // send auth token back and use access token to auth with desktop
+        SocketTaskService.confirmDesktopAuthRequest(MyApplication.getInstance(), desktop, true);
     }
 
     private void denial(Desktop desktop) {
@@ -120,11 +116,8 @@ public class AuthenticationHandleService extends Service {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        // TODO: send auth request denial message to desktop
-        // 4 bytes -> cmd version
-        // 4 bytes -> cmd
-        // 4 bytes -> access token length
-        // x bytes -> access token
+        // send auth request denial message to desktop
+        SocketTaskService.confirmDesktopAuthRequest(MyApplication.getInstance(), desktop, false);
     }
 
 

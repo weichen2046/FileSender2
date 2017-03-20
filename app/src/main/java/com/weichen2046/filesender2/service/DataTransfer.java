@@ -29,11 +29,11 @@ public class DataTransfer extends IDataTransfer.Stub {
      */
     @Override
     public void sendFileToPc(Uri fileUri, String destHost, int destPort) throws RemoteException {
-        SendFileService.startActionSendFile(mContext, fileUri, destHost, destPort);
+        SocketTaskService.startActionSendFile(mContext, fileUri, destHost, destPort);
     }
 
     @Override
     public void requestToSendFile(Uri fileUri, String destHost, int destPort) throws RemoteException {
-        SendFileService.startActionRequestSendFile(mContext, fileUri, destHost, destPort);
+        SocketTaskService.startActionRequestSendFile(mContext, fileUri, destHost, destPort);
     }
 }

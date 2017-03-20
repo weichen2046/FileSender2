@@ -21,13 +21,16 @@ public abstract class UdpCmdHandler extends ServiceManagerHolder {
     public static UdpCmdHandler getHandler(int cmd, IServiceManager manager) {
         UdpCmdHandler handler = null;
         switch (cmd) {
-            case INetworkDefs.CMD_PC_ONLINE:
-            case INetworkDefs.CMD_PC_OFFLINE:
+            case INetworkDefs.CMD_DESKTOP_ONLINE:
+            case INetworkDefs.CMD_DESKTOP_OFFLINE:
                 handler = new DesktopOnlineOfflineCmdHandler(cmd);
+                break;
             case INetworkDefs.CMD_CONFIRM_RECV_FILE:
                 handler = new ConfirmRecvCmdHandler(cmd);
-            case INetworkDefs.CMD_PC_REQUEST_AUTH:
+                break;
+            case INetworkDefs.CMD_DESKTOP_REQUEST_AUTH:
                 handler = new RequestAuthHandler(cmd);
+                break;
         }
         handler.attach(manager);
         return handler;

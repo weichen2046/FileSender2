@@ -22,9 +22,9 @@ public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
 
     @Override
     public void handle(BroadcastData data) {
-        if (mCmd == INetworkDefs.CMD_PC_ONLINE) {
+        if (mCmd == INetworkDefs.CMD_DESKTOP_ONLINE) {
             handleDesktopOnline(data);
-        } else if (mCmd == INetworkDefs.CMD_PC_OFFLINE) {
+        } else if (mCmd == INetworkDefs.CMD_DESKTOP_OFFLINE) {
             handleDesktopOffline(data);
         }
     }

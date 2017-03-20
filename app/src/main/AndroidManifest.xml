@@ -37,7 +37,7 @@
         </activity>
 
         <service
-            android:name=".service.SendFileService"
+            android:name=".service.SocketTaskService"
             android:exported="false" />
         <service
             android:name=".service.AuthenticationHandleService"

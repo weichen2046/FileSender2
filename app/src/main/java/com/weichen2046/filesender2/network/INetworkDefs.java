@@ -20,15 +20,16 @@ public interface INetworkDefs {
     byte HAS_NOT_THUMBNAIL  = 0;
     byte HAS_THUMBNAIL      = 1;
 
-    /////////////////// Phone -> PC ///////////////////
-    int CMD_PHONE_ONLINE    = 1;
-    int CMD_PHONE_OFFLINE   = 2;
-    int CMD_SEND_FILE       = 3;
-    int CMD_SEND_FILE_REQ   = 4;
+    /////////////////// Phone -> Desktop ///////////////////
+    int CMD_PHONE_ONLINE                = 1;
+    int CMD_PHONE_OFFLINE               = 2;
+    int CMD_SEND_FILE                   = 3;
+    int CMD_SEND_FILE_REQ               = 4;
+    int CMD_CONFIRM_DESKTOP_AUTH_REQ    = 5;
 
-    /////////////////// PC -> Phone ///////////////////
-    int CMD_PC_ONLINE           = 1;
-    int CMD_PC_OFFLINE          = 2;
-    int CMD_CONFIRM_RECV_FILE   = 3;
-    int CMD_PC_REQUEST_AUTH = 4;
+    /////////////////// Desktop -> Phone ///////////////////
+    int CMD_DESKTOP_ONLINE              = 1;
+    int CMD_DESKTOP_OFFLINE             = 2;
+    int CMD_CONFIRM_RECV_FILE           = 3;
+    int CMD_DESKTOP_REQUEST_AUTH        = 4;
 }

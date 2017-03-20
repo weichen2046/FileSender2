@@ -6,7 +6,7 @@ import android.util.Log;
 import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.db.FileSendingDataSource;
 import com.weichen2046.filesender2.db.FileSendingObj;
-import com.weichen2046.filesender2.service.SendFileService;
+import com.weichen2046.filesender2.service.SocketTaskService;
 
 import java.nio.ByteBuffer;
 
@@ -50,7 +50,7 @@ public class ConfirmRecvCmdHandler extends UdpCmdHandler {
 
     private void handleConfirm(FileSendingObj fsObj) {
         Log.d(TAG, "confirm file sending obj: " + fsObj);
-        SendFileService.startActionSendFile(MyApplication.getInstance(), fsObj.getUri(), fsObj.host,
+        SocketTaskService.startActionSendFile(MyApplication.getInstance(), fsObj.getUri(), fsObj.host,
                 fsObj.port);
         deleteFileSendingObject(fsObj);
     }

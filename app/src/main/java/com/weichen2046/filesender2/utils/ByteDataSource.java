@@ -3,6 +3,8 @@ package com.weichen2046.filesender2.utils;
 import com.weichen2046.filesender2.utils.byteconvertor.BytesConvertor;
 import com.weichen2046.filesender2.utils.byteconvertor.ByteConvertorChain;
 
+import java.util.ArrayList;
+
 /**
  * Created by chenwei on 2017/2/4.
  */
@@ -29,6 +31,33 @@ public abstract class ByteDataSource {
             return getData();
         }
         return data;
+    }
+
+    /**
+     * Get all bytes from the data source.
+     * Note: only use this method when there handle small data.
+     *
+     * @return bytes of data, null means no data in the data source.
+     */
+    public final byte[] getAllData() {
+        // TODO: need to optimize
+        ArrayList<Byte> allData = new ArrayList<>();
+        byte[] tmpBytes = getData();
+        while (tmpBytes != null) {
+            for (byte b : tmpBytes) {
+                allData.add(b);
+            }
+            tmpBytes = getData();
+        }
+        int length = allData.size();
+        if (length > 0) {
+            byte[] allBytes = new byte[length];
+            for (int i=0; i<length; i++) {
+                allBytes[i] = allData.get(i);
+            }
+            return allBytes;
+        }
+        return null;
     }
 
     public final boolean init() {

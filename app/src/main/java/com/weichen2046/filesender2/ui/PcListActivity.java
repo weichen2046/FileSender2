@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -29,7 +28,7 @@ import com.weichen2046.filesender2.network.DesktopMachine;
 import com.weichen2046.filesender2.network.DesktopManager;
 import com.weichen2046.filesender2.service.IDataTransfer;
 import com.weichen2046.filesender2.service.IServiceManager;
-import com.weichen2046.filesender2.service.SendFileService;
+import com.weichen2046.filesender2.service.SocketTaskService;
 import com.weichen2046.filesender2.service.ServiceManager;
 
 public class PcListActivity extends AppCompatActivity {
@@ -98,7 +97,7 @@ public class PcListActivity extends AppCompatActivity {
 
         final Intent resultIntent = data;
         Uri uri = resultIntent.getData();
-        SendFileService.startActionRequestSendFile(this, uri,
+        SocketTaskService.startActionRequestSendFile(this, uri,
                 mSelectedDesktop.addr.getHostAddress(), mSelectedDesktop.listenPort);
     }
 
