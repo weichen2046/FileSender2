@@ -10,4 +10,6 @@ interface IDesktopManager {
     boolean addDesktop(in Desktop desktop);
     boolean deleteDesktop(in Desktop desktop);
     boolean updateDesktop(in Desktop desktop);
+    int getDesktopCount();
+    List getAllDesktops();
 }

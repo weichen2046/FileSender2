@@ -3,6 +3,7 @@ package com.weichen2046.filesender2.service;
 import android.os.RemoteException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by chenwei on 2017/3/18.
@@ -53,5 +54,15 @@ public class DesktopManager extends IDesktopManager.Stub {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int getDesktopCount() throws RemoteException {
+        return mDesktops.size();
+    }
+
+    @Override
+    public List getAllDesktops() throws RemoteException {
+        return mDesktops;
     }
 }
