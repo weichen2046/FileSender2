@@ -23,6 +23,18 @@ public class DesktopManager extends IDesktopManager.Stub {
     }
 
     @Override
+    public Desktop findDesktopByAuthToken(String address, String authToken) throws RemoteException {
+        for (Desktop desktop : mDesktops) {
+            if (desktop.address.equals(address)) {
+                if (desktop.authToken.equals(authToken)) {
+                    return desktop;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public Desktop findDesktopByDesktop(Desktop desktop) throws RemoteException {
         int index = mDesktops.indexOf(desktop);
         if (index != -1) {

@@ -23,12 +23,11 @@ public class BroadcastCmdDispatcher extends Handler implements IServiceManagerHo
 
     @Override
     public void handleMessage(Message msg) {
-        UdpCmdHandler handler = UdpCmdHandler.getHandler(msg.what, mServiceManager);
+        UdpCmdHandler handler = UdpCmdHandler.getHandler(msg.what);
         if (handler != null) {
+            handler.attach(mServiceManager);
             BroadcastData bd = (BroadcastData) msg.obj;
             handler.handle(bd);
-        } else {
-            Log.w(TAG, "Unknown broadcast cmd: " + msg.what);
         }
     }
 

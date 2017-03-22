@@ -1,5 +1,7 @@
 package com.weichen2046.filesender2.network.udp;
 
+import android.util.Log;
+
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManagerHolder;
@@ -18,7 +20,7 @@ public abstract class UdpCmdHandler extends ServiceManagerHolder {
         mCmd = cmd;
     }
 
-    public static UdpCmdHandler getHandler(int cmd, IServiceManager manager) {
+    public static UdpCmdHandler getHandler(int cmd) {
         UdpCmdHandler handler = null;
         switch (cmd) {
             case INetworkDefs.CMD_DESKTOP_ONLINE:
@@ -31,8 +33,12 @@ public abstract class UdpCmdHandler extends ServiceManagerHolder {
             case INetworkDefs.CMD_DESKTOP_REQUEST_AUTH:
                 handler = new RequestAuthHandler(cmd);
                 break;
+            case INetworkDefs.CMD_EXCHANGE_TCP_PORT:
+                handler = new ExchangeTcpPortHandler(cmd);
+                break;
+            default:
+                Log.w(TAG, "unknown udp cmd: " + cmd);
         }
-        handler.attach(manager);
         return handler;
     }
 

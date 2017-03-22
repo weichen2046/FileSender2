@@ -26,10 +26,13 @@ public interface INetworkDefs {
     int CMD_SEND_FILE                   = 3;
     int CMD_SEND_FILE_REQ               = 4;
     int CMD_CONFIRM_DESKTOP_AUTH_REQ    = 5;
+    int CMD_CONFIRM_EXCHANGE_TCP_PORT   = 6;
 
     /////////////////// Desktop -> Phone ///////////////////
     int CMD_DESKTOP_ONLINE              = 1;
     int CMD_DESKTOP_OFFLINE             = 2;
     int CMD_CONFIRM_RECV_FILE           = 3;
     int CMD_DESKTOP_REQUEST_AUTH        = 4;
+    int CMD_DUMMY                       = 5;
+    int CMD_EXCHANGE_TCP_PORT           = 6;
 }
