@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.utils.ConfirmDesktopAuthRequestDataSource;
+import com.weichen2046.filesender2.utils.ConfirmExchangeTcpPortDataSource;
 import com.weichen2046.filesender2.utils.RequestSendFileDataSource;
 import com.weichen2046.filesender2.utils.SendFileDataSource;
 import com.weichen2046.filesender2.utils.TcpDataSender;
@@ -17,11 +18,13 @@ public class SocketTaskService extends IntentService {
     private static final String TAG = "SocketTaskService";
 
     private static final String ACTION_SEND_FILE
-            = "com.weichen2046.filesender2.service.action.SEND_FILE";
+            = "action.filesender2.SEND_FILE";
     private static final String ACTION_REQEST_SEND_FILE
-            = "com.weichen2046.filesender2.service.action.REQUEST_SEND_FILE";
+            = "action.filesender2.REQUEST_SEND_FILE";
     private static final String ACTION_CONFIRM_DESKTOP_AUTH
-            = "com.weichen2046.filesender2.service.action.ACTION_CONFIRM_DESKTOP_AUTH";
+            = "action.filesender2.ACTION_CONFIRM_DESKTOP_AUTH";
+    private static final String ACTION_CONFIRM_EXCHANGE_TCP_PORT
+            = "action.filesender2.ACTION_CONFIRM_EXCHANGE_TCP_PORT";
 
     private static final String EXTRA_FILE_URI      = "extra_file_uri";
     private static final String EXTRA_DEST_HOST     = "extra_dest_host";
@@ -55,6 +58,9 @@ public class SocketTaskService extends IntentService {
             final Desktop desktop = intent.getParcelableExtra(EXTRA_DESKTOP);
             final boolean accept = intent.getBooleanExtra(EXTRA_DESKTOP_CONFIRM_STATE, false);
             handleConfirmDesktopAuthRequest(desktop, accept);
+        } else if (ACTION_CONFIRM_EXCHANGE_TCP_PORT.equals(action)) {
+            final Desktop desktop = intent.getParcelableExtra(EXTRA_DESKTOP);
+            handleConfirmExchangeTcpPort(desktop);
         } else {
             Log.w(TAG, "unknown action: " + action);
         }
@@ -86,6 +92,18 @@ public class SocketTaskService extends IntentService {
         context.startService(intent);
     }
 
+    public static void confirmExchangeTcpPort(Context context, Desktop desktop) {
+        Intent intent = getServiceIntent(context, ACTION_CONFIRM_EXCHANGE_TCP_PORT);
+        intent.putExtra(EXTRA_DESKTOP, desktop);
+        context.startService(intent);
+    }
+
+    private static Intent getServiceIntent(Context context, String action) {
+        Intent serviceIntent = new Intent(context, SocketTaskService.class);
+        serviceIntent.setAction(action);
+        return serviceIntent;
+    }
+
     private void handleActionRequestSendFile(Uri fileUri, String destHost, int destPort) {
         RequestSendFileDataSource dataSource =
                 new RequestSendFileDataSource(this, fileUri, destHost, destPort);
@@ -100,6 +118,11 @@ public class SocketTaskService extends IntentService {
     private void handleConfirmDesktopAuthRequest(Desktop desktop, boolean accept) {
         ConfirmDesktopAuthRequestDataSource dataSource =
                 new ConfirmDesktopAuthRequestDataSource(desktop, accept);
+        UdpDataSender.sendData(desktop.address, desktop.udpPort, dataSource);
+    }
+
+    private void handleConfirmExchangeTcpPort(Desktop desktop) {
+        ConfirmExchangeTcpPortDataSource dataSource = new ConfirmExchangeTcpPortDataSource(desktop);
         UdpDataSender.sendData(desktop.address, desktop.udpPort, dataSource);
     }
 }

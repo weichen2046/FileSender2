@@ -2,10 +2,12 @@ package com.weichen2046.filesender2.network.udp;
 
 import android.os.RemoteException;
 
+import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.service.Desktop;
 import com.weichen2046.filesender2.service.IDesktopManager;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
+import com.weichen2046.filesender2.service.SocketTaskService;
 
 import java.nio.ByteBuffer;
 
@@ -33,6 +35,7 @@ public class ExchangeTcpPortHandler extends UdpCmdHandler {
             int tcpPort = buffer.getInt();
             desktop.tcpPort = tcpPort;
             updateDesktop(desktop);
+            SocketTaskService.confirmExchangeTcpPort(MyApplication.getInstance(), desktop);
         }
     }
 
