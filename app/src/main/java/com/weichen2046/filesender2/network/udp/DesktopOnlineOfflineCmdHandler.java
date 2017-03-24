@@ -1,10 +1,12 @@
 package com.weichen2046.filesender2.network.udp;
 
+import android.os.RemoteException;
 import android.util.Log;
 
-import com.weichen2046.filesender2.network.DesktopMachine;
 import com.weichen2046.filesender2.network.INetworkDefs;
-import com.weichen2046.filesender2.network.DesktopManager;
+import com.weichen2046.filesender2.service.IPCDiscoverer;
+import com.weichen2046.filesender2.service.IServiceManager;
+import com.weichen2046.filesender2.service.ServiceManager;
 
 import java.nio.ByteBuffer;
 
@@ -13,9 +15,6 @@ import java.nio.ByteBuffer;
  */
 
 public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
-
-    private DesktopManager mManager = DesktopManager.getInstance();
-
     public DesktopOnlineOfflineCmdHandler(int cmd) {
         super(cmd);
     }
@@ -34,17 +33,32 @@ public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
             Log.w(TAG, "handle desktop online but data is null");
             return;
         }
-        int port = ByteBuffer.wrap(data.data).getInt();
-        Log.d(TAG, "desktop online, pc tcp listen port: " + port);
-        DesktopMachine newDesktop = new DesktopMachine(data.addr, port);
-        DesktopMachine oldDesktop = mManager.add(newDesktop);
-        if (newDesktop == oldDesktop) {
-            // TODO: query desktop details
-        }
+        // read token length
+        ByteBuffer buffer = ByteBuffer.wrap(data.data);
+        int tokenLength = buffer.getInt();
+        // read token
+        byte[] tokenBytes = new byte[tokenLength];
+        buffer.get(tokenBytes);
+        String token = new String(tokenBytes);
+        // read udp port
+        int udpPort = buffer.getInt();
+        Log.d(TAG, "desktop online, udp port: " + udpPort + ", temp token: " + token);
+        sayHello(data.addr.getHostAddress(), udpPort);
     }
 
     private void handleDesktopOffline(BroadcastData data) {
-        Log.d(TAG, "desktop offline, desktop addr: " + data.addr);
-        mManager.remove(data.addr);
+        Log.d(TAG, "desktop offline, desktop addr: " + data.addr.getHostAddress());
+        // TODO: delete desktop from DesktopManager
+    }
+
+    private void sayHello(String address, int port) {
+        IServiceManager manager = get();
+        try {
+            IPCDiscoverer discoverer = IPCDiscoverer.Stub.asInterface(
+                    manager.getService(ServiceManager.SERVICE_PC_DISCOVERER));
+            discoverer.sayHello(address, port);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 }

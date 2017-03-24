@@ -2,6 +2,7 @@ package com.weichen2046.filesender2.service;
 
 import android.os.AsyncTask;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
@@ -27,15 +28,18 @@ public class PCDiscoverer extends IPCDiscoverer.Stub {
     private String mTempAccessToken;
 
     @Override
-    public void sayHello(int times, final int pcPort) throws RemoteException {
+    public void sayHello(final String address, final int port) throws RemoteException {
         // main thread can not have network operation
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... params) {
                 boolean res = false;
-                String broadcastAddress = NetworkAddressHelper.getBroadcastAddress();
-                if (null == broadcastAddress) {
-                    Log.w(TAG, "Can not get broadcast address");
+                String destAddress = address;
+                if (TextUtils.isEmpty(destAddress)) {
+                    destAddress =  NetworkAddressHelper.getBroadcastAddress();
+                }
+                if (TextUtils.isEmpty(destAddress)) {
+                    Log.w(TAG, "Can not get destination address");
                     return res;
                 }
 
@@ -51,8 +55,8 @@ public class PCDiscoverer extends IPCDiscoverer.Stub {
                     bb.put(tokenBytes);
                     bb.putInt(INetworkDefs.MOBILE_UDP_LISTEN_PORT);
                     byte[] buf = bb.array();
-                    InetAddress group = InetAddress.getByName(broadcastAddress);
-                    DatagramPacket packet = new DatagramPacket(buf, buf.length, group, pcPort);
+                    InetAddress group = InetAddress.getByName(destAddress);
+                    DatagramPacket packet = new DatagramPacket(buf, buf.length, group, port);
                     socket = new DatagramSocket();
                     socket.send(packet);
                     res = true;

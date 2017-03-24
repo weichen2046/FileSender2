@@ -8,10 +8,10 @@ interface IPCDiscoverer {
     /**
      * Send network broadcast to notify ourself is here.
      *
-     * @param times The times of notification.
-     * @param pcPort The PC side broadcast listen port.
+     * @param address The destination desktop address, null means broadcast address.
+     * @param port The PC side broadcast listen port.
      */
-    void sayHello(int times, int pcPort);
+    void sayHello(String address, int port);
 
     boolean checkTempAccessToken(String token);
 }
