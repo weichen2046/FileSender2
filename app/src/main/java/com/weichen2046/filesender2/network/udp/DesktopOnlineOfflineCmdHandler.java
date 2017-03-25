@@ -4,6 +4,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
+import com.weichen2046.filesender2.service.IDesktopManager;
 import com.weichen2046.filesender2.service.IPCDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
@@ -47,8 +48,29 @@ public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
     }
 
     private void handleDesktopOffline(BroadcastData data) {
-        Log.d(TAG, "desktop offline, desktop addr: " + data.addr.getHostAddress());
+        String desktopAddress = data.addr.getHostAddress();
+        Log.d(TAG, "desktop offline, desktop addr: " + desktopAddress);
+
         // TODO: delete desktop from DesktopManager
+
+        ByteBuffer buffer = ByteBuffer.wrap(data.data);
+        // 1 bytes has token indicator
+        boolean hasToken = buffer.get() == 1;
+        if (!hasToken) {
+            // 4 bytes udp port
+            int udpPort = buffer.getInt();
+            Log.d(TAG, "desktop offline broadcast, udpPort: " + udpPort);
+            deleteDesktopByPort(desktopAddress, udpPort);
+        } else {
+            // 4 bytes token length
+            int tokenLength = buffer.getInt();
+            // read token
+            byte[] tokenBytes = new byte[tokenLength];
+            buffer.get(tokenBytes);
+            String token = new String(tokenBytes);
+            Log.d(TAG, "desktop offline, access token: " + token);
+            deleteDesktopByToken(desktopAddress, token);
+        }
     }
 
     private void sayHello(String address, int port) {
@@ -57,6 +79,30 @@ public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
             IPCDiscoverer discoverer = IPCDiscoverer.Stub.asInterface(
                     manager.getService(ServiceManager.SERVICE_PC_DISCOVERER));
             discoverer.sayHello(address, port);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteDesktopByPort(String address, int port) {
+        IServiceManager manager = get();
+        try {
+            IDesktopManager desktopManager = IDesktopManager.Stub.asInterface(
+                    manager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
+            boolean res = desktopManager.deleteDesktopByPort(address, port);
+            Log.d(TAG, "delete desktop " + address + " " + (res ? "ok" : "fail"));
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteDesktopByToken(String address, String authToken) {
+        IServiceManager manager = get();
+        try {
+            IDesktopManager desktopManager = IDesktopManager.Stub.asInterface(
+                    manager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
+            boolean res = desktopManager.deleteDesktopByAuthToken(address, authToken);
+            Log.d(TAG, "delete desktop " + address + " " + (res ? "ok" : "fail"));
         } catch (RemoteException e) {
             e.printStackTrace();
         }

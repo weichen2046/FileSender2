@@ -58,6 +58,26 @@ public class DesktopManager extends IDesktopManager.Stub {
     }
 
     @Override
+    public boolean deleteDesktopByPort(String address, int udpPort) throws RemoteException {
+        Desktop desktop = findDesktop(address, udpPort);
+        // tcp port is 0 means the desktop is not authenticated
+        // NOTE: desktop's access token or auth token can not use to determine authentication state
+        if (desktop != null && desktop.tcpPort == 0) {
+            return deleteDesktop(desktop);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteDesktopByAuthToken(String address, String authToken) throws RemoteException {
+        Desktop desktop = findDesktopByAuthToken(address, authToken);
+        if (desktop != null) {
+            return deleteDesktop(desktop);
+        }
+        return false;
+    }
+
+    @Override
     public boolean updateDesktop(Desktop desktop) throws RemoteException {
         int index = mDesktops.indexOf(desktop);
         if (index != -1) {
