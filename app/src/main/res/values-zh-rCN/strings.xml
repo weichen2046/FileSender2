@@ -15,4 +15,6 @@
     <string name="auth_request_text">鉴权请求来自 IP: %1$s</string>
     <string name="auth_request_accept">接受</string>
     <string name="auth_request_denial">拒绝</string>
+    <string name="loading_desktop_title">电脑列表</string>
+    <string name="loading_desktop_message">加载中...</string>
 </resources>

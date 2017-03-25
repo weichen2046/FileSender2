@@ -25,7 +25,7 @@ import com.weichen2046.filesender2.service.IBroadcastMonitor;
 import com.weichen2046.filesender2.service.IPCDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
-import com.weichen2046.filesender2.ui.PcListActivity;
+import com.weichen2046.filesender2.ui.DesktopListActivity;
 
 
 public class MainActivity extends AppCompatActivity
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_pc_list) {
-            Intent pcListIntent = new Intent(this, PcListActivity.class);
+            Intent pcListIntent = new Intent(this, DesktopListActivity.class);
             startActivity(pcListIntent);
         } else if (id == R.id.nav_choose_file) {
 

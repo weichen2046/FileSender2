@@ -14,4 +14,6 @@
     <string name="auth_request_text">Authentication from IP: %1$s</string>
     <string name="auth_request_accept">Accept</string>
     <string name="auth_request_denial">Denial</string>
+    <string name="loading_desktop_title">Desktop List</string>
+    <string name="loading_desktop_message">Loading...</string>
 </resources>
