@@ -42,7 +42,16 @@
         <service
             android:name=".service.AuthenticationHandleService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
+        <service
+            android:name=".debug.DebugService"
+            android:process=":debugservice"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.weichen2046.filesender2.debugservice" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
