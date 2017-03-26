@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.weichen2046.filesender2.db.FileSendingDataSource;
 import com.weichen2046.filesender2.network.INetworkDefs;
+import com.weichen2046.filesender2.service.Desktop;
 import com.weichen2046.filesender2.utils.byteconvertor.BooleanBytesConvertor;
 import com.weichen2046.filesender2.utils.byteconvertor.BytesConvertor;
 import com.weichen2046.filesender2.utils.byteconvertor.IntBytesConvertor;
@@ -25,14 +26,12 @@ import java.util.UUID;
 public class RequestSendFileDataSource extends ByteDataSource {
     private Context mContext;
     private Uri mFileUri;
-    private String mHost;
-    private int mPort;
+    private Desktop mDesktop;
 
-    public RequestSendFileDataSource(Context context, Uri fileUri, String host, int port) {
+    public RequestSendFileDataSource(Context context, Uri fileUri, Desktop desktop) {
         mContext = context;
         mFileUri = fileUri;
-        mHost = host;
-        mPort = port;
+        mDesktop = desktop;
     }
 
     @Override
@@ -42,7 +41,7 @@ public class RequestSendFileDataSource extends ByteDataSource {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         FileSendingDataSource dataSource = new FileSendingDataSource(mContext);
         dataSource.open();
-        long fileId = dataSource.add(uuid, mFileUri, mHost, mPort);
+        long fileId = dataSource.add(uuid, mFileUri, mDesktop.address, mDesktop.tcpPort);
         dataSource.close();
 
         // use uuid as default file name
@@ -65,10 +64,14 @@ public class RequestSendFileDataSource extends ByteDataSource {
 
         boolean hasThumnail = false;
 
-        // data version
+        // write data version
         fillData(new IntBytesConvertor(INetworkDefs.DATA_VERSION));
-        // network cmd
+        // write network cmd
         fillData(new IntBytesConvertor(INetworkDefs.CMD_SEND_FILE_REQ));
+        // write token length
+        fillData(new IntBytesConvertor(mDesktop.accessToken.length()));
+        // write token
+        fillData(new StringBytesConvertor(mDesktop.accessToken));
 
         BytesConvertor convertor = new StringBytesConvertor(fileName);
         byte[] fileNameBytes = convertor.getBytes();

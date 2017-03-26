@@ -43,11 +43,6 @@ public class ServiceManager extends Service {
                     mSubServices.put(SERVICE_BROADCAST_MONITOR, binder);
                 }
 
-                if (serviceId == SERVICE_DATA_TRANSFER) {
-                    binder = new DataTransfer(ServiceManager.this);
-                    mSubServices.put(SERVICE_DATA_TRANSFER, binder);
-                }
-
                 if (serviceId == SERVICE_DESKTOP_MANAGER) {
                     binder = new DesktopManager();
                     mSubServices.put(SERVICE_DESKTOP_MANAGER, binder);

@@ -51,9 +51,8 @@ public class SocketTaskService extends IntentService {
             handleActionSendFile(uri, host, port);
         } else if (ACTION_REQEST_SEND_FILE.equals(action)) {
             final Uri uri = intent.getParcelableExtra(EXTRA_FILE_URI);
-            final String host = intent.getStringExtra(EXTRA_DEST_HOST);
-            final int port = intent.getIntExtra(EXTRA_DEST_PORT, INetworkDefs.DEFAULT_DESKTOP_TCP_PORT);
-            handleActionRequestSendFile(uri, host, port);
+            final Desktop desktop = intent.getParcelableExtra(EXTRA_DESKTOP);
+            handleActionRequestSendFile(uri, desktop);
         } else if (ACTION_CONFIRM_DESKTOP_AUTH.equals(action)) {
             final Desktop desktop = intent.getParcelableExtra(EXTRA_DESKTOP);
             final boolean accept = intent.getBooleanExtra(EXTRA_DESKTOP_CONFIRM_STATE, false);
@@ -66,12 +65,11 @@ public class SocketTaskService extends IntentService {
         }
     }
 
-    public static void startActionRequestSendFile(Context context, Uri fileUri, String host, int port) {
+    public static void startActionRequestSendFile(Context context, Uri fileUri, Desktop desktop) {
         Intent intent = new Intent(context, SocketTaskService.class);
         intent.setAction(ACTION_REQEST_SEND_FILE);
         intent.putExtra(EXTRA_FILE_URI, fileUri);
-        intent.putExtra(EXTRA_DEST_HOST, host);
-        intent.putExtra(EXTRA_DEST_PORT, port);
+        intent.putExtra(EXTRA_DESKTOP, desktop);
         context.startService(intent);
     }
 
@@ -104,10 +102,10 @@ public class SocketTaskService extends IntentService {
         return serviceIntent;
     }
 
-    private void handleActionRequestSendFile(Uri fileUri, String destHost, int destPort) {
+    private void handleActionRequestSendFile(Uri fileUri, Desktop desktop) {
         RequestSendFileDataSource dataSource =
-                new RequestSendFileDataSource(this, fileUri, destHost, destPort);
-        TcpDataSender.sendData(destHost, destPort, dataSource);
+                new RequestSendFileDataSource(this, fileUri, desktop);
+        TcpDataSender.sendData(desktop.address, desktop.tcpPort, dataSource);
     }
 
     private void handleActionSendFile(Uri fileUri, String destHost, int destPort) {

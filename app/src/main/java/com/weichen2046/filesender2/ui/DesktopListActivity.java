@@ -109,8 +109,7 @@ public class DesktopListActivity extends AppCompatActivity {
         }
         final Intent resultIntent = data;
         Uri uri = resultIntent.getData();
-        SocketTaskService.startActionRequestSendFile(this, uri,
-                mSelectedDesktop.address, mSelectedDesktop.tcpPort);
+        SocketTaskService.startActionRequestSendFile(this, uri, mSelectedDesktop);
     }
 
     @Override
