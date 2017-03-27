@@ -46,9 +46,8 @@ public class SocketTaskService extends IntentService {
         final String action = intent.getAction();
         if (ACTION_SEND_FILE.equals(action)) {
             final Uri uri = intent.getParcelableExtra(EXTRA_FILE_URI);
-            final String host = intent.getStringExtra(EXTRA_DEST_HOST);
-            final int port = intent.getIntExtra(EXTRA_DEST_PORT, INetworkDefs.DEFAULT_DESKTOP_TCP_PORT);
-            handleActionSendFile(uri, host, port);
+            final Desktop desktop = intent.getParcelableExtra(EXTRA_DESKTOP);
+            handleActionSendFile(uri, desktop);
         } else if (ACTION_REQEST_SEND_FILE.equals(action)) {
             final Uri uri = intent.getParcelableExtra(EXTRA_FILE_URI);
             final Desktop desktop = intent.getParcelableExtra(EXTRA_DESKTOP);
@@ -73,12 +72,11 @@ public class SocketTaskService extends IntentService {
         context.startService(intent);
     }
 
-    public static void startActionSendFile(Context context, Uri fileUri, String host, int port) {
+    public static void startActionSendFile(Context context, Uri fileUri, Desktop desktop) {
         Intent intent = new Intent(context, SocketTaskService.class);
         intent.setAction(ACTION_SEND_FILE);
         intent.putExtra(EXTRA_FILE_URI, fileUri);
-        intent.putExtra(EXTRA_DEST_HOST, host);
-        intent.putExtra(EXTRA_DEST_PORT, port);
+        intent.putExtra(EXTRA_DESKTOP, desktop);
         context.startService(intent);
     }
 
@@ -108,9 +106,9 @@ public class SocketTaskService extends IntentService {
         TcpDataSender.sendData(desktop.address, desktop.tcpPort, dataSource);
     }
 
-    private void handleActionSendFile(Uri fileUri, String destHost, int destPort) {
-        SendFileDataSource dataSource = new SendFileDataSource(this, fileUri);
-        TcpDataSender.sendData(destHost, destPort, dataSource);
+    private void handleActionSendFile(Uri fileUri, Desktop desktop) {
+        SendFileDataSource dataSource = new SendFileDataSource(this, fileUri, desktop);
+        TcpDataSender.sendData(desktop.address, desktop.tcpPort, dataSource);
     }
 
     private void handleConfirmDesktopAuthRequest(Desktop desktop, boolean accept) {

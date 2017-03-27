@@ -4,6 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 
 import com.weichen2046.filesender2.utils.Utils;
 
@@ -17,6 +18,8 @@ import java.util.Arrays;
  */
 
 public class UriFileBytesConvertor extends BytesConvertor {
+    private static final String TAG = "UriFileBytesConvertor";
+
     private Context mContext;
     private Uri mFileUri;
     private ParcelFileDescriptor mFileDescriptor;

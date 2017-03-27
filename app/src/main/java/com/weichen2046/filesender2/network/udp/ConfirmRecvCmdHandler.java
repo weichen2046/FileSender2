@@ -1,11 +1,16 @@
 package com.weichen2046.filesender2.network.udp;
 
 import android.database.SQLException;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.db.FileSendingDataSource;
 import com.weichen2046.filesender2.db.FileSendingObj;
+import com.weichen2046.filesender2.service.Desktop;
+import com.weichen2046.filesender2.service.IDesktopManager;
+import com.weichen2046.filesender2.service.IServiceManager;
+import com.weichen2046.filesender2.service.ServiceManager;
 import com.weichen2046.filesender2.service.SocketTaskService;
 
 import java.nio.ByteBuffer;
@@ -23,9 +28,24 @@ public class ConfirmRecvCmdHandler extends UdpCmdHandler {
 
     @Override
     public void handle(BroadcastData data) {
-        ByteBuffer bb = ByteBuffer.wrap(data.data);
-        boolean confirmed = bb.get() == 1;
-        long fileId = bb.getLong();
+        ByteBuffer buffer = ByteBuffer.wrap(data.data);
+        // read access token length
+        int tokenLength = buffer.getInt();
+        // read access token
+        byte[] tokenBytes = new byte[tokenLength];
+        buffer.get(tokenBytes);
+        String authToken = new String(tokenBytes);
+
+        Desktop desktop = findDesktop(data.addr.getHostAddress(), authToken);
+        if (desktop == null) {
+            Log.w(TAG, "desktop authenticate failed");
+            return;
+        }
+
+        // read confirm state
+        boolean confirmed = buffer.get() == 1;
+        // read file id
+        long fileId = buffer.getLong();
         Log.d(TAG, "confirm file id: " + fileId + ", confirmed: " + confirmed);
 
         mFileSendingDataSource = new FileSendingDataSource(MyApplication.getInstance());
@@ -36,7 +56,7 @@ public class ConfirmRecvCmdHandler extends UdpCmdHandler {
                 return;
             }
             if (confirmed) {
-                handleConfirm(fsObj);
+                handleConfirm(fsObj, desktop);
             } else {
                 handleDenie(fsObj);
             }
@@ -48,10 +68,26 @@ public class ConfirmRecvCmdHandler extends UdpCmdHandler {
         }
     }
 
-    private void handleConfirm(FileSendingObj fsObj) {
+    private Desktop findDesktop(String address, String authToken) {
+        IServiceManager manager = get();
+        Desktop desktop = null;
+        try {
+            IDesktopManager desktopManager =IDesktopManager.Stub.asInterface(
+                    manager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
+            desktop = desktopManager.findDesktopByAuthToken(address, authToken);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return desktop;
+    }
+
+    private void handleConfirm(FileSendingObj fsObj, Desktop desktop) {
         Log.d(TAG, "confirm file sending obj: " + fsObj);
-        SocketTaskService.startActionSendFile(MyApplication.getInstance(), fsObj.getUri(), fsObj.host,
-                fsObj.port);
+        if (!desktop.address.equals(fsObj.host)) {
+            // TODO: abort send?
+            Log.w(TAG, "desktop address not match, auth host: " + desktop.address + ", file host address: " + fsObj.host);
+        }
+        SocketTaskService.startActionSendFile(MyApplication.getInstance(), fsObj.getUri(), desktop);
         deleteFileSendingObject(fsObj);
     }
 

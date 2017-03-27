@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.provider.OpenableColumns;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
+import com.weichen2046.filesender2.service.Desktop;
 import com.weichen2046.filesender2.utils.byteconvertor.BytesConvertor;
 import com.weichen2046.filesender2.utils.byteconvertor.IntBytesConvertor;
 import com.weichen2046.filesender2.utils.byteconvertor.LongBytesConvertor;
@@ -23,10 +24,12 @@ import java.util.UUID;
 public class SendFileDataSource extends ByteDataSource {
     private Context mContext;
     private Uri mFileUri;
+    private Desktop mDesktop;
 
-    public SendFileDataSource(Context context, Uri fileUri) {
+    public SendFileDataSource(Context context, Uri fileUri, Desktop desktop) {
         mContext = context;
         mFileUri = fileUri;
+        mDesktop = desktop;
     }
 
     @Override
@@ -55,6 +58,10 @@ public class SendFileDataSource extends ByteDataSource {
         fillData(new IntBytesConvertor(INetworkDefs.DATA_VERSION));
         // network cmd
         fillData(new IntBytesConvertor(INetworkDefs.CMD_SEND_FILE));
+        // write token length
+        fillData(new IntBytesConvertor(mDesktop.accessToken.length()));
+        // write token
+        fillData(new StringBytesConvertor(mDesktop.accessToken));
 
         BytesConvertor convertor = new StringBytesConvertor(fileName);
         byte[] fileNameBytes = convertor.getBytes();
