@@ -53,6 +53,8 @@ public class DesktopListActivity extends AppCompatActivity {
     private static final int MSG_SHOW_PROGRESS_DIALOG = 1;
     private static final int MSG_PROGRESS_DIALOG_TIMEOUT = 2;
 
+    private static final int REQUEST_CODE_FOR_FILE_TO_SEND = 1;
+
     private Desktop mSelectedDesktop = null;
 
     @Override
@@ -87,7 +89,6 @@ public class DesktopListActivity extends AppCompatActivity {
     private AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-            // TODO: handle unauthenticated desktop properly
             mSelectedDesktop = (Desktop) mDesktopAdapter.getItem(pos);
             Intent openFile;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -97,19 +98,21 @@ public class DesktopListActivity extends AppCompatActivity {
             }
             openFile.setType("*/*");
             openFile.addCategory(Intent.CATEGORY_OPENABLE);
-            startActivityForResult(openFile, 1);
+            startActivityForResult(openFile, REQUEST_CODE_FOR_FILE_TO_SEND);
         }
     };
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Activity.RESULT_CANCELED) {
+        if (resultCode == Activity.RESULT_CANCELED) {
             return;
         }
-        final Intent resultIntent = data;
-        Uri uri = resultIntent.getData();
-        SocketTaskService.startActionRequestSendFile(this, uri, mSelectedDesktop);
+        if (requestCode == REQUEST_CODE_FOR_FILE_TO_SEND) {
+            final Intent resultIntent = data;
+            Uri uri = resultIntent.getData();
+            SocketTaskService.startActionRequestSendFile(this, uri, mSelectedDesktop);
+        }
     }
 
     @Override
