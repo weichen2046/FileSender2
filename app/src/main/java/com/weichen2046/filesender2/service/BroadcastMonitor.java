@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.os.RemoteException;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.weichen2046.filesender2.network.udp.BroadcastCmdDispatcher;
@@ -18,6 +19,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by chenwei on 12/4/16.
@@ -128,10 +130,48 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub implements IService
                         bb.putInt(INetworkDefs.DATA_VERSION);
                         bb.putInt(INetworkDefs.CMD_PHONE_OFFLINE);
                         byte[] buf = bb.array();
+
                         InetAddress group = InetAddress.getByName(broadcastAddress);
-                        DatagramPacket packet = new DatagramPacket(buf, buf.length, group, INetworkDefs.MOBILE_UDP_LISTEN_PORT);
+
                         socket = new DatagramSocket();
+                        // let phone monitor thread exit
+                        DatagramPacket packet = new DatagramPacket(buf, buf.length, group, INetworkDefs.MOBILE_UDP_LISTEN_PORT);
                         socket.send(packet);
+
+                        // notify all desktops
+                        bb = ByteBuffer.allocate(Integer.SIZE / 8 * 3);
+                        bb.putInt(INetworkDefs.DATA_VERSION);
+                        bb.putInt(INetworkDefs.CMD_PHONE_OFFLINE);
+                        bb.putInt(INetworkDefs.MOBILE_UDP_LISTEN_PORT);
+                        buf = bb.array();
+                        packet = new DatagramPacket(buf, buf.length, group, INetworkDefs.DESKTOP_UDP_LISTEN_PORT);
+                        socket.send(packet);
+
+                        // notify authenticated desktops
+                        try {
+                            IDesktopManager desktopManager = IDesktopManager.Stub.asInterface(
+                                    mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
+                            List<Desktop> desktops = desktopManager.getAllDesktops();
+                            for (Desktop desktop : desktops) {
+                                if (TextUtils.isEmpty(desktop.accessToken)) {
+                                    Log.w(TAG, "send offline to authenticated desktop but has no access token");
+                                    continue;
+                                }
+                                // send phone offline with access token
+                                byte[] tokenBytes = desktop.accessToken.getBytes();
+                                bb = ByteBuffer.allocate(Integer.SIZE / 8 * 3 + tokenBytes.length);
+                                bb.putInt(INetworkDefs.DATA_VERSION);
+                                bb.putInt(INetworkDefs.CMD_PHONE_OFFLINE);
+                                bb.putInt(tokenBytes.length);
+                                bb.put(tokenBytes);
+                                buf = bb.array();
+                                InetAddress desktopAddr = InetAddress.getByName(desktop.address);
+                                packet = new DatagramPacket(buf, buf.length, desktopAddr, desktop.udpPort);
+                                socket.send(packet);
+                            }
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
                     } catch (SocketException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
