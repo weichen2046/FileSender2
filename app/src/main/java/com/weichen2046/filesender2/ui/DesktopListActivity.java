@@ -2,9 +2,11 @@ package com.weichen2046.filesender2.ui;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -28,6 +30,7 @@ import android.widget.TextView;
 
 import com.weichen2046.filesender2.R;
 import com.weichen2046.filesender2.service.Desktop;
+import com.weichen2046.filesender2.service.DesktopManager;
 import com.weichen2046.filesender2.service.IDesktopManager;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
@@ -116,6 +119,22 @@ public class DesktopListActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        // register desktop change broadcast
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(DesktopManager.ACTION_DESKTOP_CHANGES);
+        registerReceiver(mReceiverForDesktop, filter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // unregister desktop change broadcast
+        unregisterReceiver(mReceiverForDesktop);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (mBoundToService) {
@@ -129,6 +148,20 @@ public class DesktopListActivity extends AppCompatActivity {
             mDialog = null;
         }
     }
+
+    private BroadcastReceiver mReceiverForDesktop = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mDesktopManager == null) {
+                return;
+            }
+            try {
+                mDesktopAdapter.setData(mDesktopManager.getAllDesktops());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override

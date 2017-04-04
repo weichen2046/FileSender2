@@ -1,6 +1,9 @@
 package com.weichen2046.filesender2.service;
 
+import android.content.Intent;
 import android.os.RemoteException;
+
+import com.weichen2046.filesender2.MyApplication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +14,15 @@ import java.util.List;
 
 public class DesktopManager extends IDesktopManager.Stub {
     private ArrayList<Desktop> mDesktops = new ArrayList<>();
+
+    public static final String ACTION_DESKTOP_CHANGES = "action.filesender2.DESKTOP_CHANGES";
+    public static final String EXTRA_CHANGE_TYPE = "extra_change_type";
+
+    public static enum DesktopChangeType {
+        ADD,
+        DELETE,
+        UPDATE
+    }
 
     @Override
     public Desktop findDesktop(String address, int udpPort) throws RemoteException {
@@ -49,12 +61,17 @@ public class DesktopManager extends IDesktopManager.Stub {
             return false;
         }
         mDesktops.add(desktop);
+        notifyDesktopChange(DesktopChangeType.ADD);
         return true;
     }
 
     @Override
     public boolean deleteDesktop(Desktop desktop) throws RemoteException {
-        return mDesktops.remove(desktop);
+        boolean res = mDesktops.remove(desktop);
+        if (res) {
+            notifyDesktopChange(DesktopChangeType.DELETE);
+        }
+        return res;
     }
 
     @Override
@@ -83,6 +100,7 @@ public class DesktopManager extends IDesktopManager.Stub {
         if (index != -1) {
             Desktop desktop1 = mDesktops.get(index);
             desktop1.update(desktop);
+            notifyDesktopChange(DesktopChangeType.UPDATE);
             return true;
         }
         return false;
@@ -96,5 +114,11 @@ public class DesktopManager extends IDesktopManager.Stub {
     @Override
     public List getAllDesktops() throws RemoteException {
         return mDesktops;
+    }
+
+    private void notifyDesktopChange(DesktopChangeType type) {
+        Intent intent = new Intent(ACTION_DESKTOP_CHANGES);
+        intent.putExtra(EXTRA_CHANGE_TYPE, type);
+        MyApplication.getInstance().sendBroadcast(intent);
     }
 }
