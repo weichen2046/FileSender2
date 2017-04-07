@@ -52,8 +52,6 @@ public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
         String desktopAddress = data.addr.getHostAddress();
         Log.d(TAG, "desktop offline, desktop addr: " + desktopAddress);
 
-        // TODO: delete desktop from DesktopManager
-
         ByteBuffer buffer = ByteBuffer.wrap(data.data);
         // 1 bytes has token indicator
         boolean hasToken = buffer.get() == 1;
