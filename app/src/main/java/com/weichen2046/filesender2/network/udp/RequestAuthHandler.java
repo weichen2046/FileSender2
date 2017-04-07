@@ -5,8 +5,8 @@ import android.util.Log;
 
 import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.service.Desktop;
+import com.weichen2046.filesender2.service.IDesktopDiscoverer;
 import com.weichen2046.filesender2.service.IDesktopManager;
-import com.weichen2046.filesender2.service.IPCDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
 import com.weichen2046.filesender2.utils.NotificationHelper;
@@ -44,7 +44,7 @@ public class RequestAuthHandler extends UdpCmdHandler {
         boolean authPass = false;
         IServiceManager manager = get();
         try {
-            IPCDiscoverer discoverer = IPCDiscoverer.Stub.asInterface(manager.getService(ServiceManager.SERVICE_PC_DISCOVERER));
+            IDesktopDiscoverer discoverer = IDesktopDiscoverer.Stub.asInterface(manager.getService(ServiceManager.SERVICE_DESKTOP_DISCOVERER));
             authPass = discoverer.checkTempAccessToken(tempAccessToken);
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -56,7 +56,7 @@ public class RequestAuthHandler extends UdpCmdHandler {
         }
 
         String desktopAddress = data.addr.getHostAddress();
-        // find the pc and update it access token
+        // find the desktop and update it access token
         Desktop desktop = null;
         try {
             IDesktopManager desktopManager = IDesktopManager.Stub.asInterface(manager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));

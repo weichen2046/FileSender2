@@ -22,7 +22,7 @@ import android.view.View;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.service.IUdpDataMonitor;
-import com.weichen2046.filesender2.service.IPCDiscoverer;
+import com.weichen2046.filesender2.service.IDesktopDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
 import com.weichen2046.filesender2.ui.DesktopListActivity;
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity
 
     private boolean mBoundToService = false;
     private IServiceManager mServiceManager = null;
-    private IPCDiscoverer mPCDiscoverer = null;
+    private IDesktopDiscoverer mDesktopDiscoverer = null;
     private IUdpDataMonitor mUdpDataMonitor = null;
 
     @Override
@@ -135,9 +135,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_pc_list) {
-            Intent pcListIntent = new Intent(this, DesktopListActivity.class);
-            startActivity(pcListIntent);
+        if (id == R.id.nav_desktop_list) {
+            Intent desktopListIntent = new Intent(this, DesktopListActivity.class);
+            startActivity(desktopListIntent);
         } else if (id == R.id.nav_choose_file) {
 
         } else if (id == R.id.nav_share) {
@@ -183,9 +183,9 @@ public class MainActivity extends AppCompatActivity
                 mUdpDataMonitor = IUdpDataMonitor.Stub.asInterface(binder);
                 mUdpDataMonitor.start();
 
-                binder = mServiceManager.getService(ServiceManager.SERVICE_PC_DISCOVERER);
-                mPCDiscoverer = IPCDiscoverer.Stub.asInterface(binder);
-                mPCDiscoverer.sayHello(null, INetworkDefs.DESKTOP_UDP_LISTEN_PORT);
+                binder = mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_DISCOVERER);
+                mDesktopDiscoverer = IDesktopDiscoverer.Stub.asInterface(binder);
+                mDesktopDiscoverer.sayHello(null, INetworkDefs.DESKTOP_UDP_LISTEN_PORT);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

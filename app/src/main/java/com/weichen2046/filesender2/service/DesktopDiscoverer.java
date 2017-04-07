@@ -21,9 +21,9 @@ import java.nio.ByteBuffer;
  * Created by chenwei on 12/4/16.
  */
 
-public class PCDiscoverer extends IPCDiscoverer.Stub {
+public class DesktopDiscoverer extends IDesktopDiscoverer.Stub {
 
-    private static final String TAG = "PCDiscoverer";
+    private static final String TAG = "DesktopDiscoverer";
 
     private String mTempAccessToken;
 

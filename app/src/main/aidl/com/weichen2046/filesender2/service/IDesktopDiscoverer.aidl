@@ -1,15 +1,15 @@
-// IPCDiscoverer.aidl
+// IDesktopDiscoverer.aidl
 package com.weichen2046.filesender2.service;
 
 // Declare any non-default types here with import statements
 
-interface IPCDiscoverer {
+interface IDesktopDiscoverer {
 
     /**
      * Send network broadcast to notify ourself is here.
      *
      * @param address The destination desktop address, null means broadcast address.
-     * @param port The PC side broadcast listen port.
+     * @param port The desktop side broadcast listen port.
      */
     void sayHello(String address, int port);
 

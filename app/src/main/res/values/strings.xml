@@ -8,7 +8,7 @@
     <string name="action_start_broadcast_monitor">Start BMonitor</string>
     <string name="action_stop_broadcast_monitor">Stop BMonitor</string>
 
-    <string name="pc_list">PC List</string>
+    <string name="desktop_list">Desktop List</string>
     <string name="choose_file">Choose File</string>
     <string name="auth_request_title">Authentication Request</string>
     <string name="auth_request_text">Authentication from IP: %1$s</string>

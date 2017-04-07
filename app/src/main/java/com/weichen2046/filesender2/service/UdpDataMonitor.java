@@ -11,6 +11,7 @@ import com.weichen2046.filesender2.network.udp.UdpCmdDispatcher;
 import com.weichen2046.filesender2.network.udp.BroadcastData;
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.networklib.NetworkAddressHelper;
+import com.weichen2046.filesender2.utils.Utils;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -62,7 +63,7 @@ public class UdpDataMonitor extends IUdpDataMonitor.Stub implements IServiceMana
                 try {
                     socket = new DatagramSocket(INetworkDefs.MOBILE_UDP_LISTEN_PORT);
                     while (true) {
-                        byte[] buf = new byte[256];
+                        byte[] buf = new byte[4096];
                         packet = new DatagramPacket(buf, buf.length);
                         socket.receive(packet);
 
@@ -98,9 +99,7 @@ public class UdpDataMonitor extends IUdpDataMonitor.Stub implements IServiceMana
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
-                    if (null != socket) {
-                        socket.close();
-                    }
+                    Utils.silenceClose(socket);
                 }
                 Log.d(TAG, "monitor thread exit");
             }
@@ -177,9 +176,7 @@ public class UdpDataMonitor extends IUdpDataMonitor.Stub implements IServiceMana
                     } catch (IOException e) {
                         e.printStackTrace();
                     } finally {
-                        if (null != socket) {
-                            socket.close();
-                        }
+                        Utils.silenceClose(socket);
                     }
                     return true;
                 }

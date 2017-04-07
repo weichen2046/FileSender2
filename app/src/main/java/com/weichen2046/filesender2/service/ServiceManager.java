@@ -13,7 +13,7 @@ public class ServiceManager extends Service {
 
     private SparseArray<IBinder> mSubServices = new SparseArray<>();
 
-    public static final int SERVICE_PC_DISCOVERER       = 1;
+    public static final int SERVICE_DESKTOP_DISCOVERER  = 1;
     public static final int SERVICE_UDP_DATA_MONITOR    = 2;
     public static final int SERVICE_DATA_TRANSFER       = 3;
     public static final int SERVICE_DESKTOP_MANAGER     = 4;
@@ -31,9 +31,9 @@ public class ServiceManager extends Service {
         public synchronized IBinder getService(int serviceId) throws RemoteException {
             IBinder binder = mSubServices.get(serviceId);
             if (binder == null) {
-                if (serviceId == SERVICE_PC_DISCOVERER) {
-                    binder = new PCDiscoverer();
-                    mSubServices.put(SERVICE_PC_DISCOVERER, binder);
+                if (serviceId == SERVICE_DESKTOP_DISCOVERER) {
+                    binder = new DesktopDiscoverer();
+                    mSubServices.put(SERVICE_DESKTOP_DISCOVERER, binder);
                 }
 
                 if (serviceId == SERVICE_UDP_DATA_MONITOR) {

@@ -47,7 +47,7 @@ public class DesktopListActivity extends AppCompatActivity {
     private IDesktopManager mDesktopManager;
     private boolean mBoundToService;
 
-    private ListView mPcListView;
+    private ListView mDesktopListView;
     private DesktopAdapter mDesktopAdapter;
 
     private ProgressDialog mDialog = null;
@@ -63,12 +63,12 @@ public class DesktopListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pc_list);
+        setContentView(R.layout.activity_desktop_list);
 
-        mDesktopAdapter = new DesktopAdapter(this, R.layout.pc_list_item);
-        mPcListView = (ListView) findViewById(R.id.pc_list);
-        mPcListView.setAdapter(mDesktopAdapter);
-        mPcListView.setOnItemClickListener(mItemClickListener);
+        mDesktopAdapter = new DesktopAdapter(this, R.layout.desktop_list_item);
+        mDesktopListView = (ListView) findViewById(R.id.desktop_list);
+        mDesktopListView.setAdapter(mDesktopAdapter);
+        mDesktopListView.setOnItemClickListener(mItemClickListener);
 
         Intent intent = new Intent(this, ServiceManager.class);
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
