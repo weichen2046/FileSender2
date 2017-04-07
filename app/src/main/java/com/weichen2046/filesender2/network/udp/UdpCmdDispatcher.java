@@ -12,12 +12,12 @@ import com.weichen2046.filesender2.service.IServiceManagerHolder;
  * Created by chenwei on 12/5/16.
  */
 
-public class BroadcastCmdDispatcher extends Handler implements IServiceManagerHolder {
+public class UdpCmdDispatcher extends Handler implements IServiceManagerHolder {
 
-    private static final String TAG = "BroadcastCmdDispatcher";
+    private static final String TAG = "UdpCmdDispatcher";
     private IServiceManager mServiceManager;
 
-    public BroadcastCmdDispatcher(Looper looper) {
+    public UdpCmdDispatcher(Looper looper) {
         super(looper);
     }
 

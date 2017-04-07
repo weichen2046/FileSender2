@@ -7,7 +7,7 @@ import android.os.RemoteException;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.weichen2046.filesender2.network.udp.BroadcastCmdDispatcher;
+import com.weichen2046.filesender2.network.udp.UdpCmdDispatcher;
 import com.weichen2046.filesender2.network.udp.BroadcastData;
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.networklib.NetworkAddressHelper;
@@ -25,16 +25,16 @@ import java.util.List;
  * Created by chenwei on 12/4/16.
  */
 
-public class BroadcastMonitor extends IBroadcastMonitor.Stub implements IServiceManagerHolder {
+public class UdpDataMonitor extends IUdpDataMonitor.Stub implements IServiceManagerHolder {
 
-    private static final String TAG = "BroadcastMonitor";
+    private static final String TAG = "UdpDataMonitor";
     private boolean mStared = false;
 
     private IServiceManager mServiceManager;
 
     private Thread mWorker = null;
     private HandlerThread mCmdThread = null;
-    private BroadcastCmdDispatcher mCmdDispatcher = null;
+    private UdpCmdDispatcher mCmdDispatcher = null;
 
     @Override
     public synchronized boolean start() throws RemoteException {
@@ -50,7 +50,7 @@ public class BroadcastMonitor extends IBroadcastMonitor.Stub implements IService
 
         mCmdThread = new HandlerThread("broadcast-cmd-thread");
         mCmdThread.start();
-        mCmdDispatcher = new BroadcastCmdDispatcher(mCmdThread.getLooper());
+        mCmdDispatcher = new UdpCmdDispatcher(mCmdThread.getLooper());
         mCmdDispatcher.attach(mServiceManager);
 
         mWorker = new Thread(new Runnable() {

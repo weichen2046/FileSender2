@@ -18,7 +18,7 @@ public class DesktopManager extends IDesktopManager.Stub {
     public static final String ACTION_DESKTOP_CHANGES = "action.filesender2.DESKTOP_CHANGES";
     public static final String EXTRA_CHANGE_TYPE = "extra_change_type";
 
-    public static enum DesktopChangeType {
+    public enum DesktopChangeType {
         ADD,
         DELETE,
         UPDATE

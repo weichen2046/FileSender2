@@ -21,7 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
-import com.weichen2046.filesender2.service.IBroadcastMonitor;
+import com.weichen2046.filesender2.service.IUdpDataMonitor;
 import com.weichen2046.filesender2.service.IPCDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity
     private boolean mBoundToService = false;
     private IServiceManager mServiceManager = null;
     private IPCDiscoverer mPCDiscoverer = null;
-    private IBroadcastMonitor mBroadcastMonitor = null;
+    private IUdpDataMonitor mUdpDataMonitor = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +103,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (id == R.id.action_start_bmonitor) {
-            if (mBroadcastMonitor != null) {
+            if (mUdpDataMonitor != null) {
                 try {
-                    boolean res = mBroadcastMonitor.start();
+                    boolean res = mUdpDataMonitor.start();
                     Log.d(TAG, "start broadcast monitor: " + res);
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -115,9 +115,9 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (id == R.id.action_stop_bmonitor) {
-            if (mBroadcastMonitor != null) {
+            if (mUdpDataMonitor != null) {
                 try {
-                    boolean res = mBroadcastMonitor.stop();
+                    boolean res = mUdpDataMonitor.stop();
                     Log.d(TAG, "stop broadcast monitor: " + res);
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -158,8 +158,8 @@ public class MainActivity extends AppCompatActivity
         if (mBoundToService) {
             mBoundToService = false;
             try {
-                if (null != mBroadcastMonitor) {
-                    mBroadcastMonitor.stop();
+                if (null != mUdpDataMonitor) {
+                    mUdpDataMonitor.stop();
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -179,9 +179,9 @@ public class MainActivity extends AppCompatActivity
             MyApplication.getInstance().setServiceManager(mServiceManager);
 
             try {
-                IBinder binder = mServiceManager.getService(ServiceManager.SERVICE_BROADCAST_MONITOR);
-                mBroadcastMonitor = IBroadcastMonitor.Stub.asInterface(binder);
-                mBroadcastMonitor.start();
+                IBinder binder = mServiceManager.getService(ServiceManager.SERVICE_UDP_DATA_MONITOR);
+                mUdpDataMonitor = IUdpDataMonitor.Stub.asInterface(binder);
+                mUdpDataMonitor.start();
 
                 binder = mServiceManager.getService(ServiceManager.SERVICE_PC_DISCOVERER);
                 mPCDiscoverer = IPCDiscoverer.Stub.asInterface(binder);

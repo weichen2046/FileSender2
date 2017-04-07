@@ -14,7 +14,7 @@ public class ServiceManager extends Service {
     private SparseArray<IBinder> mSubServices = new SparseArray<>();
 
     public static final int SERVICE_PC_DISCOVERER       = 1;
-    public static final int SERVICE_BROADCAST_MONITOR   = 2;
+    public static final int SERVICE_UDP_DATA_MONITOR    = 2;
     public static final int SERVICE_DATA_TRANSFER       = 3;
     public static final int SERVICE_DESKTOP_MANAGER     = 4;
 
@@ -36,11 +36,11 @@ public class ServiceManager extends Service {
                     mSubServices.put(SERVICE_PC_DISCOVERER, binder);
                 }
 
-                if (serviceId == SERVICE_BROADCAST_MONITOR) {
-                    BroadcastMonitor broadcastMonitor = new BroadcastMonitor();
-                    broadcastMonitor.attach(IServiceManager.Stub.asInterface(this));
-                    binder = broadcastMonitor;
-                    mSubServices.put(SERVICE_BROADCAST_MONITOR, binder);
+                if (serviceId == SERVICE_UDP_DATA_MONITOR) {
+                    UdpDataMonitor udpDataMonitor = new UdpDataMonitor();
+                    udpDataMonitor.attach(IServiceManager.Stub.asInterface(this));
+                    binder = udpDataMonitor;
+                    mSubServices.put(SERVICE_UDP_DATA_MONITOR, binder);
                 }
 
                 if (serviceId == SERVICE_DESKTOP_MANAGER) {
