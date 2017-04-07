@@ -23,7 +23,7 @@ public class RequestAuthHandler extends UdpCmdHandler {
     }
 
     @Override
-    public void handle(BroadcastData data) {
+    public boolean handle(BroadcastData data) {
         ByteBuffer buffer = ByteBuffer.wrap(data.data);
         // read temp access token length
         int tokenLength = buffer.getInt();
@@ -52,7 +52,7 @@ public class RequestAuthHandler extends UdpCmdHandler {
 
         if (!authPass) {
             Log.d(TAG, "temp access token check failed, received access token " + tempAccessToken);
-            return;
+            return false;
         }
 
         String desktopAddress = data.addr.getHostAddress();
@@ -78,5 +78,6 @@ public class RequestAuthHandler extends UdpCmdHandler {
         }
 
         NotificationHelper.makeAuthRequestNotification(MyApplication.getInstance(), desktop);
+        return true;
     }
 }

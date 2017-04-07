@@ -50,7 +50,7 @@ public class PCDiscoverer extends IPCDiscoverer.Stub {
                     byte[] tokenBytes = token.getBytes();
                     ByteBuffer bb = ByteBuffer.allocate(Integer.SIZE / 8 * 4 + tokenBytes.length);
                     bb.putInt(INetworkDefs.DATA_VERSION);
-                    bb.putInt(INetworkDefs.CMD_PHONE_ONLINE);
+                    bb.putInt(INetworkDefs.CMD_T_PHONE_ONLINE);
                     bb.putInt(tokenBytes.length);
                     bb.put(tokenBytes);
                     bb.putInt(INetworkDefs.MOBILE_UDP_LISTEN_PORT);

@@ -21,7 +21,7 @@ public class ConfirmExchangeTcpPortDataSource extends ByteDataSource {
         // 4 bytes -> cmd version
         fillData(new IntBytesConvertor(INetworkDefs.DATA_VERSION));
         // 4 bytes -> cmd
-        fillData(new IntBytesConvertor(INetworkDefs.CMD_CONFIRM_EXCHANGE_TCP_PORT));
+        fillData(new IntBytesConvertor(INetworkDefs.CMD_T_CONFIRM_EXCHANGE_TCP_PORT));
         // 4 bytes -> access token length
         fillData(new IntBytesConvertor(mDesktop.accessToken.length()));
         // x bytes -> access token

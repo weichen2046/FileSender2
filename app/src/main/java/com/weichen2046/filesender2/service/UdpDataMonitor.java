@@ -128,7 +128,7 @@ public class UdpDataMonitor extends IUdpDataMonitor.Stub implements IServiceMana
                     try {
                         ByteBuffer bb = ByteBuffer.allocate(Integer.SIZE / 8 * 2);
                         bb.putInt(INetworkDefs.DATA_VERSION);
-                        bb.putInt(INetworkDefs.CMD_PHONE_OFFLINE);
+                        bb.putInt(INetworkDefs.CMD_T_PHONE_OFFLINE);
                         byte[] buf = bb.array();
 
                         InetAddress group = InetAddress.getByName(broadcastAddress);
@@ -141,7 +141,7 @@ public class UdpDataMonitor extends IUdpDataMonitor.Stub implements IServiceMana
                         // notify all desktops
                         bb = ByteBuffer.allocate(Integer.SIZE / 8 * 3);
                         bb.putInt(INetworkDefs.DATA_VERSION);
-                        bb.putInt(INetworkDefs.CMD_PHONE_OFFLINE);
+                        bb.putInt(INetworkDefs.CMD_T_PHONE_OFFLINE);
                         bb.putInt(INetworkDefs.MOBILE_UDP_LISTEN_PORT);
                         buf = bb.array();
                         packet = new DatagramPacket(buf, buf.length, group, INetworkDefs.DESKTOP_UDP_LISTEN_PORT);
@@ -161,7 +161,7 @@ public class UdpDataMonitor extends IUdpDataMonitor.Stub implements IServiceMana
                                 byte[] tokenBytes = desktop.accessToken.getBytes();
                                 bb = ByteBuffer.allocate(Integer.SIZE / 8 * 3 + tokenBytes.length);
                                 bb.putInt(INetworkDefs.DATA_VERSION);
-                                bb.putInt(INetworkDefs.CMD_PHONE_OFFLINE);
+                                bb.putInt(INetworkDefs.CMD_T_PHONE_OFFLINE);
                                 bb.putInt(tokenBytes.length);
                                 bb.put(tokenBytes);
                                 buf = bb.array();

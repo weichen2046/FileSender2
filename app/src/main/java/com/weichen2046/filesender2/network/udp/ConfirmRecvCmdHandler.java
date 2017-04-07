@@ -27,7 +27,7 @@ public class ConfirmRecvCmdHandler extends UdpCmdHandler {
     }
 
     @Override
-    public void handle(BroadcastData data) {
+    public boolean handle(BroadcastData data) {
         ByteBuffer buffer = ByteBuffer.wrap(data.data);
         // read access token length
         int tokenLength = buffer.getInt();
@@ -39,7 +39,7 @@ public class ConfirmRecvCmdHandler extends UdpCmdHandler {
         Desktop desktop = findDesktop(data.addr.getHostAddress(), authToken);
         if (desktop == null) {
             Log.w(TAG, "desktop authenticate failed");
-            return;
+            return false;
         }
 
         // read confirm state
@@ -53,7 +53,7 @@ public class ConfirmRecvCmdHandler extends UdpCmdHandler {
             mFileSendingDataSource.open();
             FileSendingObj fsObj = mFileSendingDataSource.retrieve(fileId);
             if (fsObj == null) {
-                return;
+                return false;
             }
             if (confirmed) {
                 handleConfirm(fsObj, desktop);
@@ -66,6 +66,7 @@ public class ConfirmRecvCmdHandler extends UdpCmdHandler {
             mFileSendingDataSource.close();
             mFileSendingDataSource = null;
         }
+        return true;
     }
 
     private Desktop findDesktop(String address, String authToken) {

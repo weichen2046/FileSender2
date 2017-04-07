@@ -57,7 +57,7 @@ public class SendFileDataSource extends ByteDataSource {
         // data version
         fillData(new IntBytesConvertor(INetworkDefs.DATA_VERSION));
         // network cmd
-        fillData(new IntBytesConvertor(INetworkDefs.CMD_SEND_FILE));
+        fillData(new IntBytesConvertor(INetworkDefs.CMD_T_SEND_FILE));
         // write token length
         fillData(new IntBytesConvertor(mDesktop.accessToken.length()));
         // write token
