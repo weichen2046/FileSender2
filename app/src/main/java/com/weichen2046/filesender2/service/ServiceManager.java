@@ -7,6 +7,8 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.util.SparseArray;
 
+import com.weichen2046.filesender2.utils.TcpDataSender;
+
 public class ServiceManager extends Service {
 
     private static final String TAG = "ServiceManager";
@@ -15,7 +17,7 @@ public class ServiceManager extends Service {
 
     public static final int SERVICE_DESKTOP_DISCOVERER  = 1;
     public static final int SERVICE_UDP_DATA_MONITOR    = 2;
-    public static final int SERVICE_DATA_TRANSFER       = 3;
+    public static final int SERVICE_TCP_DATA_MONITOR    = 3;
     public static final int SERVICE_DESKTOP_MANAGER     = 4;
 
     public ServiceManager() {
@@ -41,6 +43,12 @@ public class ServiceManager extends Service {
                     udpDataMonitor.attach(IServiceManager.Stub.asInterface(this));
                     binder = udpDataMonitor;
                     mSubServices.put(SERVICE_UDP_DATA_MONITOR, binder);
+                }
+
+                if (serviceId == SERVICE_TCP_DATA_MONITOR) {
+                    TcpDataMonitor tcpDataMonitor = new TcpDataMonitor();
+                    binder = tcpDataMonitor;
+                    mSubServices.put(SERVICE_TCP_DATA_MONITOR, binder);
                 }
 
                 if (serviceId == SERVICE_DESKTOP_MANAGER) {

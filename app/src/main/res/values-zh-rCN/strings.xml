@@ -6,8 +6,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">设置</string>
-    <string name="action_start_broadcast_monitor">启动广播监听</string>
-    <string name="action_stop_broadcast_monitor">停止广播监听</string>
+    <string name="action_start_network_monitor">启动网络监听</string>
+    <string name="action_stop_network_monitor">停止网络监听</string>
 
     <string name="desktop_list">电脑列表</string>
     <string name="choose_file">选择文件</string>

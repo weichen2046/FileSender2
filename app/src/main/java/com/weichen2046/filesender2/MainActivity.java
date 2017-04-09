@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
+import com.weichen2046.filesender2.service.ITcpDataMonitor;
 import com.weichen2046.filesender2.service.IUdpDataMonitor;
 import com.weichen2046.filesender2.service.IDesktopDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity
     private IServiceManager mServiceManager = null;
     private IDesktopDiscoverer mDesktopDiscoverer = null;
     private IUdpDataMonitor mUdpDataMonitor = null;
+    private ITcpDataMonitor mTcpDataMonitor = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +104,7 @@ public class MainActivity extends AppCompatActivity
             return true;
         }
 
-        if (id == R.id.action_start_bmonitor) {
+        if (id == R.id.action_start_monitor) {
             if (mUdpDataMonitor != null) {
                 try {
                     boolean res = mUdpDataMonitor.start();
@@ -111,14 +113,28 @@ public class MainActivity extends AppCompatActivity
                     e.printStackTrace();
                 }
             }
+            if (mTcpDataMonitor != null) {
+                try {
+                    mTcpDataMonitor.start();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             return true;
         }
 
-        if (id == R.id.action_stop_bmonitor) {
+        if (id == R.id.action_stop_monitor) {
             if (mUdpDataMonitor != null) {
                 try {
                     boolean res = mUdpDataMonitor.stop();
                     Log.d(TAG, "stop broadcast monitor: " + res);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (mTcpDataMonitor != null) {
+                try {
+                    mTcpDataMonitor.stop();
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -161,6 +177,9 @@ public class MainActivity extends AppCompatActivity
                 if (null != mUdpDataMonitor) {
                     mUdpDataMonitor.stop();
                 }
+                if (null != mTcpDataMonitor) {
+                    mTcpDataMonitor.stop();
+                }
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -182,6 +201,10 @@ public class MainActivity extends AppCompatActivity
                 IBinder binder = mServiceManager.getService(ServiceManager.SERVICE_UDP_DATA_MONITOR);
                 mUdpDataMonitor = IUdpDataMonitor.Stub.asInterface(binder);
                 mUdpDataMonitor.start();
+
+                binder = mServiceManager.getService(ServiceManager.SERVICE_TCP_DATA_MONITOR);
+                mTcpDataMonitor = ITcpDataMonitor.Stub.asInterface(binder);
+                mTcpDataMonitor.start();
 
                 binder = mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_DISCOVERER);
                 mDesktopDiscoverer = IDesktopDiscoverer.Stub.asInterface(binder);

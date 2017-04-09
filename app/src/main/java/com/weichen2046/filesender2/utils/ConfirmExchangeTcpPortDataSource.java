@@ -27,7 +27,7 @@ public class ConfirmExchangeTcpPortDataSource extends ByteDataSource {
         // x bytes -> access token
         fillData(new StringBytesConvertor(mDesktop.accessToken));
         // 4 bytes -> tcp port
-        fillData(new IntBytesConvertor(INetworkDefs.DEFAULT_DESKTOP_TCP_PORT));
+        fillData(new IntBytesConvertor(INetworkDefs.DEFAULT_MOBILE_TCP_PORT));
         return true;
     }
 }

@@ -5,8 +5,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="action_start_broadcast_monitor">Start BMonitor</string>
-    <string name="action_stop_broadcast_monitor">Stop BMonitor</string>
+    <string name="action_start_network_monitor">Start Net Monitor</string>
+    <string name="action_stop_network_monitor">Stop Net Monitor</string>
 
     <string name="desktop_list">Desktop List</string>
     <string name="choose_file">Choose File</string>

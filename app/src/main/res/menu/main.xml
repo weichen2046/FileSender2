@@ -8,13 +8,13 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_start_bmonitor"
+        android:id="@+id/action_start_monitor"
         android:orderInCategory="100"
-        android:title="@string/action_start_broadcast_monitor"
+        android:title="@string/action_start_network_monitor"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_stop_bmonitor"
+        android:id="@+id/action_stop_monitor"
         android:orderInCategory="100"
-        android:title="@string/action_stop_broadcast_monitor"
+        android:title="@string/action_stop_network_monitor"
         app:showAsAction="never" />
 </menu>
