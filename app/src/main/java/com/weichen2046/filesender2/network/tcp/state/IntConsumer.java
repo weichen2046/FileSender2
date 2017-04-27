@@ -1,4 +1,4 @@
-package com.weichen2046.filesender2.network.tcp;
+package com.weichen2046.filesender2.network.tcp.state;
 
 import java.nio.ByteBuffer;
 
@@ -7,13 +7,15 @@ import java.nio.ByteBuffer;
  */
 
 public class IntConsumer extends StateConsumer {
+    private static final int LENGTH = 4;
+
     public IntConsumer(ConsumerCallback callback) {
-        super(4, callback);
+        super(new FixedLengthGetter(LENGTH), callback);
     }
 
     @Override
     public Object onHandle(byte[] buffer) {
-        ByteBuffer bb = ByteBuffer.wrap(buffer, 0, 4);
+        ByteBuffer bb = ByteBuffer.wrap(buffer, 0, LENGTH);
         return bb.getInt();
     }
 }

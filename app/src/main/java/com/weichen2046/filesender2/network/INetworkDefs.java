@@ -36,4 +36,5 @@ public interface INetworkDefs {
     int CMD_R_DESKTOP_REQUEST_AUTH      = 4;
     int CMD_R_SENDING_FILE_REQ          = 5;
     int CMD_R_EXCHANGE_TCP_PORT         = 6;
+    int CMD_R_SEND_FILE                 = 7;
 }

@@ -13,12 +13,11 @@ import com.koushikdutta.async.callback.CompletedCallback;
 import com.koushikdutta.async.callback.DataCallback;
 import com.koushikdutta.async.callback.ListenCallback;
 import com.weichen2046.filesender2.network.INetworkDefs;
-import com.weichen2046.filesender2.network.tcp.StateConsumer;
+import com.weichen2046.filesender2.network.tcp.state.StateConsumer;
 import com.weichen2046.filesender2.network.tcp.TcpDataConsumer;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 /**
@@ -89,14 +88,18 @@ public class TcpDataMonitor extends ITcpDataMonitor.Stub {
             Log.d(TAG, "accept tcp connection, socket: " + socket);
             addClient(socket);
             final TcpDataConsumer consumer = new TcpDataConsumer();
-            consumer.init();
+            consumer.init(-1, -1, null);
             socket.setDataCallback(new DataCallback() {
                 @Override
                 public void onDataAvailable(DataEmitter emitter, ByteBufferList bb) {
                     byte[] data = bb.getAllByteArray();
                     Log.d(TAG, "on client data available, bytes: " + data.length);
                     StateConsumer.HandleState res = consumer.handle(data);
+                    while (res == StateConsumer.HandleState.OK) {
+                        res = consumer.handle(null);
+                    }
                     if (res == StateConsumer.HandleState.FAIL) {
+                        socket.end();
                         socket.close();
                     }
                 }

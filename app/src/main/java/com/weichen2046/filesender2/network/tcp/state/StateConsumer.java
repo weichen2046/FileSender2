@@ -1,4 +1,7 @@
-package com.weichen2046.filesender2.network.tcp;
+package com.weichen2046.filesender2.network.tcp.state;
+
+import com.weichen2046.filesender2.network.tcp.state.ConsumerCallback;
+import com.weichen2046.filesender2.network.tcp.state.ILengthGetter;
 
 /**
  * Created by chenwei on 2017/4/9.
@@ -14,24 +17,30 @@ public class StateConsumer {
     }
 
     protected byte[] mRemains;
-    protected int mRequired = UNSPECIFIED;
+    protected ILengthGetter mLengthGetter;
     protected ConsumerCallback mCallback;
 
-    public StateConsumer(int required, ConsumerCallback callback) {
-        mRequired = required;
+    public StateConsumer(ILengthGetter lengthGetter, ConsumerCallback callback) {
+        mLengthGetter = lengthGetter;
         mCallback = callback;
     }
 
     public HandleState handle(byte[] buffer) {
         byte[] data = mergeData(buffer);
-        if (data.length < getRequired()) {
+        int required = mLengthGetter.getRequiredLength();
+        if (data == null || data.length < required) {
             return HandleState.MORE_DATA;
         }
 
         Object value = onHandle(data);
 
-        // TODO: calc remains
+        // calc remains
         byte[] remains = null;
+        if (data.length > required) {
+            int remainLength = data.length - required;
+            remains = new byte[remainLength];
+            System.arraycopy(data, required, remains, 0, remainLength);
+        }
 
         mCallback.onDataParsed(value, remains);
         return HandleState.OK;
@@ -39,15 +48,6 @@ public class StateConsumer {
 
     public Object onHandle(byte[] buffer) {
         return null;
-    }
-
-    public byte[] getRemains() {
-        return mRemains;
-    }
-
-    private long getRequired() {
-        // TODO: refactor to return dynamic length
-        return 0;
     }
 
     private byte[] mergeData(byte[] data) {

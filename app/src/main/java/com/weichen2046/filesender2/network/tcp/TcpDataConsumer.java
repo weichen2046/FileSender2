@@ -2,6 +2,12 @@ package com.weichen2046.filesender2.network.tcp;
 
 import android.util.Log;
 
+import com.weichen2046.filesender2.network.INetworkDefs;
+import com.weichen2046.filesender2.network.tcp.state.CmdConsumer;
+import com.weichen2046.filesender2.network.tcp.state.ConsumerCallback;
+import com.weichen2046.filesender2.network.tcp.state.StateConsumer;
+import com.weichen2046.filesender2.network.tcp.state.VersionConsumer;
+
 import java.util.ArrayList;
 
 
@@ -10,7 +16,7 @@ import java.util.ArrayList;
  */
 
 public class TcpDataConsumer {
-    private static final String TAG = "TcpDataConsumer";
+    public static final String TAG = "TcpDataConsumer";
 
     private TcpDataConsumer mInnerConsumer = null;
 
@@ -19,17 +25,19 @@ public class TcpDataConsumer {
 
     protected int mVersion;
     protected int mCmd;
+    protected byte[] mRemains;
 
     public StateConsumer.HandleState handle(byte[] buffer) {
         if (mInnerConsumer != null) {
             return mInnerConsumer.handle(buffer);
         } else {
+            byte[] data = mergeData(buffer);
             if (mConsumerIndex >= mConsumers.size()) {
                 Log.d(TAG, "current index out of bounds");
                 return StateConsumer.HandleState.FAIL;
             }
             StateConsumer consumer = mConsumers.get(mConsumerIndex);
-            StateConsumer.HandleState res = consumer.handle(buffer);
+            StateConsumer.HandleState res = consumer.handle(data);
             if (res == StateConsumer.HandleState.OK) {
                 mConsumerIndex++;
             }
@@ -37,21 +45,62 @@ public class TcpDataConsumer {
         }
     }
 
-    public void init() {
-        mConsumers.add(new VersionConsumer(new ConsumerCallback() {
+    public void init(int version, int cmd, byte[] data) {
+        mVersion = version;
+        mCmd = cmd;
+        mRemains = data;
+        onInitStates();
+    }
+
+    protected void addStateConsumer(StateConsumer consumer) {
+        mConsumers.add(consumer);
+    }
+
+    protected void onInitStates() {
+        addStateConsumer(new VersionConsumer(new ConsumerCallback() {
             @Override
             public void onDataParsed(Object value, byte[] remains) {
                 mVersion = (int) value;
                 Log.d(TAG, "version: " + mVersion);
+                mRemains = remains;
             }
         }));
-        mConsumers.add(new CmdConsumer(new ConsumerCallback() {
+        addStateConsumer(new CmdConsumer(new ConsumerCallback() {
             @Override
             public void onDataParsed(Object value, byte[] remains) {
                 mCmd = (int) value;
                 Log.d(TAG, "cmd: " + mCmd);
-                // TODO: according to cmd, create inner consumer
+                mInnerConsumer = getDataConsumerFromCmd(mCmd, mVersion, remains);
+                mRemains = null;
             }
         }));
+    }
+
+    private byte[] mergeData(byte[] data) {
+        if (mRemains == null) {
+            return data;
+        }
+        if (data == null) {
+            return mRemains;
+        }
+        byte[] buff = new byte[mRemains.length + data.length];
+        System.arraycopy(mRemains, 0, buff, 0, mRemains.length);
+        System.arraycopy(data, 0, buff, mRemains.length, data.length);
+        return buff;
+    }
+
+    private TcpDataConsumer getDataConsumerFromCmd(int cmd, int version, byte[] data) {
+        TcpDataConsumer consumer = null;
+        switch (cmd) {
+            case INetworkDefs.CMD_R_SEND_FILE:
+                consumer = new CmdSendFileConsumer();
+            default:
+                Log.w(TAG, "unknown cmd: " + cmd);
+                break;
+        }
+        if (consumer != null) {
+            consumer.init(version, cmd, data);
+        }
+        return consumer;
     }
 }
