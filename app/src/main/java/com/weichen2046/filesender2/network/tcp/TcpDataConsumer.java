@@ -3,10 +3,9 @@ package com.weichen2046.filesender2.network.tcp;
 import android.util.Log;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
-import com.weichen2046.filesender2.network.tcp.state.CmdConsumer;
-import com.weichen2046.filesender2.network.tcp.state.ConsumerCallback;
+import com.weichen2046.filesender2.network.tcp.state.CmdStateConsumer;
+import com.weichen2046.filesender2.network.tcp.state.IntStateConsumer;
 import com.weichen2046.filesender2.network.tcp.state.StateConsumer;
-import com.weichen2046.filesender2.network.tcp.state.VersionConsumer;
 
 import java.util.ArrayList;
 
@@ -37,8 +36,11 @@ public class TcpDataConsumer {
                 return StateConsumer.HandleState.FAIL;
             }
             StateConsumer consumer = mConsumers.get(mConsumerIndex);
+            consumer.initializedIfNeeded();
             StateConsumer.HandleState res = consumer.handle(data);
+            mRemains = consumer.getAndResetRemains();
             if (res == StateConsumer.HandleState.OK) {
+                consumer.destroyIfNeeded();
                 mConsumerIndex++;
             }
             return res;
@@ -57,21 +59,19 @@ public class TcpDataConsumer {
     }
 
     protected void onInitStates() {
-        addStateConsumer(new VersionConsumer(new ConsumerCallback() {
+        addStateConsumer(new IntStateConsumer(new StateConsumer.StateConsumerCallback() {
             @Override
             public void onDataParsed(Object value, byte[] remains) {
                 mVersion = (int) value;
                 Log.d(TAG, "version: " + mVersion);
-                mRemains = remains;
             }
         }));
-        addStateConsumer(new CmdConsumer(new ConsumerCallback() {
+        addStateConsumer(new CmdStateConsumer(new StateConsumer.StateConsumerCallback() {
             @Override
             public void onDataParsed(Object value, byte[] remains) {
                 mCmd = (int) value;
                 Log.d(TAG, "cmd: " + mCmd);
                 mInnerConsumer = getDataConsumerFromCmd(mCmd, mVersion, remains);
-                mRemains = null;
             }
         }));
     }
@@ -94,6 +94,7 @@ public class TcpDataConsumer {
         switch (cmd) {
             case INetworkDefs.CMD_R_SEND_FILE:
                 consumer = new CmdSendFileConsumer();
+                break;
             default:
                 Log.w(TAG, "unknown cmd: " + cmd);
                 break;

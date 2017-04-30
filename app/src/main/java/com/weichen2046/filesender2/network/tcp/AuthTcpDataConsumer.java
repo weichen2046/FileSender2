@@ -2,10 +2,10 @@ package com.weichen2046.filesender2.network.tcp;
 
 import android.util.Log;
 
-import com.weichen2046.filesender2.network.tcp.state.AuthTokenConsumer;
-import com.weichen2046.filesender2.network.tcp.state.AuthTokenLengthConsumer;
-import com.weichen2046.filesender2.network.tcp.state.ConsumerCallback;
-import com.weichen2046.filesender2.network.tcp.state.DynamicLengthGetter;
+import com.weichen2046.filesender2.network.tcp.state.StateConsumer;
+import com.weichen2046.filesender2.network.tcp.state.DynamicIntLengthGetter;
+import com.weichen2046.filesender2.network.tcp.state.IntStateConsumer;
+import com.weichen2046.filesender2.network.tcp.state.StringStateConsumer;
 
 /**
  * Created by chenwei on 2017/4/27.
@@ -17,22 +17,20 @@ public class AuthTcpDataConsumer extends TcpDataConsumer {
 
     @Override
     public void onInitStates() {
-        addStateConsumer(new AuthTokenLengthConsumer(new ConsumerCallback() {
+        addStateConsumer(new IntStateConsumer(new StateConsumer.StateConsumerCallback() {
             @Override
             public void onDataParsed(Object value, byte[] remains) {
                 mTokenLength = (int) value;
                 Log.d(TAG, "token length: " + mTokenLength);
-                mRemains = remains;
             }
         }));
         addStateConsumer(
-                new AuthTokenConsumer(new DynamicLengthGetter(this, "getTokenLength"),
-                        new ConsumerCallback() {
+                new StringStateConsumer(new DynamicIntLengthGetter(this, "getTokenLength"),
+                        new StateConsumer.StateConsumerCallback() {
             @Override
             public void onDataParsed(Object value, byte[] remains) {
                 mToken = value.toString();
                 Log.d(TAG, "token: " + mToken);
-                mRemains = remains;
             }
         }));
     }
