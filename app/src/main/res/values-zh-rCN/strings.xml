@@ -5,6 +5,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <string name="menu_settings">设置</string>
     <string name="action_settings">设置</string>
     <string name="action_start_network_monitor">启动网络监听</string>
     <string name="action_stop_network_monitor">停止网络监听</string>
