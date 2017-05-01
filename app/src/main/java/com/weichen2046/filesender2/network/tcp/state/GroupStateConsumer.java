@@ -48,6 +48,9 @@ public class GroupStateConsumer extends StateConsumer {
     protected void onReset() {
         super.onReset();
         mCurrentIndex = 0;
+        for(StateConsumer consumer : mConsumers) {
+            consumer.reset();
+        }
     }
 
     private byte[] mergeData(byte[] data) {

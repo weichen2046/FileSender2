@@ -46,6 +46,7 @@ public abstract class StateConsumer {
     }
 
     protected void reset() {
+        mInitialized = false;
         onReset();
     }
 
