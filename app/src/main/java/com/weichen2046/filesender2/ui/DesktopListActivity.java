@@ -236,6 +236,14 @@ public class DesktopListActivity extends AppCompatActivity {
         public void setData(List<Desktop> desktops) {
             mDesktops.clear();
             mDesktops.addAll(desktops);
+            // for debug
+            if (false) {
+                Desktop debug = new Desktop();
+                debug.address = "10.101.2.248";
+                for (int i=0; i<100; i++) {
+                    mDesktops.add(debug);
+                }
+            }
             notifyDataSetChanged();
         }
 

@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.desktop_list_item_cardview,
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.desktop_list_item3,
                     parent, false);
             ViewHolder vh = new ViewHolder(v);
             return vh;
