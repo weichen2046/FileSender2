@@ -18,4 +18,11 @@
     <string name="auth_request_denial">Denial</string>
     <string name="loading_desktop_title">Desktop List</string>
     <string name="loading_desktop_message">Loading...</string>
+
+    <string name="connected_device_share">Share</string>
+    <string name="connected_device_details">Details</string>
+
+    <string name="device_name">Device Name</string>
+    <string name="device_ip_address">Device IP Address</string>
+    <string name="device_description">Device Description</string>
 </resources>

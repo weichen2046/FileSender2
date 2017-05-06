@@ -17,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.service.Desktop;
 import com.weichen2046.filesender2.service.DesktopManager;
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setNestedScrollingEnabled(false);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new MyAdapter();
@@ -288,7 +291,7 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.desktop_list_item3,
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.connected_device_item,
                     parent, false);
             ViewHolder vh = new ViewHolder(v);
             return vh;
@@ -299,9 +302,13 @@ public class MainActivity extends AppCompatActivity
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
             Desktop desktop = mDesktops.get(position);
-            holder.mIcon.setImageResource(R.drawable.ic_menu_share);
-            holder.mName.setText(desktop.address);
-            holder.mIp.setText(desktop.address);
+            Glide.with(MainActivity.this).load(R.drawable.material_design_demo_img).fitCenter().into(holder.mIcon);
+            if (!TextUtils.isEmpty(desktop.nickname)) {
+                holder.mName.setText(desktop.nickname);
+            }
+            if (!TextUtils.isEmpty(desktop.address)) {
+                holder.mIp.setText(desktop.address);
+            }
         }
 
         @Override
@@ -315,9 +322,9 @@ public class MainActivity extends AppCompatActivity
             public TextView mIp;
             public ViewHolder(View view) {
                 super(view);
-                mIcon = (ImageView) view.findViewById(R.id.icon);
-                mName = (TextView) view.findViewById(R.id.name);
-                mIp = (TextView) view.findViewById(R.id.ip);
+                mIcon = (ImageView) view.findViewById(R.id.connected_device_icon);
+                mName = (TextView) view.findViewById(R.id.connected_device_name);
+                mIp = (TextView) view.findViewById(R.id.connected_device_address);
             }
         }
     }

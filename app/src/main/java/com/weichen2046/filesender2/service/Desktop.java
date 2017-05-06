@@ -8,6 +8,7 @@ import android.os.Parcelable;
  */
 
 public class Desktop implements Parcelable {
+    public String nickname;
     public String address;
     public int udpPort;
     public int tcpPort;
@@ -18,6 +19,7 @@ public class Desktop implements Parcelable {
     }
 
     protected Desktop(Parcel in) {
+        nickname = in.readString();
         address = in.readString();
         udpPort = in.readInt();
         tcpPort = in.readInt();
@@ -44,6 +46,7 @@ public class Desktop implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(nickname);
         dest.writeString(address);
         dest.writeInt(udpPort);
         dest.writeInt(tcpPort);
@@ -52,6 +55,7 @@ public class Desktop implements Parcelable {
     }
 
     public void update(Desktop desktop) {
+        nickname = desktop.nickname;
         address = desktop.address;
         udpPort = desktop.udpPort;
         tcpPort = desktop.tcpPort;
@@ -71,7 +75,7 @@ public class Desktop implements Parcelable {
     @Override
     public String toString() {
         return String.format(
-                "Desktop [ address: %s, udpPort: %d, tcpPort: %d, accessToken: %s, authToken: %s ]",
-                address, udpPort, tcpPort, accessToken, authToken);
+                "Desktop [ nickname: %s, address: %s, udpPort: %d, tcpPort: %d, accessToken: %s, authToken: %s ]",
+                nickname, address, udpPort, tcpPort, accessToken, authToken);
     }
 }
