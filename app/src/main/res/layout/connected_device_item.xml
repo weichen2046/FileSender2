@@ -62,19 +62,17 @@
 
             <Button
                 android:id="@+id/btn_connected_device_share"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/connected_device_share"
-                android:textColor="@color/colorAccent" />
+                android:text="@string/connected_device_share" />
 
             <Button
                 android:id="@+id/btn_connected_device_details"
-                style="@style/Widget.AppCompat.Button.Borderless"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/connected_device_details"
-                android:textColor="@color/colorAccent" />
+                android:text="@string/connected_device_details" />
 
         </LinearLayout>
 
