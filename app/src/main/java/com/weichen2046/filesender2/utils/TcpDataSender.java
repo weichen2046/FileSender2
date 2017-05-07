@@ -14,7 +14,7 @@ import java.net.Socket;
 public class TcpDataSender {
     private static final String TAG = "TcpDataSender";
 
-    public static void sendData(String destHost, int destPort, ByteDataSource source) {
+    public static void sendDataSync(String destHost, int destPort, ByteDataSource source) {
         Socket socket = null;
         try {
             boolean res = source.init();

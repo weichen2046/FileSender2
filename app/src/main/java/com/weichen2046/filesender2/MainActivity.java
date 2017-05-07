@@ -1,11 +1,14 @@
 package com.weichen2046.filesender2;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -24,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,6 +41,7 @@ import com.weichen2046.filesender2.service.IUdpDataMonitor;
 import com.weichen2046.filesender2.service.IDesktopDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
+import com.weichen2046.filesender2.service.SocketTaskService;
 import com.weichen2046.filesender2.ui.DesktopListActivity;
 
 import java.util.ArrayList;
@@ -58,6 +63,9 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private MyAdapter mAdapter;
+
+    private static final int REQUEST_CODE_FOR_FILE_TO_SEND = 1;
+    private Desktop mSelectedDevice = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -265,6 +273,19 @@ public class MainActivity extends AppCompatActivity
         registerReceiver(mReceiverForDesktop, filter);
     }
 
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_CANCELED) {
+            return;
+        }
+        if (requestCode == REQUEST_CODE_FOR_FILE_TO_SEND) {
+            final Intent resultIntent = data;
+            Uri uri = resultIntent.getData();
+            SocketTaskService.startActionRequestSendFile(this, uri, mSelectedDevice);
+        }
+    }
+
     private BroadcastReceiver mReceiverForDesktop = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -309,6 +330,9 @@ public class MainActivity extends AppCompatActivity
             if (!TextUtils.isEmpty(desktop.address)) {
                 holder.mIp.setText(desktop.address);
             }
+            holder.mShare.setEnabled(!TextUtils.isEmpty(desktop.authToken));
+            holder.mShareListener.setDevice(desktop);
+            holder.mShare.setOnClickListener(holder.mShareListener);
         }
 
         @Override
@@ -320,11 +344,43 @@ public class MainActivity extends AppCompatActivity
             public ImageView mIcon;
             public TextView mName;
             public TextView mIp;
+            public Button mShare;
+            public Button mDetails;
+
+            public DeviceOnClickListener mShareListener;
+
+            public class DeviceOnClickListener implements View.OnClickListener {
+
+                private Desktop mDevice;
+
+                public void setDevice(Desktop device) {
+                    mDevice = device;
+                }
+
+                @Override
+                public void onClick(View v) {
+                    mSelectedDevice = mDevice;
+                    Log.d(TAG, "clicked device: " + mDevice);
+                    Intent openFile;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        openFile = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    } else {
+                        openFile = new Intent(Intent.ACTION_GET_CONTENT);
+                    }
+                    openFile.setType("*/*");
+                    openFile.addCategory(Intent.CATEGORY_OPENABLE);
+                    startActivityForResult(openFile, REQUEST_CODE_FOR_FILE_TO_SEND);
+                }
+            }
+
             public ViewHolder(View view) {
                 super(view);
+                mShareListener = new DeviceOnClickListener();
                 mIcon = (ImageView) view.findViewById(R.id.connected_device_icon);
                 mName = (TextView) view.findViewById(R.id.connected_device_name);
                 mIp = (TextView) view.findViewById(R.id.connected_device_address);
+                mShare = (Button) view.findViewById(R.id.btn_connected_device_share);
+                mDetails = (Button) view.findViewById(R.id.btn_connected_device_details);
             }
         }
     }

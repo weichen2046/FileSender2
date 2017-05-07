@@ -25,4 +25,6 @@
     <string name="device_name">Device Name</string>
     <string name="device_ip_address">Device IP Address</string>
     <string name="device_description">Device Description</string>
+
+    <string name="file_send_complete">File send complete</string>
 </resources>

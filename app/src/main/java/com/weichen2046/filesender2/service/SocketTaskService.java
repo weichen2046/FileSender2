@@ -6,7 +6,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.weichen2046.filesender2.network.INetworkDefs;
+import com.weichen2046.filesender2.ui.ResultBroadcastReceiver;
 import com.weichen2046.filesender2.utils.ConfirmDesktopAuthRequestDataSource;
 import com.weichen2046.filesender2.utils.ConfirmExchangeTcpPortDataSource;
 import com.weichen2046.filesender2.utils.RequestSendFileDataSource;
@@ -103,12 +103,13 @@ public class SocketTaskService extends IntentService {
     private void handleActionRequestSendFile(Uri fileUri, Desktop desktop) {
         RequestSendFileDataSource dataSource =
                 new RequestSendFileDataSource(this, fileUri, desktop);
-        TcpDataSender.sendData(desktop.address, desktop.tcpPort, dataSource);
+        TcpDataSender.sendDataSync(desktop.address, desktop.tcpPort, dataSource);
     }
 
     private void handleActionSendFile(Uri fileUri, Desktop desktop) {
         SendFileDataSource dataSource = new SendFileDataSource(this, fileUri, desktop);
-        TcpDataSender.sendData(desktop.address, desktop.tcpPort, dataSource);
+        TcpDataSender.sendDataSync(desktop.address, desktop.tcpPort, dataSource);
+        ResultBroadcastReceiver.nofitySendFileComplete(this);
     }
 
     private void handleConfirmDesktopAuthRequest(Desktop desktop, boolean accept) {

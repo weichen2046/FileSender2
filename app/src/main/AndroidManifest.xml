@@ -45,13 +45,22 @@
             android:exported="false" />
         <service
             android:name=".debug.DebugService"
-            android:process=":debugservice"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:process=":debugservice">
             <intent-filter>
                 <action android:name="com.weichen2046.filesender2.debugservice" />
             </intent-filter>
         </service>
+
+        <receiver
+            android:name=".ui.ResultBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="action.filesender2.SEND_FILE_COMPLETE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
