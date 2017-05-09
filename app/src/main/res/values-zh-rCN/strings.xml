@@ -13,9 +13,12 @@
     <string name="desktop_list">电脑列表</string>
     <string name="choose_file">选择文件</string>
     <string name="auth_request_title">鉴权请求</string>
-    <string name="auth_request_text">鉴权请求来自 IP: %1$s</string>
-    <string name="auth_request_accept">接受</string>
-    <string name="auth_request_denial">拒绝</string>
+    <string name="fmt_auth_request_text">鉴权请求来自 IP: %1$s</string>
+    <string name="file_sending_request">文件发送请求</string>
+    <string name="fmt_file_to_recv">%d 个文件要接收</string>
+    <string name="request_accept">接受</string>
+    <string name="request_denial">拒绝</string>
+
     <string name="loading_desktop_title">电脑列表</string>
     <string name="loading_desktop_message">加载中...</string>
 

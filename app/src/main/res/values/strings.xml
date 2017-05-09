@@ -13,9 +13,12 @@
     <string name="desktop_list">Desktop List</string>
     <string name="choose_file">Choose File</string>
     <string name="auth_request_title">Authentication Request</string>
-    <string name="auth_request_text">Authentication from IP: %1$s</string>
-    <string name="auth_request_accept">Accept</string>
-    <string name="auth_request_denial">Denial</string>
+    <string name="fmt_auth_request_text">Authentication from IP: %1$s</string>
+    <string name="file_sending_request">File Sending Request</string>
+    <string name="fmt_file_to_recv">%d files to receive</string>
+    <string name="request_accept">Accept</string>
+    <string name="request_denial">Denial</string>
+
     <string name="loading_desktop_title">Desktop List</string>
     <string name="loading_desktop_message">Loading...</string>
 

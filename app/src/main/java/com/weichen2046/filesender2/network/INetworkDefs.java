@@ -29,7 +29,7 @@ public interface INetworkDefs {
     int CMD_T_CONFIRM_DESKTOP_AUTH_REQ  = 5;
     int CMD_T_CONFIRM_EXCHANGE_TCP_PORT = 6;
 
-    /////////////////// Desktop -> Phone ///////////////////
+    /////////////////// Other device -> Phone ///////////////////
     int CMD_R_DESKTOP_ONLINE            = 1;
     int CMD_R_DESKTOP_OFFLINE           = 2;
     int CMD_R_CONFIRM_RECV_FILE         = 3;

@@ -99,6 +99,7 @@ public class TcpDataMonitor extends ITcpDataMonitor.Stub {
                         res = consumer.handle(null);
                     }
                     if (res == StateConsumer.HandleState.FAIL) {
+                        consumer.end(false);
                         socket.end();
                         socket.close();
                     }

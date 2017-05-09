@@ -28,8 +28,7 @@ public class CmdSendFileConsumer extends AuthTcpDataConsumer {
     @Override
     public void onInitStates() {
         super.onInitStates();
-        // TODO:
-        // names length
+        // file list length
         // Nth file name length
         // Nth file name
         // Nth file content length

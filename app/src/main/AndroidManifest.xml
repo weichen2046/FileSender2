@@ -40,7 +40,7 @@
             android:name=".service.SocketTaskService"
             android:exported="false" />
         <service
-            android:name=".service.AuthenticationHandleService"
+            android:name=".service.UserConfirmationHandleService"
             android:enabled="true"
             android:exported="false" />
         <service

@@ -21,24 +21,30 @@ import com.weichen2046.filesender2.utils.NotificationHelper;
 
 import java.util.ArrayList;
 
-public class AuthenticationHandleService extends Service {
+public class UserConfirmationHandleService extends Service {
     private static final String TAG = "AuthenticationHandle";
 
-    private static final int MSG_HANDLE_AUTH_REQUEST = 1;
-    private static final int MSG_HANDLE_ADD_DELAY_AUTH_REQUEST = 2;
+    private static final int MSG_HANDLE_DELAY_TO_HANDLE = 1;
+    private static final int MSG_HANDLE_AUTH_REQUEST = 2;
+    private static final int MSG_HANDLE_RECV_FILE = 3;
 
     private static final String EXTRA_START_REQUEST_ID = "extra_start_request_id";
     public static final String EXTRA_ACCEPT_STATE = "extra_access_state";
     public static final String EXTRA_AUTH_DESKTOP = "extra_auth_desktop";
 
+    public static final String EXTRA_MSG_TYPE = "extra_msg_type";
+    public static final int MSG_TYPE_AUTH       = 1;
+    public static final int MSG_TYPE_RECV_FILE  = 2;
+
     private static final int MAX_DELAYED_MESSAGE_COUNT = 12;
-    private ArrayList<Bundle> mDelayedMessages = new ArrayList<>(MAX_DELAYED_MESSAGE_COUNT);
+    private ArrayList<Bundle> mDelayedMessagesForAuth = new ArrayList<>(MAX_DELAYED_MESSAGE_COUNT);
+    private ArrayList<Bundle> mDelayedMessagesForFileRecv = new ArrayList<>(MAX_DELAYED_MESSAGE_COUNT);
 
     private IServiceManager mServiceManager;
     private HandlerThread mWorkThread;
     private Handler mHander;
 
-    public AuthenticationHandleService() {
+    public UserConfirmationHandleService() {
     }
 
     @Override
@@ -65,24 +71,29 @@ public class AuthenticationHandleService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        nm.cancel(NotificationHelper.NOTIFICATION_DESKTOP_AUTH_REQ);
-        boolean accept = intent.getBooleanExtra(EXTRA_ACCEPT_STATE, false);
-        Desktop desktop = intent.getParcelableExtra(EXTRA_AUTH_DESKTOP);
-
-        Bundle bundle = new Bundle();
-        bundle.putBoolean(EXTRA_ACCEPT_STATE, accept);
-        bundle.putParcelable(EXTRA_AUTH_DESKTOP, desktop);
+        Bundle bundle = (Bundle) intent.getExtras().clone();
         bundle.putInt(EXTRA_START_REQUEST_ID, startId);
 
-        Message msg = mHander.obtainMessage(MSG_HANDLE_ADD_DELAY_AUTH_REQUEST, bundle);
+        int msgType = intent.getIntExtra(EXTRA_MSG_TYPE, 0);
+        switch (msgType) {
+            case MSG_TYPE_AUTH:
+                nm.cancel(NotificationHelper.NOTIFICATION_DEVICE_AUTH_REQ);
+                break;
+            case MSG_TYPE_RECV_FILE:
+                nm.cancel(NotificationHelper.NOTIFICATION_RECV_FILE_REQ);
+                break;
+            default:
+                Log.w(TAG, "unknown msg type: " + msgType);
+                break;
+        }
+        Message msg = mHander.obtainMessage(MSG_HANDLE_DELAY_TO_HANDLE, bundle);
         msg.sendToTarget();
-
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "AuthenticationHandleService onDestroy");
+        Log.d(TAG, "UserConfirmationHandleService onDestroy");
         super.onDestroy();
         // unbind IServiceManager
         if (mServiceManager != null) {
@@ -93,7 +104,7 @@ public class AuthenticationHandleService extends Service {
         }
     }
 
-    private void accept(Desktop desktop) {
+    private void acceptDeviceAuth(Desktop desktop) {
         try {
             // update desktop
             IDesktopManager desktopManager = IDesktopManager.Stub.asInterface(
@@ -107,7 +118,7 @@ public class AuthenticationHandleService extends Service {
         SocketTaskService.confirmDesktopAuthRequest(MyApplication.getInstance(), desktop, true);
     }
 
-    private void denial(Desktop desktop) {
+    private void denialDeviceAuth(Desktop desktop) {
         try {
             // delete from desktop manager
             IDesktopManager desktopManager = IDesktopManager.Stub.asInterface(
@@ -116,7 +127,7 @@ public class AuthenticationHandleService extends Service {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        // send auth request denial message to desktop
+        // send auth request denialDeviceAuth message to desktop
         SocketTaskService.confirmDesktopAuthRequest(MyApplication.getInstance(), desktop, false);
     }
 
@@ -135,6 +146,32 @@ public class AuthenticationHandleService extends Service {
         }
     };
 
+    private ArrayList<Bundle> getDelayMsgList(int msgType) {
+        ArrayList<Bundle> list = null;
+        switch (msgType) {
+            case MSG_TYPE_AUTH:
+                list = mDelayedMessagesForAuth;
+                break;
+            case MSG_TYPE_RECV_FILE:
+                list = mDelayedMessagesForFileRecv;
+                break;
+        }
+        return list;
+    }
+
+    private int getMsgId(int msgType) {
+        int msgId = -1;
+        switch (msgType) {
+            case MSG_TYPE_AUTH:
+                msgId = MSG_HANDLE_AUTH_REQUEST;
+                break;
+            case MSG_TYPE_RECV_FILE:
+                msgId = MSG_HANDLE_RECV_FILE;
+                break;
+        }
+        return msgId;
+    }
+
     private class MyHandler extends Handler {
         MyHandler(Looper looper) {
             super(looper);
@@ -142,36 +179,55 @@ public class AuthenticationHandleService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
+            int lastReqId = -1;
             switch (msg.what) {
                 case MSG_HANDLE_AUTH_REQUEST:
                     if (mServiceManager == null) {
                         return;
                     }
-                    if (mDelayedMessages.size() > 0) {
-                        int lastReqId = -1;
-                        for (Bundle bundle : mDelayedMessages) {
+                    if (mDelayedMessagesForAuth.size() > 0) {
+                        for (Bundle bundle : mDelayedMessagesForAuth) {
                             lastReqId = bundle.getInt(EXTRA_START_REQUEST_ID);
                             boolean accept = bundle.getBoolean(EXTRA_ACCEPT_STATE);
                             Desktop desktop = bundle.getParcelable(EXTRA_AUTH_DESKTOP);
                             Log.d(TAG, (accept ? "accept" : "denial") + " authentication request from " + desktop);
                             if (accept) {
                                 desktop.authToken = TokenHelper.generateToken();
-                                accept(desktop);
+                                acceptDeviceAuth(desktop);
                             } else {
-                                denial(desktop);
+                                denialDeviceAuth(desktop);
                             }
                         }
-                        mDelayedMessages.clear();
+                        mDelayedMessagesForAuth.clear();
                         stopSelfResult(lastReqId);
                     }
                     break;
-                case MSG_HANDLE_ADD_DELAY_AUTH_REQUEST:
-                    if (mDelayedMessages.size() < MAX_DELAYED_MESSAGE_COUNT) {
-                        mDelayedMessages.add((Bundle) msg.obj);
-                        Message msgx = mHander.obtainMessage(MSG_HANDLE_AUTH_REQUEST);
-                        msgx.sendToTarget();
+
+                case MSG_HANDLE_RECV_FILE:
+                    for (Bundle bundle : mDelayedMessagesForFileRecv) {
+                        lastReqId = bundle.getInt(EXTRA_START_REQUEST_ID);
+                        // TODO:
+                    }
+                    mDelayedMessagesForFileRecv.clear();
+                    stopSelfResult(lastReqId);
+                    break;
+
+                case MSG_HANDLE_DELAY_TO_HANDLE:
+                    Bundle bundle = (Bundle) msg.obj;
+                    int msgType = bundle.getInt(EXTRA_MSG_TYPE);
+                    ArrayList<Bundle> targetList = getDelayMsgList(msgType);
+                    if (targetList != null) {
+                        if (targetList.size() < MAX_DELAYED_MESSAGE_COUNT) {
+                            targetList.add(bundle);
+                            int msgId = getMsgId(msgType);
+                            Message msgx = mHander.obtainMessage(msgId);
+                            msgx.sendToTarget();
+                        } else {
+                            Log.w(TAG, "delayed message full, ignore request for msg type: " + msgType);
+                        }
                     } else {
-                        Log.w(TAG, "delayed message full, ignore authentication request");
+                        lastReqId = bundle.getInt(EXTRA_START_REQUEST_ID);
+                        stopSelfResult(lastReqId);
                     }
                     break;
             }

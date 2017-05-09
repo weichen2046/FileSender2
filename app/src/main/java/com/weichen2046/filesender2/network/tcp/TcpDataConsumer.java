@@ -42,6 +42,9 @@ public class TcpDataConsumer {
             if (res == StateConsumer.HandleState.OK) {
                 consumer.destroyIfNeeded();
                 mConsumerIndex++;
+                if (mConsumerIndex == mConsumers.size()) {
+                    end(true);
+                }
             }
             return res;
         }
@@ -52,6 +55,10 @@ public class TcpDataConsumer {
         mCmd = cmd;
         mRemains = data;
         onInitStates();
+    }
+
+    public void end(boolean isOK) {
+        onEnd(isOK);
     }
 
     protected void addStateConsumer(StateConsumer consumer) {
@@ -76,6 +83,9 @@ public class TcpDataConsumer {
         }));
     }
 
+    protected void onEnd(boolean isOK) {
+    }
+
     private byte[] mergeData(byte[] data) {
         if (mRemains == null) {
             return data;
@@ -92,6 +102,9 @@ public class TcpDataConsumer {
     private TcpDataConsumer getDataConsumerFromCmd(int cmd, int version, byte[] data) {
         TcpDataConsumer consumer = null;
         switch (cmd) {
+            case INetworkDefs.CMD_R_SENDING_FILE_REQ:
+                consumer = new CmdSendFileRequestHandler();
+                break;
             case INetworkDefs.CMD_R_SEND_FILE:
                 consumer = new CmdSendFileConsumer();
                 break;

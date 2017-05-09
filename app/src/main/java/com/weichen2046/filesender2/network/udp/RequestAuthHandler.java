@@ -77,7 +77,7 @@ public class RequestAuthHandler extends UdpCmdHandler {
             e.printStackTrace();
         }
 
-        NotificationHelper.makeAuthRequestNotification(MyApplication.getInstance(), desktop);
+        NotificationHelper.notifyAuthRequest(MyApplication.getInstance(), desktop);
         return true;
     }
 }
