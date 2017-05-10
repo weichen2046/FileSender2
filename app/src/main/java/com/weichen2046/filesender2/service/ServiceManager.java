@@ -47,6 +47,7 @@ public class ServiceManager extends Service {
 
                 if (serviceId == SERVICE_TCP_DATA_MONITOR) {
                     TcpDataMonitor tcpDataMonitor = new TcpDataMonitor();
+                    tcpDataMonitor.attach(IServiceManager.Stub.asInterface(this));
                     binder = tcpDataMonitor;
                     mSubServices.put(SERVICE_TCP_DATA_MONITOR, binder);
                 }

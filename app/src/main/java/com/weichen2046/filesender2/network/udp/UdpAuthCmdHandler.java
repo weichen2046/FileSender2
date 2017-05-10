@@ -36,7 +36,7 @@ public class UdpAuthCmdHandler extends UdpCmdHandler {
     }
 
     private Desktop findDesktop(String address, String authToken) {
-        IServiceManager manager = get();
+        IServiceManager manager = getServiceManager();
         Desktop desktop = null;
         try {
             IDesktopManager desktopManager =IDesktopManager.Stub.asInterface(

@@ -30,7 +30,9 @@ public class UserConfirmationHandleService extends Service {
 
     private static final String EXTRA_START_REQUEST_ID = "extra_start_request_id";
     public static final String EXTRA_ACCEPT_STATE = "extra_access_state";
-    public static final String EXTRA_AUTH_DESKTOP = "extra_auth_desktop";
+    public static final String EXTRA_AUTH_DEVICE = "extra_auth_device";
+    public static final String EXTRA_FILE_IDS = "extra_file_ids";
+    public static final String EXTRA_FILE_NAMES = "extra_file_names";
 
     public static final String EXTRA_MSG_TYPE = "extra_msg_type";
     public static final int MSG_TYPE_AUTH       = 1;
@@ -189,10 +191,11 @@ public class UserConfirmationHandleService extends Service {
                         for (Bundle bundle : mDelayedMessagesForAuth) {
                             lastReqId = bundle.getInt(EXTRA_START_REQUEST_ID);
                             boolean accept = bundle.getBoolean(EXTRA_ACCEPT_STATE);
-                            Desktop desktop = bundle.getParcelable(EXTRA_AUTH_DESKTOP);
+                            Desktop desktop = bundle.getParcelable(EXTRA_AUTH_DEVICE);
                             Log.d(TAG, (accept ? "accept" : "denial") + " authentication request from " + desktop);
                             if (accept) {
                                 desktop.authToken = TokenHelper.generateToken();
+                                //Log.d(TAG, "generate new auth token for device: " + desktop);
                                 acceptDeviceAuth(desktop);
                             } else {
                                 denialDeviceAuth(desktop);
@@ -206,7 +209,16 @@ public class UserConfirmationHandleService extends Service {
                 case MSG_HANDLE_RECV_FILE:
                     for (Bundle bundle : mDelayedMessagesForFileRecv) {
                         lastReqId = bundle.getInt(EXTRA_START_REQUEST_ID);
-                        // TODO:
+                        boolean accept = bundle.getBoolean(EXTRA_ACCEPT_STATE);
+                        Desktop device = bundle.getParcelable(EXTRA_AUTH_DEVICE);
+                        String[] fileIDs = bundle.getStringArray(EXTRA_FILE_IDS);
+                        String[] fileNames = bundle.getStringArray(EXTRA_FILE_NAMES);
+                        Log.d(TAG, (accept ? "accept" : "denial") + " send file request from " + device);
+                        if (accept) {
+                            // TODO:
+                        } else {
+                            // TODO:
+                        }
                     }
                     mDelayedMessagesForFileRecv.clear();
                     stopSelfResult(lastReqId);

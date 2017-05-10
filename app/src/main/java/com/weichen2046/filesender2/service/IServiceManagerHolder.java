@@ -7,5 +7,5 @@ package com.weichen2046.filesender2.service;
 public interface IServiceManagerHolder {
     void attach(IServiceManager manager);
     void detach();
-    IServiceManager get();
+    IServiceManager getServiceManager();
 }

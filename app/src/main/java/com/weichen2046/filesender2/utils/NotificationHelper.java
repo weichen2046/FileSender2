@@ -14,7 +14,9 @@ import com.weichen2046.filesender2.service.UserConfirmationHandleService;
 import com.weichen2046.filesender2.service.Desktop;
 
 import static com.weichen2046.filesender2.service.UserConfirmationHandleService.EXTRA_ACCEPT_STATE;
-import static com.weichen2046.filesender2.service.UserConfirmationHandleService.EXTRA_AUTH_DESKTOP;
+import static com.weichen2046.filesender2.service.UserConfirmationHandleService.EXTRA_AUTH_DEVICE;
+import static com.weichen2046.filesender2.service.UserConfirmationHandleService.EXTRA_FILE_IDS;
+import static com.weichen2046.filesender2.service.UserConfirmationHandleService.EXTRA_FILE_NAMES;
 import static com.weichen2046.filesender2.service.UserConfirmationHandleService.EXTRA_MSG_TYPE;
 import static com.weichen2046.filesender2.service.UserConfirmationHandleService.MSG_TYPE_AUTH;
 import static com.weichen2046.filesender2.service.UserConfirmationHandleService.MSG_TYPE_RECV_FILE;
@@ -50,7 +52,7 @@ public class NotificationHelper {
         Intent service = new Intent(context, UserConfirmationHandleService.class);
         service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_AUTH);
         service.putExtra(EXTRA_ACCEPT_STATE, true);
-        service.putExtra(EXTRA_AUTH_DESKTOP, desktop);
+        service.putExtra(EXTRA_AUTH_DEVICE, desktop);
         PendingIntent pendingIntent = PendingIntent.getService(context,
                 NOTIFICATION_DEVICE_AUTH_ACCEPT, service, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.addAction(R.drawable.ic_check_black_32dp, rs.getString(R.string.request_accept), pendingIntent);
@@ -58,7 +60,7 @@ public class NotificationHelper {
         service = new Intent(context, UserConfirmationHandleService.class);
         service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_AUTH);
         service.putExtra(EXTRA_ACCEPT_STATE, false);
-        service.putExtra(EXTRA_AUTH_DESKTOP, desktop);
+        service.putExtra(EXTRA_AUTH_DEVICE, desktop);
         pendingIntent = PendingIntent.getService(context,
                 NOTIFICATION_DEVICE_AUTH_DENIAL, service, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.addAction(R.drawable.ic_close_black_32dp, rs.getString(R.string.request_denial), pendingIntent);
@@ -67,7 +69,8 @@ public class NotificationHelper {
         nm.notify(NOTIFICATION_DEVICE_AUTH_REQ, builder.build());
     }
 
-    public static void notifySendFileRequest(Context context, String[] files) {
+    public static void notifySendFileRequest(Context context, Desktop remoteDevice,
+                                             String[] fileIDs, String[] files) {
         if (context == null) {
             Log.w(TAG, "can not make notification, context is null");
             return;
@@ -87,8 +90,9 @@ public class NotificationHelper {
         Intent service = new Intent(context, UserConfirmationHandleService.class);
         service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_RECV_FILE);
         service.putExtra(EXTRA_ACCEPT_STATE, true);
-        // TODO: put files information to extras
-        //service.putExtra(EXTRA_AUTH_DESKTOP, desktop);
+        service.putExtra(EXTRA_AUTH_DEVICE, remoteDevice);
+        service.putExtra(EXTRA_FILE_IDS, fileIDs);
+        service.putExtra(EXTRA_FILE_NAMES, files);
         PendingIntent pendingIntent = PendingIntent.getService(context,
                 NOTIFICATION_DEVICE_RECV_FILE_ACCEPT, service, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.addAction(R.drawable.ic_check_black_32dp, rs.getString(R.string.request_accept), pendingIntent);
@@ -96,7 +100,9 @@ public class NotificationHelper {
         service = new Intent(context, UserConfirmationHandleService.class);
         service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_RECV_FILE);
         service.putExtra(EXTRA_ACCEPT_STATE, false);
-        //service.putExtra(EXTRA_AUTH_DESKTOP, desktop);
+        service.putExtra(EXTRA_AUTH_DEVICE, remoteDevice);
+        service.putExtra(EXTRA_FILE_IDS, fileIDs);
+        service.putExtra(EXTRA_FILE_NAMES, files);
         pendingIntent = PendingIntent.getService(context,
                 NOTIFICATION_DEVICE_REC_FILE_DENIAL, service, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.addAction(R.drawable.ic_close_black_32dp, rs.getString(R.string.request_denial), pendingIntent);

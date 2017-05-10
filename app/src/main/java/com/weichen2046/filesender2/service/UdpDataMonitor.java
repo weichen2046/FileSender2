@@ -199,7 +199,7 @@ public class UdpDataMonitor extends IUdpDataMonitor.Stub implements IServiceMana
     }
 
     @Override
-    public IServiceManager get() {
+    public IServiceManager getServiceManager() {
         return mServiceManager;
     }
 }

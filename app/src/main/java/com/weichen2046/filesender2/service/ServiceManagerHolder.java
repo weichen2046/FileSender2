@@ -18,7 +18,7 @@ public class ServiceManagerHolder implements IServiceManagerHolder {
     }
 
     @Override
-    public IServiceManager get() {
+    public IServiceManager getServiceManager() {
         return mServiceManager;
     }
 }

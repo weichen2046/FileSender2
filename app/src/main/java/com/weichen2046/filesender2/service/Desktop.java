@@ -12,7 +12,9 @@ public class Desktop implements Parcelable {
     public String address;
     public int udpPort;
     public int tcpPort;
+    // token use to access remote device, we send this to remove device for authenticating
     public String accessToken;
+    // token use to authenticate remote device, remote device will send this back for authenticating
     public String authToken;
 
     public Desktop() {

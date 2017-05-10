@@ -31,7 +31,7 @@ public class ExchangeTcpPortHandler extends UdpAuthCmdHandler {
     }
 
     private void updateDesktop(Desktop desktop) {
-        IServiceManager manager = get();
+        IServiceManager manager = getServiceManager();
         try {
             IDesktopManager desktopManager =IDesktopManager.Stub.asInterface(
                     manager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));

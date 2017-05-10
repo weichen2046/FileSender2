@@ -73,7 +73,7 @@ public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
     }
 
     private void sayHello(String address, int port) {
-        IServiceManager manager = get();
+        IServiceManager manager = getServiceManager();
         try {
             IDesktopDiscoverer discoverer = IDesktopDiscoverer.Stub.asInterface(
                     manager.getService(ServiceManager.SERVICE_DESKTOP_DISCOVERER));
@@ -84,7 +84,7 @@ public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
     }
 
     private void deleteDesktopByPort(String address, int port) {
-        IServiceManager manager = get();
+        IServiceManager manager = getServiceManager();
         try {
             IDesktopManager desktopManager = IDesktopManager.Stub.asInterface(
                     manager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
@@ -96,7 +96,7 @@ public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
     }
 
     private void deleteDesktopByToken(String address, String authToken) {
-        IServiceManager manager = get();
+        IServiceManager manager = getServiceManager();
         try {
             IDesktopManager desktopManager = IDesktopManager.Stub.asInterface(
                     manager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));

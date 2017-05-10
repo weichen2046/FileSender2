@@ -6,6 +6,7 @@ import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.network.tcp.state.CmdStateConsumer;
 import com.weichen2046.filesender2.network.tcp.state.IntStateConsumer;
 import com.weichen2046.filesender2.network.tcp.state.StateConsumer;
+import com.weichen2046.filesender2.service.ServiceManagerHolder;
 
 import java.util.ArrayList;
 
@@ -14,14 +15,16 @@ import java.util.ArrayList;
  * Created by chenwei on 2017/4/9.
  */
 
-public class TcpDataConsumer {
-    public static final String TAG = "TcpDataConsumer";
+public class TcpDataHandler extends ServiceManagerHolder {
+    public static final String TAG = "TcpDataHandler";
 
-    private TcpDataConsumer mInnerConsumer = null;
+    private TcpDataHandler mInnerConsumer = null;
 
     private ArrayList<StateConsumer> mConsumers = new ArrayList<>();
     private int mConsumerIndex = 0;
 
+    protected String mRemoteHost;
+    protected int mRemotePort;
     protected int mVersion;
     protected int mCmd;
     protected byte[] mRemains;
@@ -50,7 +53,9 @@ public class TcpDataConsumer {
         }
     }
 
-    public void init(int version, int cmd, byte[] data) {
+    public void init(int version, int cmd, byte[] data, String host, int port) {
+        mRemoteHost = host;
+        mRemotePort = port;
         mVersion = version;
         mCmd = cmd;
         mRemains = data;
@@ -68,17 +73,19 @@ public class TcpDataConsumer {
     protected void onInitStates() {
         addStateConsumer(new IntStateConsumer(new StateConsumer.StateConsumerCallback() {
             @Override
-            public void onDataParsed(Object value, byte[] remains) {
+            public boolean onDataParsed(Object value, byte[] remains) {
                 mVersion = (int) value;
                 Log.d(TAG, "version: " + mVersion);
+                return true;
             }
         }));
         addStateConsumer(new CmdStateConsumer(new StateConsumer.StateConsumerCallback() {
             @Override
-            public void onDataParsed(Object value, byte[] remains) {
+            public boolean onDataParsed(Object value, byte[] remains) {
                 mCmd = (int) value;
                 Log.d(TAG, "cmd: " + mCmd);
                 mInnerConsumer = getDataConsumerFromCmd(mCmd, mVersion, remains);
+                return true;
             }
         }));
     }
@@ -99,21 +106,22 @@ public class TcpDataConsumer {
         return buff;
     }
 
-    private TcpDataConsumer getDataConsumerFromCmd(int cmd, int version, byte[] data) {
-        TcpDataConsumer consumer = null;
+    private TcpDataHandler getDataConsumerFromCmd(int cmd, int version, byte[] data) {
+        TcpDataHandler consumer = null;
         switch (cmd) {
             case INetworkDefs.CMD_R_SENDING_FILE_REQ:
                 consumer = new CmdSendFileRequestHandler();
                 break;
             case INetworkDefs.CMD_R_SEND_FILE:
-                consumer = new CmdSendFileConsumer();
+                consumer = new CmdSendFileHandler();
                 break;
             default:
                 Log.w(TAG, "unknown cmd: " + cmd);
                 break;
         }
         if (consumer != null) {
-            consumer.init(version, cmd, data);
+            consumer.init(version, cmd, data, mRemoteHost, mRemotePort);
+            consumer.attach(getServiceManager());
         }
         return consumer;
     }

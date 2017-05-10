@@ -42,7 +42,7 @@ public class UdpCmdDispatcher extends Handler implements IServiceManagerHolder {
     }
 
     @Override
-    public IServiceManager get() {
+    public IServiceManager getServiceManager() {
         return mServiceManager;
     }
 }

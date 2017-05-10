@@ -17,8 +17,10 @@ import java.util.Arrays;
  * Created by chenwei on 2017/5/7.
  */
 
-public class CmdSendFileRequestHandler extends AuthTcpDataConsumer {
+public class CmdSendFileRequestHandler extends AuthTcpDataHandler {
     private int mNFileToReceive;
+    private int[] mNFileIDLengths;
+    private String[] mNFileIDs;
     private int[] mNFileNameLengths;
     private String[] mNFileNames;
     private int mCurrentFileIndex = 0;
@@ -31,30 +33,55 @@ public class CmdSendFileRequestHandler extends AuthTcpDataConsumer {
         // Nth file name
         addStateConsumer(new IntStateConsumer(new StateConsumer.StateConsumerCallback() {
             @Override
-            public void onDataParsed(Object value, byte[] remains) {
+            public boolean onDataParsed(Object value, byte[] remains) {
                 mNFileToReceive = (int) value;
+                mNFileIDLengths = new int[mNFileToReceive];
+                mNFileIDs = new String[mNFileToReceive];
                 mNFileNameLengths = new int[mNFileToReceive];
                 mNFileNames = new String[mNFileToReceive];
+                return true;
             }
         }));
 
         GroupStateConsumer gsc = new GroupStateConsumer();
         gsc.addConsumer(new IntStateConsumer(new StateConsumer.StateConsumerCallback() {
             @Override
-            public void onDataParsed(Object value, byte[] remains) {
+            public boolean onDataParsed(Object value, byte[] remains) {
                 int fileNameLength = (int) value;
                 mNFileNameLengths[mCurrentFileIndex] = fileNameLength;
                 Log.d(TAG, "recv file[" + mCurrentFileIndex + "], name length: " + fileNameLength);
+                return true;
             }
         }));
         gsc.addConsumer(new StringStateConsumer(
                 new DynamicIntLengthGetter(this, "getCurrentFileNameLength"),
                 new StateConsumer.StateConsumerCallback() {
                     @Override
-                    public void onDataParsed(Object value, byte[] remains) {
+                    public boolean onDataParsed(Object value, byte[] remains) {
                         String fileName = value.toString();
                         mNFileNames[mCurrentFileIndex] = fileName;
                         Log.d(TAG, "recv file[" + mCurrentFileIndex + "], name: " + fileName);
+                        return true;
+                    }
+                }));
+        gsc.addConsumer(new IntStateConsumer(new StateConsumer.StateConsumerCallback() {
+            @Override
+            public boolean onDataParsed(Object value, byte[] remains) {
+                int fileIdLength = (int) value;
+                mNFileIDLengths[mCurrentFileIndex] = fileIdLength;
+                Log.d(TAG, "recv file[" + mCurrentFileIndex + "], id length: " + fileIdLength);
+                return true;
+            }
+        }));
+        gsc.addConsumer(new StringStateConsumer(
+                new DynamicIntLengthGetter(this, "getCurrentFileIDLength"),
+                new StateConsumer.StateConsumerCallback() {
+                    @Override
+                    public boolean onDataParsed(Object value, byte[] remains) {
+                        String fileId = value.toString();
+                        mNFileIDs[mCurrentFileIndex] = fileId;
+                        Log.d(TAG, "recv file[" + mCurrentFileIndex + "], id: " + fileId);
+                        return true;
                     }
                 }));
 
@@ -71,6 +98,10 @@ public class CmdSendFileRequestHandler extends AuthTcpDataConsumer {
         return mNFileNameLengths[mCurrentFileIndex];
     }
 
+    public int getCurrentFileIDLength() {
+        return mNFileIDLengths[mCurrentFileIndex];
+    }
+
     public int getFileListLength() {
         return mNFileToReceive;
     }
@@ -79,6 +110,7 @@ public class CmdSendFileRequestHandler extends AuthTcpDataConsumer {
     protected void onEnd(boolean isOK) {
         super.onEnd(isOK);
         Log.d(TAG, "cmd send file request handle complete, files: " + Arrays.toString(mNFileNames));
-        NotificationHelper.notifySendFileRequest(MyApplication.getInstance(), mNFileNames);
+        NotificationHelper.notifySendFileRequest(MyApplication.getInstance(), mAuthedDevice,
+                mNFileIDs, mNFileNames);
     }
 }

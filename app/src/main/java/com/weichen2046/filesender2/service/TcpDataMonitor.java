@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.koushikdutta.async.AsyncNetworkSocket;
 import com.koushikdutta.async.AsyncServer;
 import com.koushikdutta.async.AsyncServerSocket;
 import com.koushikdutta.async.AsyncSocket;
@@ -13,10 +14,11 @@ import com.koushikdutta.async.callback.CompletedCallback;
 import com.koushikdutta.async.callback.DataCallback;
 import com.koushikdutta.async.callback.ListenCallback;
 import com.weichen2046.filesender2.network.INetworkDefs;
+import com.weichen2046.filesender2.network.tcp.TcpDataHandler;
 import com.weichen2046.filesender2.network.tcp.state.StateConsumer;
-import com.weichen2046.filesender2.network.tcp.TcpDataConsumer;
 
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -24,10 +26,11 @@ import java.util.ArrayList;
  * Created by chenwei on 2017/4/9.
  */
 
-public class TcpDataMonitor extends ITcpDataMonitor.Stub {
+public class TcpDataMonitor extends ITcpDataMonitor.Stub implements IServiceManagerHolder {
     private static final String TAG = "TcpDataMonitor";
 
     private boolean mStarted = false;
+    private IServiceManager mServiceManager;
 
     private ArrayList<AsyncSocket> mClients = new ArrayList<>();
 
@@ -87,19 +90,21 @@ public class TcpDataMonitor extends ITcpDataMonitor.Stub {
         public void onAccepted(final AsyncSocket socket) {
             Log.d(TAG, "accept tcp connection, socket: " + socket);
             addClient(socket);
-            final TcpDataConsumer consumer = new TcpDataConsumer();
-            consumer.init(-1, -1, null);
+            final TcpDataHandler handler = new TcpDataHandler();
+            handler.attach(mServiceManager);
+            InetSocketAddress address = ((AsyncNetworkSocket) socket).getRemoteAddress();
+            handler.init(-1, -1, null, address.getHostName(), address.getPort());
             socket.setDataCallback(new DataCallback() {
                 @Override
                 public void onDataAvailable(DataEmitter emitter, ByteBufferList bb) {
                     byte[] data = bb.getAllByteArray();
                     Log.d(TAG, "on client data available, bytes: " + data.length);
-                    StateConsumer.HandleState res = consumer.handle(data);
+                    StateConsumer.HandleState res = handler.handle(data);
                     while (res == StateConsumer.HandleState.OK) {
-                        res = consumer.handle(null);
+                        res = handler.handle(null);
                     }
                     if (res == StateConsumer.HandleState.FAIL) {
-                        consumer.end(false);
+                        handler.end(false);
                         socket.end();
                         socket.close();
                     }
@@ -120,4 +125,19 @@ public class TcpDataMonitor extends ITcpDataMonitor.Stub {
             Log.d(TAG, "Tcp data monitor shutdown");
         }
     };
+
+    @Override
+    public void attach(IServiceManager manager) {
+        mServiceManager = manager;
+    }
+
+    @Override
+    public void detach() {
+        mServiceManager = null;
+    }
+
+    @Override
+    public IServiceManager getServiceManager() {
+        return mServiceManager;
+    }
 }

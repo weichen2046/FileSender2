@@ -42,7 +42,7 @@ public class RequestAuthHandler extends UdpCmdHandler {
 
         // authenticate use the temp access token
         boolean authPass = false;
-        IServiceManager manager = get();
+        IServiceManager manager = getServiceManager();
         try {
             IDesktopDiscoverer discoverer = IDesktopDiscoverer.Stub.asInterface(manager.getService(ServiceManager.SERVICE_DESKTOP_DISCOVERER));
             authPass = discoverer.checkTempAccessToken(tempAccessToken);

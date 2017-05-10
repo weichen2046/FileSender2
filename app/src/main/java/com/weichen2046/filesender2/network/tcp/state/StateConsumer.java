@@ -76,7 +76,10 @@ public abstract class StateConsumer {
 
         StateConsumerCallback callback = getConsumerCallback();
         if (callback != null) {
-            callback.onDataParsed(value, mRemains);
+            boolean res = callback.onDataParsed(value, mRemains);
+            if (!res) {
+                return HandleState.FAIL;
+            }
         }
 
         return getHandleState();
@@ -114,6 +117,6 @@ public abstract class StateConsumer {
      */
 
     public interface StateConsumerCallback {
-        void onDataParsed(Object value, byte[] remains);
+        boolean onDataParsed(Object value, byte[] remains);
     }
 }

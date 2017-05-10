@@ -17,7 +17,7 @@ import com.weichen2046.filesender2.network.tcp.state.StringStateConsumer;
  * Created by chenwei on 2017/4/27.
  */
 
-public class CmdSendFileConsumer extends AuthTcpDataConsumer {
+public class CmdSendFileHandler extends AuthTcpDataHandler {
     private int mNFileToReceive;
     private int[] mNFileNameLengths;
     private String[] mNFileNames;
@@ -35,39 +35,43 @@ public class CmdSendFileConsumer extends AuthTcpDataConsumer {
         // Nth file content
         addStateConsumer(new IntStateConsumer(new StateConsumer.StateConsumerCallback() {
             @Override
-            public void onDataParsed(Object value, byte[] remains) {
+            public boolean onDataParsed(Object value, byte[] remains) {
                 mNFileToReceive = (int) value;
                 mNFileNameLengths = new int[mNFileToReceive];
                 mNFileNames = new String[mNFileToReceive];
                 mNFileContentLengths = new long[mNFileToReceive];
+                return true;
             }
         }));
 
         GroupStateConsumer gsc = new GroupStateConsumer();
         gsc.addConsumer(new IntStateConsumer(new StateConsumer.StateConsumerCallback() {
             @Override
-            public void onDataParsed(Object value, byte[] remains) {
+            public boolean onDataParsed(Object value, byte[] remains) {
                 int fileNameLength = (int) value;
                 mNFileNameLengths[mCurrentFileIndex] = fileNameLength;
                 Log.d(TAG, "recv file[" + mCurrentFileIndex + "], name length: " + fileNameLength);
+                return true;
             }
         }));
         gsc.addConsumer(new StringStateConsumer(
                         new DynamicIntLengthGetter(this, "getCurrentFileNameLength"),
                         new StateConsumer.StateConsumerCallback() {
                             @Override
-                            public void onDataParsed(Object value, byte[] remains) {
+                            public boolean onDataParsed(Object value, byte[] remains) {
                                 String fileName = value.toString();
                                 mNFileNames[mCurrentFileIndex] = fileName;
                                 Log.d(TAG, "recv file[" + mCurrentFileIndex + "], name: " + fileName);
+                                return true;
                             }
                         }));
         gsc.addConsumer(new LongStateConsumer(new StateConsumer.StateConsumerCallback() {
             @Override
-            public void onDataParsed(Object value, byte[] remains) {
+            public boolean onDataParsed(Object value, byte[] remains) {
                 long fileContentLength = (long) value;
                 mNFileContentLengths[mCurrentFileIndex] = fileContentLength;
                 Log.d(TAG, "recv file[" + mCurrentFileIndex + "], file content length: " + fileContentLength);
+                return true;
             }
         }));
         gsc.addConsumer(
