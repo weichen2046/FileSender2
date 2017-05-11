@@ -1,4 +1,4 @@
-package com.weichen2046.filesender2.utils;
+package com.weichen2046.filesender2.utils.tcpdatasource;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.provider.OpenableColumns;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.service.Desktop;
+import com.weichen2046.filesender2.utils.ByteDataSource;
+import com.weichen2046.filesender2.utils.Utils;
 import com.weichen2046.filesender2.utils.byteconvertor.BytesConvertor;
 import com.weichen2046.filesender2.utils.byteconvertor.IntBytesConvertor;
 import com.weichen2046.filesender2.utils.byteconvertor.LongBytesConvertor;
@@ -63,6 +65,7 @@ public class SendFileDataSource extends ByteDataSource {
         // write token
         fillData(new StringBytesConvertor(mDesktop.accessToken));
 
+        // file name may contains non-ascii, so it's bytes length may not equals it's string length
         BytesConvertor convertor = new StringBytesConvertor(fileName);
         byte[] fileNameBytes = convertor.getBytes();
         // file name length

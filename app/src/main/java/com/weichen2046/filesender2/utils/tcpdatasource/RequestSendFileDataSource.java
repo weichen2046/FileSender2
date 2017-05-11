@@ -1,4 +1,4 @@
-package com.weichen2046.filesender2.utils;
+package com.weichen2046.filesender2.utils.tcpdatasource;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -10,6 +10,8 @@ import android.util.Log;
 import com.weichen2046.filesender2.db.FileSendingDataSource;
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.service.Desktop;
+import com.weichen2046.filesender2.utils.ByteDataSource;
+import com.weichen2046.filesender2.utils.Utils;
 import com.weichen2046.filesender2.utils.byteconvertor.BooleanBytesConvertor;
 import com.weichen2046.filesender2.utils.byteconvertor.BytesConvertor;
 import com.weichen2046.filesender2.utils.byteconvertor.IntBytesConvertor;

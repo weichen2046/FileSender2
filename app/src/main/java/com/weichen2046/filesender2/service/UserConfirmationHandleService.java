@@ -133,6 +133,13 @@ public class UserConfirmationHandleService extends Service {
         SocketTaskService.confirmDesktopAuthRequest(MyApplication.getInstance(), desktop, false);
     }
 
+    private void acceptFileSendingRequest(Desktop device, String[] fileIDs, String[] fileNames) {
+        SocketTaskService.confirmFileSendingRequest(MyApplication.getInstance(), device, fileIDs, true);
+    }
+
+    private void denialFileSendingRequest(Desktop device, String[] fileIDs) {
+        SocketTaskService.confirmFileSendingRequest(MyApplication.getInstance(), device, fileIDs, false);
+    }
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -215,9 +222,9 @@ public class UserConfirmationHandleService extends Service {
                         String[] fileNames = bundle.getStringArray(EXTRA_FILE_NAMES);
                         Log.d(TAG, (accept ? "accept" : "denial") + " send file request from " + device);
                         if (accept) {
-                            // TODO:
+                            acceptFileSendingRequest(device, fileIDs, fileNames);
                         } else {
-                            // TODO:
+                            denialFileSendingRequest(device, fileIDs);
                         }
                     }
                     mDelayedMessagesForFileRecv.clear();

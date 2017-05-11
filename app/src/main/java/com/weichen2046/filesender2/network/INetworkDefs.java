@@ -21,13 +21,14 @@ public interface INetworkDefs {
     byte HAS_NOT_THUMBNAIL  = 0;
     byte HAS_THUMBNAIL      = 1;
 
-    /////////////////// Phone -> Desktop ///////////////////
+    /////////////////// Phone -> Device ///////////////////
     int CMD_T_PHONE_ONLINE              = 1;
     int CMD_T_PHONE_OFFLINE             = 2;
     int CMD_T_SEND_FILE                 = 3;
     int CMD_T_SENDING_FILE_REQ          = 4;
     int CMD_T_CONFIRM_DESKTOP_AUTH_REQ  = 5;
     int CMD_T_CONFIRM_EXCHANGE_TCP_PORT = 6;
+    int CMD_T_ACCEPT_SENDING_FILES      = 7;
 
     /////////////////// Other device -> Phone ///////////////////
     int CMD_R_DESKTOP_ONLINE            = 1;
