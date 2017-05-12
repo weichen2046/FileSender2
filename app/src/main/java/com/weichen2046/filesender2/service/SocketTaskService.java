@@ -64,10 +64,10 @@ public class SocketTaskService extends IntentService {
             final Desktop desktop = intent.getParcelableExtra(EXTRA_DESKTOP);
             handleConfirmExchangeTcpPort(desktop);
         } else if (ACTION_CONFIRM_SENDING_FILE_REQ.equals(action)) {
-            final Desktop desktop = intent.getParcelableExtra(EXTRA_DESKTOP);
+            final Desktop device = intent.getParcelableExtra(EXTRA_DESKTOP);
             final String[] fileIds = intent.getStringArrayExtra(EXTRA_FILE_IDS);
             final boolean accept = intent.getBooleanExtra(EXTRA_DEVICE_CONFIRM_STATE, false);
-            handleConfirmSendingFileRequest(desktop, fileIds, accept);
+            handleConfirmSendingFileRequest(device, fileIds, accept);
         } else {
             Log.w(TAG, "unknown action: " + action);
         }
@@ -97,10 +97,11 @@ public class SocketTaskService extends IntentService {
         context.startService(intent);
     }
 
-    public static void confirmFileSendingRequest(Context context, Desktop desktop, String[] fileIDs,
+    public static void confirmFileSendingRequest(Context context, Desktop device, String[] fileIDs,
                                                  boolean accept) {
         Intent intent = new Intent(context, SocketTaskService.class);
         intent.setAction(ACTION_CONFIRM_SENDING_FILE_REQ);
+        intent.putExtra(EXTRA_DESKTOP, device);
         intent.putExtra(EXTRA_FILE_IDS, fileIDs);
         intent.putExtra(EXTRA_DEVICE_CONFIRM_STATE, accept);
         context.startService(intent);

@@ -33,6 +33,8 @@ public class ConfirmSendingFileRequestDataSource extends AuthDataSource {
             return true;
         }
 
+        fillData(new IntBytesConvertor(mFileIDs.length));
+
         for (String fileId : mFileIDs) {
             // file id length
             fillData(new IntBytesConvertor(fileId.length()));

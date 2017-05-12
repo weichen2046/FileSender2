@@ -22,7 +22,7 @@ import com.weichen2046.filesender2.utils.NotificationHelper;
 import java.util.ArrayList;
 
 public class UserConfirmationHandleService extends Service {
-    private static final String TAG = "AuthenticationHandle";
+    private static final String TAG = "UserConfirmationHandleS";
 
     private static final int MSG_HANDLE_DELAY_TO_HANDLE = 1;
     private static final int MSG_HANDLE_AUTH_REQUEST = 2;
