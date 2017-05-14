@@ -4,8 +4,9 @@
     <color name="colorPrimaryDark">#FEA500</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="main_background">#eeeeee</color>
+    <color name="main_background">#EEEEEE</color>
 
+    <color name="white">#FFFFFFFF</color>
     <color name="black">#000000</color>
     <color name="gray_deep">#666666</color>
     <color name="gray_light">#CCCCCC</color>

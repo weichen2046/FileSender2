@@ -61,6 +61,13 @@
                 <action android:name="action.filesender2.SEND_FILE_COMPLETE" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".ui.PendingRecvFilesActivity"
+            android:exported="true"
+            android:label="@string/title_activity_pending_recv_files"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

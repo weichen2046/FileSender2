@@ -18,6 +18,7 @@
     <string name="fmt_file_to_recv">%d files to receive</string>
     <string name="request_accept">Accept</string>
     <string name="request_denial">Denial</string>
+    <string name="request_details">Details</string>
 
     <string name="loading_desktop_title">Desktop List</string>
     <string name="loading_desktop_message">Loading...</string>
@@ -30,4 +31,6 @@
     <string name="device_description">Device Description</string>
 
     <string name="file_send_complete">File send complete</string>
+    <string name="title_activity_pending_recv_files">File Receiving List</string>
+    <string name="action_denial_all">Denial all files</string>
 </resources>

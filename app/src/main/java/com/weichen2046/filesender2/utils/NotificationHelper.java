@@ -12,6 +12,7 @@ import android.util.Log;
 import com.weichen2046.filesender2.R;
 import com.weichen2046.filesender2.service.UserConfirmationHandleService;
 import com.weichen2046.filesender2.service.Desktop;
+import com.weichen2046.filesender2.ui.PendingRecvFilesActivity;
 
 import static com.weichen2046.filesender2.service.UserConfirmationHandleService.EXTRA_ACCEPT_STATE;
 import static com.weichen2046.filesender2.service.UserConfirmationHandleService.EXTRA_AUTH_DEVICE;
@@ -34,7 +35,8 @@ public class NotificationHelper {
     public static final int NOTIFICATION_DEVICE_AUTH_ACCEPT = 1;
     public static final int NOTIFICATION_DEVICE_AUTH_DENIAL = 2;
     public static final int NOTIFICATION_DEVICE_RECV_FILE_ACCEPT = 3;
-    public static final int NOTIFICATION_DEVICE_REC_FILE_DENIAL = 4;
+    public static final int NOTIFICATION_DEVICE_RECV_FILE_DENIAL = 4;
+    public static final int NOTIFICATION_DEVICE_RECV_FILE_DETAILS = 5;
 
     public static void notifyAuthRequest(Context context, Desktop desktop) {
         if (context == null) {
@@ -87,26 +89,38 @@ public class NotificationHelper {
                         : String.format(rs.getString(R.string.fmt_file_to_recv), files.length);
         builder.setContentText(contentText);
 
-        Intent service = new Intent(context, UserConfirmationHandleService.class);
-        service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_RECV_FILE);
-        service.putExtra(EXTRA_ACCEPT_STATE, true);
-        service.putExtra(EXTRA_AUTH_DEVICE, remoteDevice);
-        service.putExtra(EXTRA_FILE_IDS, fileIDs);
-        service.putExtra(EXTRA_FILE_NAMES, files);
-        PendingIntent pendingIntent = PendingIntent.getService(context,
-                NOTIFICATION_DEVICE_RECV_FILE_ACCEPT, service, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.addAction(R.drawable.ic_check_black_32dp, rs.getString(R.string.request_accept), pendingIntent);
+        if (files.length == 1) {
+            Intent service = new Intent(context, UserConfirmationHandleService.class);
+            service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_RECV_FILE);
+            service.putExtra(EXTRA_ACCEPT_STATE, true);
+            service.putExtra(EXTRA_AUTH_DEVICE, remoteDevice);
+            service.putExtra(EXTRA_FILE_IDS, fileIDs);
+            service.putExtra(EXTRA_FILE_NAMES, files);
+            PendingIntent pendingIntent = PendingIntent.getService(context,
+                    NOTIFICATION_DEVICE_RECV_FILE_ACCEPT, service, PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.addAction(R.drawable.ic_check_black_32dp, rs.getString(R.string.request_accept), pendingIntent);
 
-        service = new Intent(context, UserConfirmationHandleService.class);
-        service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_RECV_FILE);
-        service.putExtra(EXTRA_ACCEPT_STATE, false);
-        service.putExtra(EXTRA_AUTH_DEVICE, remoteDevice);
-        service.putExtra(EXTRA_FILE_IDS, fileIDs);
-        service.putExtra(EXTRA_FILE_NAMES, files);
-        pendingIntent = PendingIntent.getService(context,
-                NOTIFICATION_DEVICE_REC_FILE_DENIAL, service, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.addAction(R.drawable.ic_close_black_32dp, rs.getString(R.string.request_denial), pendingIntent);
+            service = new Intent(context, UserConfirmationHandleService.class);
+            service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_RECV_FILE);
+            service.putExtra(EXTRA_ACCEPT_STATE, false);
+            service.putExtra(EXTRA_AUTH_DEVICE, remoteDevice);
+            service.putExtra(EXTRA_FILE_IDS, fileIDs);
+            service.putExtra(EXTRA_FILE_NAMES, files);
+            pendingIntent = PendingIntent.getService(context,
+                    NOTIFICATION_DEVICE_RECV_FILE_DENIAL, service, PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.addAction(R.drawable.ic_close_black_32dp, rs.getString(R.string.request_denial), pendingIntent);
 
+        } else {
+            Intent detailsActivity = new Intent(context, PendingRecvFilesActivity.class);
+            detailsActivity.putExtra(EXTRA_AUTH_DEVICE, remoteDevice);
+            detailsActivity.putExtra(EXTRA_FILE_IDS, fileIDs);
+            detailsActivity.putExtra(EXTRA_FILE_NAMES, files);
+            PendingIntent pendingIntent = PendingIntent.getActivity(context,
+                    NOTIFICATION_DEVICE_RECV_FILE_DETAILS, detailsActivity,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+            builder.addAction(R.drawable.ic_viewlist_black_32dp,
+                    rs.getString(R.string.request_details), pendingIntent);
+        }
         NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         nm.notify(NOTIFICATION_RECV_FILE_REQ, builder.build());
     }

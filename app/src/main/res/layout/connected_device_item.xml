@@ -21,8 +21,8 @@
             android:layout_marginRight="@dimen/card_title_margin"
             android:layout_marginTop="@dimen/card_title_margin"
             android:textColor="@color/black"
+            android:textSize="16sp"
             android:text="@string/device_name" />
-            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/connected_device_address"
