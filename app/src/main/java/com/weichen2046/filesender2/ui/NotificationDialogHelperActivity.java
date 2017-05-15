@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -27,8 +28,10 @@ import static com.weichen2046.filesender2.service.UserConfirmationHandleService.
 import static com.weichen2046.filesender2.service.UserConfirmationHandleService.MSG_TYPE_RECV_FILE;
 
 public class NotificationDialogHelperActivity extends BaseActivity {
+    private static final String TAG = "NotificationDialog";
     private BottomSheetDialog mBottomSheetDialog;
 
+    public static final String EXTRA_DATA = "extra_data";
     public static final String ACTION_DISMISS_NOTIFICATION_DIALOG
             = "action.filesender2.DISMISS_NOTIFICATION_DIALOG";
 
@@ -54,9 +57,9 @@ public class NotificationDialogHelperActivity extends BaseActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        Bundle data = getIntent().getExtras();
+        Bundle data = getIntent().getExtras().getBundle(EXTRA_DATA);
         Desktop device = data.getParcelable(EXTRA_AUTH_DEVICE);
-        final int msgType = getIntent().getIntExtra(EXTRA_MSG_TYPE, 0);
+        final int msgType = data.getInt(EXTRA_MSG_TYPE, 0);
         switch (msgType) {
             case MSG_TYPE_AUTH:
                 handleAuthRequest(device);
@@ -65,6 +68,9 @@ public class NotificationDialogHelperActivity extends BaseActivity {
                 String[] fileIDs = data.getStringArray(EXTRA_FILE_IDS);
                 String[] fileNames = data.getStringArray(EXTRA_FILE_NAMES);
                 handleFileSendingRequest(device, fileIDs, fileNames);
+                break;
+            default:
+                Log.w(TAG, "unknow msg type: " + msgType);
                 break;
         }
 
@@ -78,8 +84,8 @@ public class NotificationDialogHelperActivity extends BaseActivity {
         tv_title.setText(R.string.auth_request_title);
         TextView tv_content = (TextView) dialogView.findViewById(R.id.sheet_content);
         tv_content.setText(String.format(rs.getString(R.string.fmt_auth_request_text), device.address));
-        Button btn_dialog_bottom_sheet_ok = (Button) dialogView.findViewById(R.id.btn_ok);
-        Button btn_dialog_bottom_sheet_cancel = (Button) dialogView.findViewById(R.id.btn_cancel);
+        Button btnOk = (Button) dialogView.findViewById(R.id.btn_ok);
+        Button btnCancel = (Button) dialogView.findViewById(R.id.btn_cancel);
         mBottomSheetDialog.setContentView(dialogView);
         mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -89,7 +95,7 @@ public class NotificationDialogHelperActivity extends BaseActivity {
                 finish();
             }
         });
-        btn_dialog_bottom_sheet_ok.setOnClickListener(new View.OnClickListener() {
+        btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // accept auth request
@@ -101,7 +107,7 @@ public class NotificationDialogHelperActivity extends BaseActivity {
                 mBottomSheetDialog.dismiss();
             }
         });
-        btn_dialog_bottom_sheet_cancel.setOnClickListener(new View.OnClickListener() {
+        btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // denial auth request
@@ -127,8 +133,8 @@ public class NotificationDialogHelperActivity extends BaseActivity {
                         : String.format(rs.getString(R.string.fmt_file_to_recv), fileNames.length);
         TextView tv_content = (TextView) dialogView.findViewById(R.id.sheet_content);
         tv_content.setText(contentText);
-        Button btn_dialog_bottom_sheet_ok = (Button) dialogView.findViewById(R.id.btn_ok);
-        Button btn_dialog_bottom_sheet_cancel = (Button) dialogView.findViewById(R.id.btn_cancel);
+        Button btnOk = (Button) dialogView.findViewById(R.id.btn_ok);
+        Button btnCancel = (Button) dialogView.findViewById(R.id.btn_cancel);
         mBottomSheetDialog.setContentView(dialogView);
         mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
@@ -138,7 +144,7 @@ public class NotificationDialogHelperActivity extends BaseActivity {
                 finish();
             }
         });
-        btn_dialog_bottom_sheet_ok.setOnClickListener(new View.OnClickListener() {
+        btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent service = new Intent(NotificationDialogHelperActivity.this, UserConfirmationHandleService.class);
@@ -151,7 +157,7 @@ public class NotificationDialogHelperActivity extends BaseActivity {
                 mBottomSheetDialog.dismiss();
             }
         });
-        btn_dialog_bottom_sheet_cancel.setOnClickListener(new View.OnClickListener() {
+        btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent service = new Intent(NotificationDialogHelperActivity.this, UserConfirmationHandleService.class);

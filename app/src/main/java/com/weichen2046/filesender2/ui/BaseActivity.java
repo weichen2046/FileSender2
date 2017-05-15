@@ -22,6 +22,10 @@ public class BaseActivity extends AppCompatActivity {
         sAppShowCount--;
     }
 
+    /**
+     * Note: should only be access in main thread.
+     * @return
+     */
     public static boolean isAppShowingUnlocked() {
         return sAppShowCount > 0;
     }

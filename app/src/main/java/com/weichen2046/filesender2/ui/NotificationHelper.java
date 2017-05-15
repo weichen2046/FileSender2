@@ -38,21 +38,21 @@ public class NotificationHelper {
     public static final int NOTIFICATION_DEVICE_RECV_FILE_DENIAL = 4;
     public static final int NOTIFICATION_DEVICE_RECV_FILE_DETAILS = 5;
 
+    public static final String ACTION_DEVICE_AUTH_REQ = "action.filesender2.DEVICE_AUTH_REQ";
+    public static final String ACTION_RECV_FILE_REQ = "action.filesender2.RECV_FILE_REQ";
+
     public static void notifyAuthRequest(Context context, Desktop device) {
         if (context == null) {
             Log.w(TAG, "can not make auth request notification, context is null");
             return;
         }
 
-        boolean isAppShowing = BaseActivity.isAppShowingUnlocked();
+        Intent broadcast = new Intent(ACTION_DEVICE_AUTH_REQ);
+        broadcast.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_AUTH);
+        broadcast.putExtra(EXTRA_AUTH_DEVICE, device);
+        context.sendBroadcast(broadcast);
+
         Resources rs = context.getResources();
-        if (isAppShowing) {
-            Intent transparentActivity = new Intent(context, NotificationDialogHelperActivity.class);
-            transparentActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            transparentActivity.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_AUTH);
-            transparentActivity.putExtra(EXTRA_AUTH_DEVICE, device);
-            context.startActivity(transparentActivity);
-        }
         // show notification via system notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.drawable.ic_statusbar_notify_auth_req);
@@ -88,16 +88,13 @@ public class NotificationHelper {
             return;
         }
 
-        boolean isAppShowing = BaseActivity.isAppShowingUnlocked();
-        if (isAppShowing) {
-            Intent notificationDialog = new Intent(context, NotificationDialogHelperActivity.class);
-            notificationDialog.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            notificationDialog.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_RECV_FILE);
-            notificationDialog.putExtra(EXTRA_AUTH_DEVICE, device);
-            notificationDialog.putExtra(EXTRA_FILE_IDS, fileIDs);
-            notificationDialog.putExtra(EXTRA_FILE_NAMES, fileNames);
-            context.startActivity(notificationDialog);
-        }
+        Intent broadcast = new Intent(ACTION_RECV_FILE_REQ);
+        broadcast.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_RECV_FILE);
+        broadcast.putExtra(EXTRA_AUTH_DEVICE, device);
+        broadcast.putExtra(EXTRA_FILE_IDS, fileIDs);
+        broadcast.putExtra(EXTRA_FILE_NAMES, fileNames);
+        context.sendBroadcast(broadcast);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         Resources rs = context.getResources();
         builder.setSmallIcon(R.drawable.ic_statusbar_notify_auth_req);

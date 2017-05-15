@@ -67,9 +67,20 @@
             android:exported="true"
             android:label="@string/title_activity_pending_recv_files"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.NotificationDialogHelperActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Translucent" />
 
-        <activity android:name=".ui.NotificationDialogHelperActivity"
-            android:theme="@style/Theme.AppCompat.Translucent"></activity>
+        <receiver
+            android:name=".ui.receiver.NotificationHelperReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="action.filesender2.DEVICE_AUTH_REQ" />
+                <action android:name="action.filesender2.RECV_FILE_REQ" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
