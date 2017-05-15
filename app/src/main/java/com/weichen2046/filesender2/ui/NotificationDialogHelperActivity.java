@@ -80,17 +80,19 @@ public class NotificationDialogHelperActivity extends BaseActivity {
         Resources rs = getResources();
         mBottomSheetDialog = new BottomSheetDialog(this);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_bottom_sheet, null);
-        TextView tv_title = (TextView) dialogView.findViewById(R.id.sheet_title);
-        tv_title.setText(R.string.auth_request_title);
-        TextView tv_content = (TextView) dialogView.findViewById(R.id.sheet_content);
-        tv_content.setText(String.format(rs.getString(R.string.fmt_auth_request_text), device.address));
+        TextView tvTitle = (TextView) dialogView.findViewById(R.id.sheet_title);
+        tvTitle.setText(R.string.auth_request_title);
+        TextView tvContent = (TextView) dialogView.findViewById(R.id.sheet_content);
+        tvContent.setText(String.format(rs.getString(R.string.fmt_auth_request_text),
+                device.address));
         Button btnOk = (Button) dialogView.findViewById(R.id.btn_ok);
         Button btnCancel = (Button) dialogView.findViewById(R.id.btn_cancel);
         mBottomSheetDialog.setContentView(dialogView);
         mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationManager nm
+                        = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 nm.cancel(NotificationHelper.NOTIFICATION_DEVICE_AUTH_REQ);
                 finish();
             }
@@ -99,7 +101,8 @@ public class NotificationDialogHelperActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 // accept auth request
-                Intent service = new Intent(NotificationDialogHelperActivity.this, UserConfirmationHandleService.class);
+                Intent service = new Intent(NotificationDialogHelperActivity.this,
+                        UserConfirmationHandleService.class);
                 service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_AUTH);
                 service.putExtra(EXTRA_ACCEPT_STATE, true);
                 service.putExtra(EXTRA_AUTH_DEVICE, device);
@@ -111,7 +114,8 @@ public class NotificationDialogHelperActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 // denial auth request
-                Intent service = new Intent(NotificationDialogHelperActivity.this, UserConfirmationHandleService.class);
+                Intent service = new Intent(NotificationDialogHelperActivity.this,
+                        UserConfirmationHandleService.class);
                 service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_AUTH);
                 service.putExtra(EXTRA_ACCEPT_STATE, false);
                 service.putExtra(EXTRA_AUTH_DEVICE, device);
@@ -122,24 +126,29 @@ public class NotificationDialogHelperActivity extends BaseActivity {
         mBottomSheetDialog.show();
     }
 
-    private void handleFileSendingRequest(final Desktop device, final String[] fileIDs, final String[] fileNames) {
+    private void handleFileSendingRequest(final Desktop device, final String[] fileIDs,
+                                          final String[] fileNames) {
         Resources rs = getResources();
         mBottomSheetDialog = new BottomSheetDialog(this);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_bottom_sheet, null);
-        TextView tv_title = (TextView) dialogView.findViewById(R.id.sheet_title);
-        tv_title.setText(R.string.file_sending_request);
+        TextView tvTitle = (TextView) dialogView.findViewById(R.id.sheet_title);
+        tvTitle.setText(R.string.file_sending_request);
         String contentText = fileNames.length == 1
                         ? fileNames[0]
                         : String.format(rs.getString(R.string.fmt_file_to_recv), fileNames.length);
-        TextView tv_content = (TextView) dialogView.findViewById(R.id.sheet_content);
-        tv_content.setText(contentText);
+        TextView tvContent = (TextView) dialogView.findViewById(R.id.sheet_content);
+        tvContent.setText(contentText);
         Button btnOk = (Button) dialogView.findViewById(R.id.btn_ok);
+        if (fileNames.length > 1) {
+            btnOk.setText(R.string.request_details);
+        }
         Button btnCancel = (Button) dialogView.findViewById(R.id.btn_cancel);
         mBottomSheetDialog.setContentView(dialogView);
         mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationManager nm
+                        = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 nm.cancel(NotificationHelper.NOTIFICATION_RECV_FILE_REQ);
                 finish();
             }
@@ -147,20 +156,31 @@ public class NotificationDialogHelperActivity extends BaseActivity {
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent service = new Intent(NotificationDialogHelperActivity.this, UserConfirmationHandleService.class);
-                service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_RECV_FILE);
-                service.putExtra(EXTRA_ACCEPT_STATE, true);
-                service.putExtra(EXTRA_AUTH_DEVICE, device);
-                service.putExtra(EXTRA_FILE_IDS, fileIDs);
-                service.putExtra(EXTRA_FILE_NAMES, fileNames);
-                startService(service);
+                if (fileNames.length > 1) {
+                    Intent detailsActivity = new Intent(NotificationDialogHelperActivity.this,
+                            PendingRecvFilesActivity.class);
+                    detailsActivity.putExtra(EXTRA_AUTH_DEVICE, device);
+                    detailsActivity.putExtra(EXTRA_FILE_IDS, fileIDs);
+                    detailsActivity.putExtra(EXTRA_FILE_NAMES, fileNames);
+                    startActivity(detailsActivity);
+                } else {
+                    Intent service = new Intent(NotificationDialogHelperActivity.this,
+                            UserConfirmationHandleService.class);
+                    service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_RECV_FILE);
+                    service.putExtra(EXTRA_ACCEPT_STATE, true);
+                    service.putExtra(EXTRA_AUTH_DEVICE, device);
+                    service.putExtra(EXTRA_FILE_IDS, fileIDs);
+                    service.putExtra(EXTRA_FILE_NAMES, fileNames);
+                    startService(service);
+                }
                 mBottomSheetDialog.dismiss();
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent service = new Intent(NotificationDialogHelperActivity.this, UserConfirmationHandleService.class);
+                Intent service = new Intent(NotificationDialogHelperActivity.this,
+                        UserConfirmationHandleService.class);
                 service.putExtra(EXTRA_MSG_TYPE, MSG_TYPE_RECV_FILE);
                 service.putExtra(EXTRA_ACCEPT_STATE, false);
                 service.putExtra(EXTRA_AUTH_DEVICE, device);

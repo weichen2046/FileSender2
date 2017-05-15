@@ -16,10 +16,10 @@ public class NotificationHelperReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         boolean isAppShowing = BaseActivity.isAppShowingUnlocked();
         if (isAppShowing) {
-            Intent transparentActivity = new Intent(context, NotificationDialogHelperActivity.class);
-            transparentActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            transparentActivity.putExtra(EXTRA_DATA, (Bundle) intent.getExtras().clone());
-            context.startActivity(transparentActivity);
+            Intent dialogActivity = new Intent(context, NotificationDialogHelperActivity.class);
+            dialogActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            dialogActivity.putExtra(EXTRA_DATA, (Bundle) intent.getExtras().clone());
+            context.startActivity(dialogActivity);
         }
     }
 }
