@@ -9,7 +9,7 @@ import com.weichen2046.filesender2.network.tcp.state.IntStateConsumer;
 import com.weichen2046.filesender2.network.tcp.state.NthStateConsumer;
 import com.weichen2046.filesender2.network.tcp.state.StateConsumer;
 import com.weichen2046.filesender2.network.tcp.state.StringStateConsumer;
-import com.weichen2046.filesender2.utils.NotificationHelper;
+import com.weichen2046.filesender2.ui.NotificationHelper;
 
 import java.util.Arrays;
 

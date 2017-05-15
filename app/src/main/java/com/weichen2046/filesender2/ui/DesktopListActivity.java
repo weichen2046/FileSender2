@@ -16,7 +16,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -39,7 +38,7 @@ import com.weichen2046.filesender2.service.SocketTaskService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DesktopListActivity extends AppCompatActivity {
+public class DesktopListActivity extends BaseActivity {
 
     private static final String TAG = "DesktopListActivity";
 

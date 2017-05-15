@@ -17,7 +17,8 @@ import android.util.Log;
 
 import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.networklib.TokenHelper;
-import com.weichen2046.filesender2.utils.NotificationHelper;
+import com.weichen2046.filesender2.ui.NotificationDialogHelperActivity;
+import com.weichen2046.filesender2.ui.NotificationHelper;
 
 import java.util.ArrayList;
 
@@ -115,8 +116,8 @@ public class UserConfirmationHandleService extends Service {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        // send auth request confirm message to desktop
-        // send auth token back and use access token to auth with desktop
+        // send auth request confirm message to remote device
+        // send auth token back and use access token to auth with remote device
         SocketTaskService.confirmDesktopAuthRequest(MyApplication.getInstance(), desktop, true);
     }
 
@@ -191,6 +192,9 @@ public class UserConfirmationHandleService extends Service {
             int lastReqId = -1;
             switch (msg.what) {
                 case MSG_HANDLE_AUTH_REQUEST:
+                    // send broadcast to dismiss NotificationDialogHelperActivity for auth request
+                    MyApplication.getInstance().sendBroadcast(
+                            new Intent(NotificationDialogHelperActivity.ACTION_DISMISS_NOTIFICATION_DIALOG));
                     if (mServiceManager == null) {
                         return;
                     }

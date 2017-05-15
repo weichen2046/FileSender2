@@ -1,4 +1,4 @@
-package com.weichen2046.filesender2;
+package com.weichen2046.filesender2.ui;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -16,7 +16,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +31,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.weichen2046.filesender2.MyApplication;
+import com.weichen2046.filesender2.R;
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.service.Desktop;
 import com.weichen2046.filesender2.service.DesktopManager;
@@ -42,13 +43,12 @@ import com.weichen2046.filesender2.service.IDesktopDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
 import com.weichen2046.filesender2.service.SocketTaskService;
-import com.weichen2046.filesender2.ui.DesktopListActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity";
@@ -259,18 +259,18 @@ public class MainActivity extends AppCompatActivity
     };
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(mReceiverForDesktop);
-    }
-
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
+    protected void onStart() {
+        super.onStart();
         // register desktop change broadcast
         IntentFilter filter = new IntentFilter();
         filter.addAction(DesktopManager.ACTION_DESKTOP_CHANGES);
         registerReceiver(mReceiverForDesktop, filter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(mReceiverForDesktop);
     }
 
     @Override

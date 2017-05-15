@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,7 +23,6 @@ import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.R;
 import com.weichen2046.filesender2.service.Desktop;
 import com.weichen2046.filesender2.service.SocketTaskService;
-import com.weichen2046.filesender2.utils.NotificationHelper;
 
 import java.util.ArrayList;
 
@@ -32,7 +30,7 @@ import static com.weichen2046.filesender2.service.UserConfirmationHandleService.
 import static com.weichen2046.filesender2.service.UserConfirmationHandleService.EXTRA_FILE_IDS;
 import static com.weichen2046.filesender2.service.UserConfirmationHandleService.EXTRA_FILE_NAMES;
 
-public class PendingRecvFilesActivity extends AppCompatActivity {
+public class PendingRecvFilesActivity extends BaseActivity {
 
     private static final String TAG = "PendingRecvFiles";
 

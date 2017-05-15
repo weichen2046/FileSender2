@@ -1,4 +1,4 @@
-package com.weichen2046.filesender2.ui;
+package com.weichen2046.filesender2.ui.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

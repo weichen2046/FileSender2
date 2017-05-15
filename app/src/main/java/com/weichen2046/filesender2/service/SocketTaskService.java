@@ -6,7 +6,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.weichen2046.filesender2.ui.ResultBroadcastReceiver;
+import com.weichen2046.filesender2.ui.receiver.ResultBroadcastReceiver;
 import com.weichen2046.filesender2.utils.udpdatasource.ConfirmDesktopAuthRequestDataSource;
 import com.weichen2046.filesender2.utils.udpdatasource.ConfirmExchangeTcpPortDataSource;
 import com.weichen2046.filesender2.utils.tcpdatasource.RequestSendFileDataSource;

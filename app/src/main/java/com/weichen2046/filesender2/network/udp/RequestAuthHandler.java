@@ -9,7 +9,7 @@ import com.weichen2046.filesender2.service.IDesktopDiscoverer;
 import com.weichen2046.filesender2.service.IDesktopManager;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
-import com.weichen2046.filesender2.utils.NotificationHelper;
+import com.weichen2046.filesender2.ui.NotificationHelper;
 
 import java.nio.ByteBuffer;
 
