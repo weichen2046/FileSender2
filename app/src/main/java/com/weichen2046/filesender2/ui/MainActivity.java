@@ -53,6 +53,7 @@ public class MainActivity extends BaseActivity
 
     private static final String TAG = "MainActivity";
 
+    private boolean mRegisteredReceiver = false;
     private boolean mBoundToService = false;
     private IServiceManager mServiceManager = null;
     private IDesktopDiscoverer mDesktopDiscoverer = null;
@@ -210,6 +211,46 @@ public class MainActivity extends BaseActivity
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!mRegisteredReceiver) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateDevices();
+                }
+            });
+            mRegisteredReceiver = true;
+            // register desktop change broadcast
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(DesktopManager.ACTION_DESKTOP_CHANGES);
+            registerReceiver(mReceiverForDesktop, filter);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mRegisteredReceiver) {
+            mRegisteredReceiver = false;
+            unregisterReceiver(mReceiverForDesktop);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_CANCELED) {
+            return;
+        }
+        if (requestCode == REQUEST_CODE_FOR_FILE_TO_SEND) {
+            final Intent resultIntent = data;
+            Uri uri = resultIntent.getData();
+            SocketTaskService.startActionRequestSendFile(this, uri, mSelectedDevice);
+        }
+    }
+
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -258,47 +299,23 @@ public class MainActivity extends BaseActivity
         }
     };
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // register desktop change broadcast
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(DesktopManager.ACTION_DESKTOP_CHANGES);
-        registerReceiver(mReceiverForDesktop, filter);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterReceiver(mReceiverForDesktop);
-    }
-
-    @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_CANCELED) {
-            return;
-        }
-        if (requestCode == REQUEST_CODE_FOR_FILE_TO_SEND) {
-            final Intent resultIntent = data;
-            Uri uri = resultIntent.getData();
-            SocketTaskService.startActionRequestSendFile(this, uri, mSelectedDevice);
-        }
-    }
-
     private BroadcastReceiver mReceiverForDesktop = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mDesktopManager == null) {
-                return;
-            }
-            try {
-                mAdapter.setData(mDesktopManager.getAllDesktops());
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
+            updateDevices();
         }
     };
+
+    private void updateDevices() {
+        if (mDesktopManager == null) {
+            return;
+        }
+        try {
+            mAdapter.setData(mDesktopManager.getAllDesktops());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
