@@ -7,17 +7,26 @@
         android:id="@+id/sheet_title"
         android:minHeight="48dp"
         android:textSize="18dp"
+        android:textColor="@color/black"
         android:paddingLeft="16dp"
         android:gravity="center_vertical"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
+    <ImageView
+        android:id="@+id/sheet_icon"
+        android:layout_below="@id/sheet_title"
+        android:src="@mipmap/ic_launcher"
+        android:layout_width="96dp"
+        android:layout_height="96dp" />
+
     <TextView
         android:id="@+id/sheet_content"
         android:minHeight="96dp"
         android:paddingLeft="16dp"
         android:layout_below="@id/sheet_title"
+        android:layout_toRightOf="@id/sheet_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
