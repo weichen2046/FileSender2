@@ -33,4 +33,6 @@
     <string name="file_send_complete">File send complete</string>
     <string name="title_activity_pending_recv_files">File Receiving List</string>
     <string name="action_denial_all">Denial all files</string>
+
+    <string name="empty_connected_device">No connected device</string>
 </resources>

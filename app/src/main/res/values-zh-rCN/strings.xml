@@ -33,4 +33,6 @@
     <string name="file_send_complete">文件发送完成</string>
     <string name="title_activity_pending_recv_files">文件接收列表</string>
     <string name="action_denial_all">拒绝所有文件</string>
+
+    <string name="empty_connected_device">没有已连接的设备</string>
 </resources>

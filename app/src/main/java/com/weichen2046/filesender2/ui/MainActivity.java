@@ -61,6 +61,7 @@ public class MainActivity extends BaseActivity
     private ITcpDataMonitor mTcpDataMonitor = null;
     private IDesktopManager mDesktopManager = null;
 
+    private TextView mEmptyView;
     private RecyclerView mRecyclerView;
     private LinearLayoutManager mLayoutManager;
     private MyAdapter mAdapter;
@@ -84,6 +85,7 @@ public class MainActivity extends BaseActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        mEmptyView = (TextView) findViewById(R.id.empty_text);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setNestedScrollingEnabled(false);
@@ -275,18 +277,10 @@ public class MainActivity extends BaseActivity
 
                 binder = mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER);
                 mDesktopManager = IDesktopManager.Stub.asInterface(binder);
-                List<Desktop> desktops = mDesktopManager.getAllDesktops();
 
-                // for debug
-                if (false) {
-                    Desktop debug = new Desktop();
-                    debug.address = "10.101.2.248";
-                    for (int i=0; i<100; i++) {
-                        desktops.add(debug);
-                    }
-                }
 
-                mAdapter.setData(desktops);
+
+                updateDevices();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -311,7 +305,23 @@ public class MainActivity extends BaseActivity
             return;
         }
         try {
-            mAdapter.setData(mDesktopManager.getAllDesktops());
+            List<Desktop> devices = mDesktopManager.getAllDesktops();
+            // for debug
+            if (false) {
+                Desktop debug = new Desktop();
+                debug.address = "10.101.2.248";
+                for (int i=0; i<100; i++) {
+                    devices.add(debug);
+                }
+            }
+            if (devices.size() == 0) {
+                mEmptyView.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
+            } else {
+                mEmptyView.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+            }
+            mAdapter.setData(devices);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
