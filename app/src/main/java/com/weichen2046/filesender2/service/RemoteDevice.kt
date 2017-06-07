@@ -59,9 +59,13 @@ open class RemoteDevice: Parcelable {
     }
 
     companion object {
-        val DEVICE_TYPE_UNKNOWN = -1
-        val DEVICE_TYPE_DESKTOP = 1
-        val DEVICE_TYPE_PHONE = 2
+        @JvmField val DEVICE_TYPE_UNKNOWN = -1
+        @JvmField val DEVICE_TYPE_DESKTOP = 1
+        @JvmField val DEVICE_TYPE_PHONE = 2
+        private val DEVICE_TYPE_MIN = DEVICE_TYPE_DESKTOP
+        private val DEVICE_TYPE_MAX = DEVICE_TYPE_PHONE
+
+        @JvmStatic fun isValidDeviceType(type: Int) = type in DEVICE_TYPE_MIN..DEVICE_TYPE_MAX
     }
 
     open fun update(device: RemoteDevice) {

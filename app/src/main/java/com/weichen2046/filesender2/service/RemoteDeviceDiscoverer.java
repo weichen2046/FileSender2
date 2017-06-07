@@ -14,6 +14,7 @@ public class RemoteDeviceDiscoverer extends IRemoteDeviceDiscoverer.Stub {
 
     private static final String TAG = "RemoteDeviceDiscoverer";
 
+    // remote device should pass back this token when request authentication
     private String mTempAccessToken;
 
     @Override
