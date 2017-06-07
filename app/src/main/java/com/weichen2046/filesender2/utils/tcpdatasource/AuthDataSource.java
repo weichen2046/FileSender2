@@ -27,9 +27,9 @@ public class AuthDataSource extends ByteDataSource {
         // network cmd
         fillData(new IntBytesConvertor(mCmd));
         // write token length
-        fillData(new IntBytesConvertor(mDevice.accessToken.length()));
+        fillData(new IntBytesConvertor(mDevice.getAccessToken().length()));
         // write token
-        fillData(new StringBytesConvertor(mDevice.accessToken));
+        fillData(new StringBytesConvertor(mDevice.getAccessToken()));
         return true;
     }
 }

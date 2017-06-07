@@ -58,7 +58,7 @@ public class NotificationHelper {
         builder.setSmallIcon(R.drawable.ic_statusbar_notify_auth_req);
         builder.setLargeIcon(BitmapFactory.decodeResource(rs, R.mipmap.ic_launcher));
         builder.setContentTitle(rs.getString(R.string.auth_request_title));
-        builder.setContentText(String.format(rs.getString(R.string.fmt_auth_request_text), device.address));
+        builder.setContentText(String.format(rs.getString(R.string.fmt_auth_request_text), device.getAddress()));
         builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
 
         Intent service = new Intent(context, UserConfirmationHandleService.class);

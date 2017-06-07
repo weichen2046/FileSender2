@@ -205,7 +205,7 @@ public class UserConfirmationHandleService extends Service {
                             Desktop desktop = bundle.getParcelable(EXTRA_AUTH_DEVICE);
                             Log.d(TAG, (accept ? "accept" : "denial") + " authentication request from " + desktop);
                             if (accept) {
-                                desktop.authToken = TokenHelper.generateToken();
+                                desktop.setAuthToken(TokenHelper.generateToken());
                                 //Log.d(TAG, "generate new auth token for device: " + desktop);
                                 acceptDeviceAuth(desktop);
                             } else {

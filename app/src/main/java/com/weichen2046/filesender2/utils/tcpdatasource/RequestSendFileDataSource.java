@@ -43,7 +43,7 @@ public class RequestSendFileDataSource extends ByteDataSource {
         String uuid = UUID.randomUUID().toString().replace("-", "");
         FileSendingDataSource dataSource = new FileSendingDataSource(mContext);
         dataSource.open();
-        long fileId = dataSource.add(uuid, mFileUri, mDesktop.address, mDesktop.tcpPort);
+        long fileId = dataSource.add(uuid, mFileUri, mDesktop.getAddress(), mDesktop.getTcpPort());
         dataSource.close();
 
         // use uuid as default file name
@@ -71,9 +71,9 @@ public class RequestSendFileDataSource extends ByteDataSource {
         // write network cmd
         fillData(new IntBytesConvertor(INetworkDefs.CMD_T_SENDING_FILE_REQ));
         // write token length
-        fillData(new IntBytesConvertor(mDesktop.accessToken.length()));
+        fillData(new IntBytesConvertor(mDesktop.getAccessToken().length()));
         // write token
-        fillData(new StringBytesConvertor(mDesktop.accessToken));
+        fillData(new StringBytesConvertor(mDesktop.getAccessToken()));
 
         BytesConvertor convertor = new StringBytesConvertor(fileName);
         byte[] fileNameBytes = convertor.getBytes();

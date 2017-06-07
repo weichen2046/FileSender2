@@ -61,9 +61,9 @@ public class SendFileDataSource extends ByteDataSource {
         // network cmd
         fillData(new IntBytesConvertor(INetworkDefs.CMD_T_SEND_FILE));
         // write token length
-        fillData(new IntBytesConvertor(mDesktop.accessToken.length()));
+        fillData(new IntBytesConvertor(mDesktop.getAccessToken().length()));
         // write token
-        fillData(new StringBytesConvertor(mDesktop.accessToken));
+        fillData(new StringBytesConvertor(mDesktop.getAccessToken()));
 
         // file name may contains non-ascii, so it's bytes length may not equals it's string length
         BytesConvertor convertor = new StringBytesConvertor(fileName);

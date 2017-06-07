@@ -27,7 +27,7 @@ public class DesktopManager extends IDesktopManager.Stub {
     @Override
     public Desktop findDesktop(String address, int udpPort) throws RemoteException {
         for (Desktop desktop : mDesktops) {
-            if (desktop.udpPort == udpPort && desktop.address.equals(address)) {
+            if (desktop.getUdpPort() == udpPort && desktop.getAddress().equals(address)) {
                 return desktop;
             }
         }
@@ -37,8 +37,8 @@ public class DesktopManager extends IDesktopManager.Stub {
     @Override
     public Desktop findDesktopByAuthToken(String address, String authToken) throws RemoteException {
         for (Desktop desktop : mDesktops) {
-            if (desktop.address.equals(address)) {
-                if (desktop.authToken.equals(authToken)) {
+            if (desktop.getAddress().equals(address)) {
+                if (desktop.getAuthToken().equals(authToken)) {
                     return desktop;
                 }
             }
@@ -79,7 +79,7 @@ public class DesktopManager extends IDesktopManager.Stub {
         Desktop desktop = findDesktop(address, udpPort);
         // tcp port is 0 means the desktop is not authenticated
         // NOTE: desktop's access token or auth token can not use to determine authentication state
-        if (desktop != null && desktop.tcpPort == 0) {
+        if (desktop != null && desktop.getTcpPort() == 0) {
             return deleteDesktop(desktop);
         }
         return false;

@@ -24,7 +24,7 @@ public class ExchangeTcpPortHandler extends UdpAuthCmdHandler {
             return false;
         }
         int tcpPort = mBuffer.getInt();
-        mDesktop.tcpPort = tcpPort;
+        mDesktop.setTcpPort(tcpPort);
         updateDesktop(mDesktop);
         SocketTaskService.confirmExchangeTcpPort(MyApplication.getInstance(), mDesktop);
         return true;

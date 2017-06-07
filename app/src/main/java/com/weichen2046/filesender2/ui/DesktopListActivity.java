@@ -238,7 +238,7 @@ public class DesktopListActivity extends BaseActivity {
             // for debug
             if (false) {
                 Desktop debug = new Desktop();
-                debug.address = "10.101.2.248";
+                debug.setAddress("10.101.2.248");
                 for (int i=0; i<100; i++) {
                     mDesktops.add(debug);
                 }
@@ -279,8 +279,8 @@ public class DesktopListActivity extends BaseActivity {
             }
             Desktop desktop = (Desktop) getItem(position);
             holder.mIcon.setImageResource(R.drawable.ic_menu_share);
-            holder.mName.setText(desktop.address);
-            holder.mIp.setText(desktop.address);
+            holder.mName.setText(desktop.getAddress());
+            holder.mIp.setText(desktop.getAddress());
             Log.d(TAG, "getView called, desktop.ip: " + holder.mName);
             return view;
         }

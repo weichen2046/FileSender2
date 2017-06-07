@@ -84,7 +84,7 @@ public class NotificationDialogHelperActivity extends BaseActivity {
         tvTitle.setText(R.string.auth_request_title);
         TextView tvContent = (TextView) dialogView.findViewById(R.id.sheet_content);
         tvContent.setText(String.format(rs.getString(R.string.fmt_auth_request_text),
-                device.address));
+                device.getAddress()));
         Button btnOk = (Button) dialogView.findViewById(R.id.btn_ok);
         Button btnCancel = (Button) dialogView.findViewById(R.id.btn_cancel);
         mBottomSheetDialog.setContentView(dialogView);

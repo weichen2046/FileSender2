@@ -122,29 +122,29 @@ public class SocketTaskService extends IntentService {
     private void handleActionRequestSendFile(Uri fileUri, Desktop desktop) {
         RequestSendFileDataSource dataSource =
                 new RequestSendFileDataSource(this, fileUri, desktop);
-        TcpDataSender.sendDataSync(desktop.address, desktop.tcpPort, dataSource);
+        TcpDataSender.sendDataSync(desktop.getAddress(), desktop.getTcpPort(), dataSource);
     }
 
     private void handleActionSendFile(Uri fileUri, Desktop desktop) {
         SendFileDataSource dataSource = new SendFileDataSource(this, fileUri, desktop);
-        TcpDataSender.sendDataSync(desktop.address, desktop.tcpPort, dataSource);
+        TcpDataSender.sendDataSync(desktop.getAddress(), desktop.getTcpPort(), dataSource);
         ResultBroadcastReceiver.nofitySendFileComplete(this);
     }
 
     private void handleConfirmDesktopAuthRequest(Desktop desktop, boolean accept) {
         ConfirmDesktopAuthRequestDataSource dataSource =
                 new ConfirmDesktopAuthRequestDataSource(desktop, accept);
-        UdpDataSender.sendData(desktop.address, desktop.udpPort, dataSource);
+        UdpDataSender.sendData(desktop.getAddress(), desktop.getUdpPort(), dataSource);
     }
 
     private void handleConfirmExchangeTcpPort(Desktop desktop) {
         ConfirmExchangeTcpPortDataSource dataSource = new ConfirmExchangeTcpPortDataSource(desktop);
-        UdpDataSender.sendData(desktop.address, desktop.udpPort, dataSource);
+        UdpDataSender.sendData(desktop.getAddress(), desktop.getUdpPort(), dataSource);
     }
 
     private void handleConfirmSendingFileRequest(Desktop device, String[] fileIDs, boolean accept) {
         ConfirmSendingFileRequestDataSource dataSource =
                 new ConfirmSendingFileRequestDataSource(device, fileIDs, accept);
-        TcpDataSender.sendDataSync(device.address, device.tcpPort, dataSource);
+        TcpDataSender.sendDataSync(device.getAddress(), device.getTcpPort(), dataSource);
     }
 }

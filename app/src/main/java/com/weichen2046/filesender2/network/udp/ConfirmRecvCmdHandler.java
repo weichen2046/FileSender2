@@ -56,9 +56,9 @@ public class ConfirmRecvCmdHandler extends UdpAuthCmdHandler {
 
     private void handleConfirm(FileSendingObj fsObj, Desktop desktop) {
         Log.d(TAG, "confirm file sending obj: " + fsObj);
-        if (!desktop.address.equals(fsObj.host)) {
+        if (!desktop.getAddress().equals(fsObj.host)) {
             // TODO: abort send?
-            Log.w(TAG, "desktop address not match, auth host: " + desktop.address + ", file host address: " + fsObj.host);
+            Log.w(TAG, "desktop address not match, auth host: " + desktop.getAddress() + ", file host address: " + fsObj.host);
         }
         SocketTaskService.startActionSendFile(MyApplication.getInstance(), fsObj.getUri(), desktop);
         deleteFileSendingObject(fsObj);

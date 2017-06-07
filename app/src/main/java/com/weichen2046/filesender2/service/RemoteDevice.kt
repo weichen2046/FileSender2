@@ -6,28 +6,29 @@ import android.os.Parcelable
 /**
  * Created by chenwei on 2017/5/20.
  */
-data class RemoteDevice(
-        var nickname: String,
-        var address: String,
-        var udpPort: Int = 0,
-        var tcpPort: Int = 0,
-        var accessToken: String,
-        var authToken: String,
-        var type: Int
-) : Parcelable {
+open class RemoteDevice: Parcelable {
 
+    var nickname: String = ""
+    var address: String = ""
+    var udpPort: Int = 0
+    var tcpPort: Int = 0
     // token use to access remote device, we send this to remove device for authenticating
+    var accessToken: String = ""
     // token use to authenticate remote device, remote device will send this back for authenticating
+    var authToken: String = ""
+    var type: Int = DEVICE_TYPE_UNKNOWN
 
-    constructor(source: Parcel): this(
-            source.readString(),
-            source.readString(),
-            source.readInt(),
-            source.readInt(),
-            source.readString(),
-            source.readString(),
-            source.readInt()
-    )
+    constructor()
+
+    constructor(source: Parcel) {
+        nickname = source.readString()
+        address = source.readString()
+        udpPort = source.readInt()
+        tcpPort = source.readInt()
+        accessToken = source.readString()
+        authToken = source.readString()
+        type = source.readInt()
+    }
 
     override fun describeContents(): Int {
         return 0
@@ -58,25 +59,18 @@ data class RemoteDevice(
     }
 
     companion object {
-
-        val CREATOR: Parcelable.Creator<RemoteDevice> = object : Parcelable.Creator<RemoteDevice> {
-            override fun createFromParcel(source: Parcel): RemoteDevice {
-                return RemoteDevice(source)
-            }
-
-            override fun newArray(size: Int): Array<RemoteDevice?> {
-                return arrayOfNulls(size)
-            }
-        }
+        val DEVICE_TYPE_UNKNOWN = -1
+        val DEVICE_TYPE_DESKTOP = 1
+        val DEVICE_TYPE_PHONE = 2
     }
 
-    fun update(device: RemoteDevice) {
+    open fun update(device: RemoteDevice) {
         nickname = device.nickname
         address = device.address
         udpPort = device.udpPort
         tcpPort = device.tcpPort
         accessToken = device.accessToken
         authToken = device.authToken
-        type = device.type;
+        type = device.type
     }
 }

@@ -28,16 +28,16 @@ public class ConfirmDesktopAuthRequestDataSource extends ByteDataSource {
         // 4 bytes -> cmd
         fillData(new IntBytesConvertor(INetworkDefs.CMD_T_CONFIRM_DESKTOP_AUTH_REQ));
         // 4 bytes -> access token length
-        fillData(new IntBytesConvertor(mDesktop.accessToken.length()));
+        fillData(new IntBytesConvertor(mDesktop.getAccessToken().length()));
         // x bytes -> access token
-        fillData(new StringBytesConvertor(mDesktop.accessToken));
+        fillData(new StringBytesConvertor(mDesktop.getAccessToken()));
         // 1 bytes -> confirm state
         fillData(new BooleanBytesConvertor(mAccept));
         if (mAccept) {
             // 4 bytes -> auth token length
-            fillData(new IntBytesConvertor(mDesktop.authToken.length()));
+            fillData(new IntBytesConvertor(mDesktop.getAuthToken().length()));
             // x bytes -> auth token
-            fillData(new StringBytesConvertor(mDesktop.authToken));
+            fillData(new StringBytesConvertor(mDesktop.getAuthToken()));
         }
         return true;
     }

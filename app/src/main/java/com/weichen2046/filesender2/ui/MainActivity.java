@@ -309,7 +309,7 @@ public class MainActivity extends BaseActivity
             // for debug
             if (false) {
                 Desktop debug = new Desktop();
-                debug.address = "10.101.2.248";
+                debug.setAddress("10.101.2.248");
                 for (int i=0; i<100; i++) {
                     devices.add(debug);
                 }
@@ -351,13 +351,13 @@ public class MainActivity extends BaseActivity
             // - replace the contents of the view with that element
             Desktop desktop = mDesktops.get(position);
             Glide.with(MainActivity.this).load(R.drawable.material_design_demo_img).fitCenter().into(holder.mIcon);
-            if (!TextUtils.isEmpty(desktop.nickname)) {
-                holder.mName.setText(desktop.nickname);
+            if (!TextUtils.isEmpty(desktop.getNickname())) {
+                holder.mName.setText(desktop.getNickname());
             }
-            if (!TextUtils.isEmpty(desktop.address)) {
-                holder.mIp.setText(desktop.address);
+            if (!TextUtils.isEmpty(desktop.getAddress())) {
+                holder.mIp.setText(desktop.getAddress());
             }
-            holder.mShare.setEnabled(!TextUtils.isEmpty(desktop.authToken));
+            holder.mShare.setEnabled(!TextUtils.isEmpty(desktop.getAuthToken()));
             holder.mShareListener.setDevice(desktop);
             holder.mShare.setOnClickListener(holder.mShareListener);
         }

@@ -152,20 +152,20 @@ public class UdpDataMonitor extends IUdpDataMonitor.Stub implements IServiceMana
                                     mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
                             List<Desktop> desktops = desktopManager.getAllDesktops();
                             for (Desktop desktop : desktops) {
-                                if (TextUtils.isEmpty(desktop.accessToken)) {
+                                if (TextUtils.isEmpty(desktop.getAccessToken())) {
                                     Log.w(TAG, "send offline to authenticated desktop but has no access token");
                                     continue;
                                 }
                                 // send phone offline with access token
-                                byte[] tokenBytes = desktop.accessToken.getBytes();
+                                byte[] tokenBytes = desktop.getAccessToken().getBytes();
                                 bb = ByteBuffer.allocate(Integer.SIZE / 8 * 3 + tokenBytes.length);
                                 bb.putInt(INetworkDefs.DATA_VERSION);
                                 bb.putInt(INetworkDefs.CMD_T_PHONE_OFFLINE);
                                 bb.putInt(tokenBytes.length);
                                 bb.put(tokenBytes);
                                 buf = bb.array();
-                                InetAddress desktopAddr = InetAddress.getByName(desktop.address);
-                                packet = new DatagramPacket(buf, buf.length, desktopAddr, desktop.udpPort);
+                                InetAddress desktopAddr = InetAddress.getByName(desktop.getAddress());
+                                packet = new DatagramPacket(buf, buf.length, desktopAddr, desktop.getUdpPort());
                                 socket.send(packet);
                             }
                         } catch (RemoteException e) {

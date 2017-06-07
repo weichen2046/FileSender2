@@ -63,14 +63,14 @@ public class RequestAuthHandler extends UdpCmdHandler {
             desktop = desktopManager.findDesktop(desktopAddress, udpPort);
             if (desktop == null) {
                 desktop = new Desktop();
-                desktop.address = desktopAddress;
-                desktop.udpPort = udpPort;
-                desktop.accessToken = token;
+                desktop.setAddress(desktopAddress);
+                desktop.setUdpPort(udpPort);
+                desktop.setAccessToken(token);
                 desktopManager.addDesktop(desktop);
 
             } else {
-                desktop.accessToken = token;
-                desktop.authToken = null;
+                desktop.setAccessToken(token);
+                desktop.setAuthToken(null);
                 desktopManager.updateDesktop(desktop);
             }
         } catch (RemoteException e) {
