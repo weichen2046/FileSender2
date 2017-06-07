@@ -48,8 +48,10 @@ open class RemoteDevice: Parcelable {
         if (o == null) {
             return false
         }
-        val right = o as Desktop?
-        return udpPort == right!!.udpPort && address == right.address
+        val right = o as RemoteDevice
+        return type == right.type
+                && udpPort == right.udpPort
+                && address == right.address
     }
 
     override fun toString(): String {

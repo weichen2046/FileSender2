@@ -3,7 +3,7 @@ package com.weichen2046.filesender2.network.udp;
 import android.os.RemoteException;
 
 import com.weichen2046.filesender2.service.Desktop;
-import com.weichen2046.filesender2.service.IDesktopManager;
+import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
 
@@ -39,9 +39,9 @@ public class UdpAuthCmdHandler extends UdpCmdHandler {
         IServiceManager manager = getServiceManager();
         Desktop desktop = null;
         try {
-            IDesktopManager desktopManager =IDesktopManager.Stub.asInterface(
-                    manager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
-            desktop = desktopManager.findDesktopByAuthToken(address, authToken);
+            IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub.asInterface(
+                    manager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+            desktop = devicesManager.findDesktopByAuthToken(address, authToken);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

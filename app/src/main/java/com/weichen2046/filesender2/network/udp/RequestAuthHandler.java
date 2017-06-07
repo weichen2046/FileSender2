@@ -7,9 +7,10 @@ import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.network.UnsupportedRemoteDeviceException;
 import com.weichen2046.filesender2.service.Desktop;
 import com.weichen2046.filesender2.service.IRemoteDeviceDiscoverer;
-import com.weichen2046.filesender2.service.IDesktopManager;
+import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.RemoteDevice;
+import com.weichen2046.filesender2.service.RemoteDeviceWrapper;
 import com.weichen2046.filesender2.service.ServiceManager;
 import com.weichen2046.filesender2.ui.NotificationHelper;
 
@@ -56,7 +57,7 @@ public class RequestAuthHandler extends UdpCmdHandler {
         IServiceManager manager = getServiceManager();
         try {
             IRemoteDeviceDiscoverer discoverer = IRemoteDeviceDiscoverer.Stub
-                    .asInterface(manager.getService(ServiceManager.SERVICE_DESKTOP_DISCOVERER));
+                    .asInterface(manager.getService(ServiceManager.SERVICE_DEVICE_DISCOVERER));
             authPass = discoverer.checkTempAccessToken(tempAuthToken);
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -72,21 +73,22 @@ public class RequestAuthHandler extends UdpCmdHandler {
         // find remote device and update it's access token
         Desktop desktop = null;
         try {
-            IDesktopManager desktopManager = IDesktopManager.Stub
-                    .asInterface(manager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
-            desktop = desktopManager.findDesktop(remoteAddress, udpPort);
+            IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub
+                    .asInterface(manager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+            desktop = devicesManager.findDesktop(remoteAddress, udpPort);
             if (desktop == null) {
                 // TODO: create remote device instance according to remote device type
                 desktop = new Desktop();
                 desktop.setAddress(remoteAddress);
                 desktop.setUdpPort(udpPort);
                 desktop.setAccessToken(token);
-                desktopManager.addDesktop(desktop);
+                devicesManager.addDesktop(desktop);
+                devicesManager.addDevice(new RemoteDeviceWrapper(desktop));
 
             } else {
                 desktop.setAccessToken(token);
                 desktop.setAuthToken(null);
-                desktopManager.updateDesktop(desktop);
+                devicesManager.updateDesktop(desktop);
             }
         } catch (RemoteException e) {
             e.printStackTrace();

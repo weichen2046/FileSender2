@@ -8,7 +8,7 @@ import com.weichen2046.filesender2.network.tcp.state.DynamicIntLengthGetter;
 import com.weichen2046.filesender2.network.tcp.state.IntStateConsumer;
 import com.weichen2046.filesender2.network.tcp.state.StringStateConsumer;
 import com.weichen2046.filesender2.service.Desktop;
-import com.weichen2046.filesender2.service.IDesktopManager;
+import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
 
@@ -40,9 +40,9 @@ public class AuthTcpDataHandler extends TcpDataHandler {
                 Log.d(TAG, "token: " + mToken);
                 IServiceManager manager = getServiceManager();
                 try {
-                    IDesktopManager desktopManager = IDesktopManager.Stub.asInterface(
-                            manager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
-                    mAuthedDevice = desktopManager.findDesktopByAuthToken(mRemoteHost, mToken);
+                    IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub.asInterface(
+                            manager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                    mAuthedDevice = devicesManager.findDesktopByAuthToken(mRemoteHost, mToken);
                     Log.d(TAG, "authed device: " + mAuthedDevice);
                     if (mAuthedDevice == null) {
                         return false;

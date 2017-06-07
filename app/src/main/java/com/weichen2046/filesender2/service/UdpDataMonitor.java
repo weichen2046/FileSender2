@@ -148,9 +148,9 @@ public class UdpDataMonitor extends IUdpDataMonitor.Stub implements IServiceMana
 
                         // notify authenticated desktops
                         try {
-                            IDesktopManager desktopManager = IDesktopManager.Stub.asInterface(
-                                    mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
-                            List<Desktop> desktops = desktopManager.getAllDesktops();
+                            IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub.asInterface(
+                                    mServiceManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                            List<Desktop> desktops = devicesManager.getAllDesktops();
                             for (Desktop desktop : desktops) {
                                 if (TextUtils.isEmpty(desktop.getAccessToken())) {
                                     Log.w(TAG, "send offline to authenticated desktop but has no access token");

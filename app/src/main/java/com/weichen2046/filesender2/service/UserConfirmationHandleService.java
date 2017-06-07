@@ -110,9 +110,9 @@ public class UserConfirmationHandleService extends Service {
     private void acceptDeviceAuth(Desktop desktop) {
         try {
             // update desktop
-            IDesktopManager desktopManager = IDesktopManager.Stub.asInterface(
-                    mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
-            desktopManager.updateDesktop(desktop);
+            IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub.asInterface(
+                    mServiceManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+            devicesManager.updateDesktop(desktop);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -124,9 +124,9 @@ public class UserConfirmationHandleService extends Service {
     private void denialDeviceAuth(Desktop desktop) {
         try {
             // delete from desktop manager
-            IDesktopManager desktopManager = IDesktopManager.Stub.asInterface(
-                    mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
-            desktopManager.deleteDesktop(desktop);
+            IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub.asInterface(
+                    mServiceManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+            devicesManager.deleteDesktop(desktop);
         } catch (RemoteException e) {
             e.printStackTrace();
         }

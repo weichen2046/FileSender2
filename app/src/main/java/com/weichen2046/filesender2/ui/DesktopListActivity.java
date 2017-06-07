@@ -29,8 +29,8 @@ import android.widget.TextView;
 
 import com.weichen2046.filesender2.R;
 import com.weichen2046.filesender2.service.Desktop;
-import com.weichen2046.filesender2.service.DesktopManager;
-import com.weichen2046.filesender2.service.IDesktopManager;
+import com.weichen2046.filesender2.service.RemoteDevicesManager;
+import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
 import com.weichen2046.filesender2.service.SocketTaskService;
@@ -43,7 +43,7 @@ public class DesktopListActivity extends BaseActivity {
     private static final String TAG = "DesktopListActivity";
 
     private IServiceManager mServiceManager;
-    private IDesktopManager mDesktopManager;
+    private IRemoteDevicesManager mDevicesManager;
     private boolean mBoundToService;
 
     private ListView mDesktopListView;
@@ -122,7 +122,7 @@ public class DesktopListActivity extends BaseActivity {
         super.onResume();
         // register desktop change broadcast
         IntentFilter filter = new IntentFilter();
-        filter.addAction(DesktopManager.ACTION_DESKTOP_CHANGES);
+        filter.addAction(RemoteDevicesManager.ACTION_DESKTOP_CHANGES);
         registerReceiver(mReceiverForDesktop, filter);
     }
 
@@ -151,11 +151,11 @@ public class DesktopListActivity extends BaseActivity {
     private BroadcastReceiver mReceiverForDesktop = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mDesktopManager == null) {
+            if (mDevicesManager == null) {
                 return;
             }
             try {
-                mDesktopAdapter.setData(mDesktopManager.getAllDesktops());
+                mDesktopAdapter.setData(mDevicesManager.getAllDesktops());
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -169,9 +169,9 @@ public class DesktopListActivity extends BaseActivity {
             mServiceManager = IServiceManager.Stub.asInterface(service);
 
             try {
-                mDesktopManager = IDesktopManager.Stub.asInterface(
-                        mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
-                mDesktopAdapter.setData(mDesktopManager.getAllDesktops());
+                mDevicesManager = IRemoteDevicesManager.Stub.asInterface(
+                        mServiceManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                mDesktopAdapter.setData(mDevicesManager.getAllDesktops());
 
                 if (mDialog != null) {
                     mDialog.dismiss();

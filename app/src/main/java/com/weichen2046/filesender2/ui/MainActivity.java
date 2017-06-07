@@ -35,8 +35,8 @@ import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.R;
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.service.Desktop;
-import com.weichen2046.filesender2.service.DesktopManager;
-import com.weichen2046.filesender2.service.IDesktopManager;
+import com.weichen2046.filesender2.service.RemoteDevicesManager;
+import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.ITcpDataMonitor;
 import com.weichen2046.filesender2.service.IUdpDataMonitor;
 import com.weichen2046.filesender2.service.IRemoteDeviceDiscoverer;
@@ -59,7 +59,7 @@ public class MainActivity extends BaseActivity
     private IRemoteDeviceDiscoverer mDesktopDiscoverer = null;
     private IUdpDataMonitor mUdpDataMonitor = null;
     private ITcpDataMonitor mTcpDataMonitor = null;
-    private IDesktopManager mDesktopManager = null;
+    private IRemoteDevicesManager mDevicesManager = null;
 
     private TextView mEmptyView;
     private RecyclerView mRecyclerView;
@@ -226,7 +226,7 @@ public class MainActivity extends BaseActivity
             mRegisteredReceiver = true;
             // register desktop change broadcast
             IntentFilter filter = new IntentFilter();
-            filter.addAction(DesktopManager.ACTION_DESKTOP_CHANGES);
+            filter.addAction(RemoteDevicesManager.ACTION_DESKTOP_CHANGES);
             registerReceiver(mReceiverForDesktop, filter);
         }
     }
@@ -271,14 +271,12 @@ public class MainActivity extends BaseActivity
                 mTcpDataMonitor = ITcpDataMonitor.Stub.asInterface(binder);
                 mTcpDataMonitor.start();
 
-                binder = mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_DISCOVERER);
+                binder = mServiceManager.getService(ServiceManager.SERVICE_DEVICE_DISCOVERER);
                 mDesktopDiscoverer = IRemoteDeviceDiscoverer.Stub.asInterface(binder);
                 mDesktopDiscoverer.sayHello(null, INetworkDefs.DESKTOP_UDP_LISTEN_PORT);
 
-                binder = mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER);
-                mDesktopManager = IDesktopManager.Stub.asInterface(binder);
-
-
+                binder = mServiceManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER);
+                mDevicesManager = IRemoteDevicesManager.Stub.asInterface(binder);
 
                 updateDevices();
             } catch (RemoteException e) {
@@ -301,11 +299,11 @@ public class MainActivity extends BaseActivity
     };
 
     private void updateDevices() {
-        if (mDesktopManager == null) {
+        if (mDevicesManager == null) {
             return;
         }
         try {
-            List<Desktop> devices = mDesktopManager.getAllDesktops();
+            List<Desktop> devices = mDevicesManager.getAllDesktops();
             // for debug
             if (false) {
                 Desktop debug = new Desktop();

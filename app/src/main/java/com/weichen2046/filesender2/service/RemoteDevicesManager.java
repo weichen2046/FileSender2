@@ -2,6 +2,7 @@ package com.weichen2046.filesender2.service;
 
 import android.content.Intent;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.weichen2046.filesender2.MyApplication;
 
@@ -12,13 +13,17 @@ import java.util.List;
  * Created by chenwei on 2017/3/18.
  */
 
-public class DesktopManager extends IDesktopManager.Stub {
+public class RemoteDevicesManager extends IRemoteDevicesManager.Stub {
+    private static final String TAG = "RemoteDevicesManager";
+
     private ArrayList<Desktop> mDesktops = new ArrayList<>();
+    private ArrayList<RemoteDevice> mDevices = new ArrayList<>();
+    private ArrayList<RemoteDeviceWrapper<RemoteDevice>> mWrappers = new ArrayList<>();
 
     public static final String ACTION_DESKTOP_CHANGES = "action.filesender2.DESKTOP_CHANGES";
     public static final String EXTRA_CHANGE_TYPE = "extra_change_type";
 
-    public enum DesktopChangeType {
+    public enum DeviceChangedType {
         ADD,
         DELETE,
         UPDATE
@@ -61,7 +66,7 @@ public class DesktopManager extends IDesktopManager.Stub {
             return false;
         }
         mDesktops.add(desktop);
-        notifyDesktopChange(DesktopChangeType.ADD);
+        notifyDeviceChanged(DeviceChangedType.ADD);
         return true;
     }
 
@@ -69,7 +74,7 @@ public class DesktopManager extends IDesktopManager.Stub {
     public boolean deleteDesktop(Desktop desktop) throws RemoteException {
         boolean res = mDesktops.remove(desktop);
         if (res) {
-            notifyDesktopChange(DesktopChangeType.DELETE);
+            notifyDeviceChanged(DeviceChangedType.DELETE);
         }
         return res;
     }
@@ -100,7 +105,7 @@ public class DesktopManager extends IDesktopManager.Stub {
         if (index != -1) {
             Desktop desktop1 = mDesktops.get(index);
             desktop1.update(desktop);
-            notifyDesktopChange(DesktopChangeType.UPDATE);
+            notifyDeviceChanged(DeviceChangedType.UPDATE);
             return true;
         }
         return false;
@@ -116,7 +121,38 @@ public class DesktopManager extends IDesktopManager.Stub {
         return mDesktops;
     }
 
-    private void notifyDesktopChange(DesktopChangeType type) {
+    @Override
+    public List getAllRemoteDevices() throws RemoteException {
+        return mWrappers;
+    }
+
+    @Override
+    public boolean addDevice(RemoteDeviceWrapper wrapper) throws RemoteException {
+        RemoteDevice device = wrapper.getInnerObj();
+        if (mDevices.contains(device)) {
+            return false;
+        }
+        mDevices.add(device);
+        mWrappers.add(wrapper);
+        notifyDeviceChanged(DeviceChangedType.ADD);
+        return true;
+    }
+
+    @Override
+    public boolean deleteDevice(RemoteDeviceWrapper wrapper) throws RemoteException {
+        RemoteDevice device = wrapper.getInnerObj();
+        boolean res = mDevices.remove(device);
+        boolean res2 = mWrappers.remove(wrapper);
+        if (res != res2) {
+            Log.w(TAG, "");
+        }
+        if (res) {
+            notifyDeviceChanged(DeviceChangedType.DELETE);
+        }
+        return false;
+    }
+
+    private void notifyDeviceChanged(DeviceChangedType type) {
         Intent intent = new Intent(ACTION_DESKTOP_CHANGES);
         intent.putExtra(EXTRA_CHANGE_TYPE, type);
         MyApplication.getInstance().sendBroadcast(intent);

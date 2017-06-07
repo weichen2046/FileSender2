@@ -12,7 +12,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.weichen2046.filesender2.service.Desktop;
-import com.weichen2046.filesender2.service.IDesktopManager;
+import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
 
@@ -98,8 +98,8 @@ public class DebugService extends Service {
 
     private void handleDumpDesktops() {
         try {
-            IDesktopManager desktopManager =  IDesktopManager.Stub.asInterface(
-                    mManager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER));
+            IRemoteDevicesManager desktopManager =  IRemoteDevicesManager.Stub.asInterface(
+                    mManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
             List<Desktop> desktops = desktopManager.getAllDesktops();
             StringBuffer buffer = new StringBuffer();
             buffer.append("=================== Dump desktops ===================").append("\n");
