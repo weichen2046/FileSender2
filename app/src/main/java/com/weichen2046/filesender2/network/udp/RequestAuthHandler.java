@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.service.Desktop;
-import com.weichen2046.filesender2.service.IDesktopDiscoverer;
+import com.weichen2046.filesender2.service.IRemoteDeviceDiscoverer;
 import com.weichen2046.filesender2.service.IDesktopManager;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
@@ -44,7 +44,7 @@ public class RequestAuthHandler extends UdpCmdHandler {
         boolean authPass = false;
         IServiceManager manager = getServiceManager();
         try {
-            IDesktopDiscoverer discoverer = IDesktopDiscoverer.Stub.asInterface(manager.getService(ServiceManager.SERVICE_DESKTOP_DISCOVERER));
+            IRemoteDeviceDiscoverer discoverer = IRemoteDeviceDiscoverer.Stub.asInterface(manager.getService(ServiceManager.SERVICE_DESKTOP_DISCOVERER));
             authPass = discoverer.checkTempAccessToken(tempAccessToken);
         } catch (RemoteException e) {
             e.printStackTrace();

@@ -7,8 +7,6 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.weichen2046.filesender2.utils.TcpDataSender;
-
 public class ServiceManager extends Service {
 
     private static final String TAG = "ServiceManager";
@@ -34,7 +32,7 @@ public class ServiceManager extends Service {
             IBinder binder = mSubServices.get(serviceId);
             if (binder == null) {
                 if (serviceId == SERVICE_DESKTOP_DISCOVERER) {
-                    binder = new DesktopDiscoverer();
+                    binder = new RemoteDeviceDiscoverer();
                     mSubServices.put(SERVICE_DESKTOP_DISCOVERER, binder);
                 }
 

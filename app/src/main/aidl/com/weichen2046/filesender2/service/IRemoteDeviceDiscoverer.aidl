@@ -3,7 +3,7 @@ package com.weichen2046.filesender2.service;
 
 // Declare any non-default types here with import statements
 
-interface IDesktopDiscoverer {
+interface IRemoteDeviceDiscoverer {
 
     /**
      * Send network broadcast to notify ourself is here.

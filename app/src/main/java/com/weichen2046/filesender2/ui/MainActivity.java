@@ -39,7 +39,7 @@ import com.weichen2046.filesender2.service.DesktopManager;
 import com.weichen2046.filesender2.service.IDesktopManager;
 import com.weichen2046.filesender2.service.ITcpDataMonitor;
 import com.weichen2046.filesender2.service.IUdpDataMonitor;
-import com.weichen2046.filesender2.service.IDesktopDiscoverer;
+import com.weichen2046.filesender2.service.IRemoteDeviceDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
 import com.weichen2046.filesender2.service.SocketTaskService;
@@ -56,7 +56,7 @@ public class MainActivity extends BaseActivity
     private boolean mRegisteredReceiver = false;
     private boolean mBoundToService = false;
     private IServiceManager mServiceManager = null;
-    private IDesktopDiscoverer mDesktopDiscoverer = null;
+    private IRemoteDeviceDiscoverer mDesktopDiscoverer = null;
     private IUdpDataMonitor mUdpDataMonitor = null;
     private ITcpDataMonitor mTcpDataMonitor = null;
     private IDesktopManager mDesktopManager = null;
@@ -272,7 +272,7 @@ public class MainActivity extends BaseActivity
                 mTcpDataMonitor.start();
 
                 binder = mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_DISCOVERER);
-                mDesktopDiscoverer = IDesktopDiscoverer.Stub.asInterface(binder);
+                mDesktopDiscoverer = IRemoteDeviceDiscoverer.Stub.asInterface(binder);
                 mDesktopDiscoverer.sayHello(null, INetworkDefs.DESKTOP_UDP_LISTEN_PORT);
 
                 binder = mServiceManager.getService(ServiceManager.SERVICE_DESKTOP_MANAGER);

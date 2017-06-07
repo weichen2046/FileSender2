@@ -4,7 +4,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.weichen2046.filesender2.network.INetworkDefs;
-import com.weichen2046.filesender2.service.IDesktopDiscoverer;
+import com.weichen2046.filesender2.service.IRemoteDeviceDiscoverer;
 import com.weichen2046.filesender2.service.IDesktopManager;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
@@ -75,7 +75,7 @@ public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
     private void sayHello(String address, int port) {
         IServiceManager manager = getServiceManager();
         try {
-            IDesktopDiscoverer discoverer = IDesktopDiscoverer.Stub.asInterface(
+            IRemoteDeviceDiscoverer discoverer = IRemoteDeviceDiscoverer.Stub.asInterface(
                     manager.getService(ServiceManager.SERVICE_DESKTOP_DISCOVERER));
             discoverer.sayHello(address, port);
         } catch (RemoteException e) {
