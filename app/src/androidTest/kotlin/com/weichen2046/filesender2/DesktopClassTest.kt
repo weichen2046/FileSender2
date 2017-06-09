@@ -17,7 +17,16 @@ import org.junit.Assert.*
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class DesktopClassTest {
-    lateinit var desktop: Desktop;
+    lateinit var desktop: Desktop
+
+    companion object {
+        private const val ADDRESS = "10.101.2.248"
+        private const val UDP_PORT = 6523
+        private const val TCP_PORT = 6222
+        private const val NICKNAME = "Test Desktop"
+        private const val AUTH_TOKEN = "6146d035076d4c41a35aee9a392e572f"
+        private const val ACCESS_TOKEN = "feb10290b53f463d869dd69de5c99a5a"
+    }
 
     @Before
     fun setUp() {
@@ -37,38 +46,32 @@ class DesktopClassTest {
         assertEquals(true, desktop == desktop2)
         assertEquals(false, desktop === desktop2)
 
-        desktop2.address = "10.101.2.248"
+        desktop2.address = ADDRESS
         assertNotEquals(desktop, desktop2)
 
-        desktop.address = "10.101.2.248"
+        desktop.address = ADDRESS
         assertEquals(desktop, desktop2)
 
-        desktop2.udpPort = 6523
+        desktop2.udpPort = UDP_PORT
         assertNotEquals(desktop, desktop2)
 
-        desktop.udpPort = 6523
+        desktop.udpPort = UDP_PORT
         assertEquals(desktop, desktop2)
 
         // currently equals(...) only compare filed type, udpPort and address, so tcpPort doesn't
         // count
-        desktop2.tcpPort = 6222
+        desktop2.tcpPort = TCP_PORT
         assertEquals(desktop, desktop2)
     }
 
     @Test
     fun test_ParcelableWriteRead() {
-        val address = "10.101.2.248"
-        val udpPort = 6523
-        val tcpPort = 6222
-        val nickname = "Test Desktop"
-        val authToken = "6146d035076d4c41a35aee9a392e572f"
-        val accessToken = "feb10290b53f463d869dd69de5c99a5a"
-        desktop.address = address
-        desktop.udpPort = udpPort
-        desktop.tcpPort = tcpPort
-        desktop.nickname = nickname
-        desktop.authToken = authToken
-        desktop.accessToken = accessToken
+        desktop.address = ADDRESS
+        desktop.udpPort = UDP_PORT
+        desktop.tcpPort = TCP_PORT
+        desktop.nickname = NICKNAME
+        desktop.authToken = AUTH_TOKEN
+        desktop.accessToken = ACCESS_TOKEN
 
         val parcel = Parcel.obtain()
 
@@ -79,12 +82,14 @@ class DesktopClassTest {
         parcel.setDataPosition(0)
         val readDesktop = Desktop.CREATOR.createFromParcel(parcel)
 
-        assertEquals(address, readDesktop.address)
-        assertEquals(udpPort, readDesktop.udpPort)
-        assertEquals(tcpPort, readDesktop.tcpPort)
-        assertEquals(nickname, readDesktop.nickname)
-        assertEquals(authToken, readDesktop.authToken)
-        assertEquals(accessToken, readDesktop.accessToken)
+        with(readDesktop) {
+            assertEquals(ADDRESS, address)
+            assertEquals(UDP_PORT, udpPort)
+            assertEquals(TCP_PORT, tcpPort)
+            assertEquals(NICKNAME, nickname)
+            assertEquals(AUTH_TOKEN, authToken)
+            assertEquals(ACCESS_TOKEN, accessToken)
+        }
 
         parcel.recycle()
     }

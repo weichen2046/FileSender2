@@ -20,6 +20,15 @@ import org.junit.Assert.*
 class PhoneClassTest {
     lateinit var phone: Phone
 
+    companion object {
+        private const val ADDRESS = "10.101.2.248"
+        private const val UDP_PORT = 6523
+        private const val TCP_PORT = 6222
+        private const val NICKNAME = "Test Desktop"
+        private const val AUTH_TOKEN = "6146d035076d4c41a35aee9a392e572f"
+        private const val ACCESS_TOKEN = "feb10290b53f463d869dd69de5c99a5a"
+    }
+
     @Before
     fun setUp() {
         phone = Phone()
@@ -38,38 +47,32 @@ class PhoneClassTest {
         assertEquals(true, phone == phone2)
         assertEquals(false, phone === phone2)
 
-        phone2.address = "10.101.2.248"
+        phone2.address = ADDRESS
         assertNotEquals(phone, phone2)
 
-        phone.address = "10.101.2.248"
+        phone.address = ADDRESS
         assertEquals(phone, phone2)
 
-        phone2.udpPort = 6523
+        phone2.udpPort = UDP_PORT
         assertNotEquals(phone, phone2)
 
-        phone.udpPort = 6523
+        phone.udpPort = UDP_PORT
         assertEquals(phone, phone2)
 
         // currently equals(...) only compare filed type, udpPort and address, so tcpPort doesn't
         // count
-        phone2.tcpPort = 6222
+        phone2.tcpPort = TCP_PORT
         assertEquals(phone, phone2)
     }
 
     @Test
     fun test_ParcelableWriteRead() {
-        val address = "10.101.2.248"
-        val udpPort = 6523
-        val tcpPort = 6222
-        val nickname = "Test Desktop"
-        val authToken = "6146d035076d4c41a35aee9a392e572f"
-        val accessToken = "feb10290b53f463d869dd69de5c99a5a"
-        phone.address = address
-        phone.udpPort = udpPort
-        phone.tcpPort = tcpPort
-        phone.nickname = nickname
-        phone.authToken = authToken
-        phone.accessToken = accessToken
+        phone.address = ADDRESS
+        phone.udpPort = UDP_PORT
+        phone.tcpPort = TCP_PORT
+        phone.nickname = NICKNAME
+        phone.authToken = AUTH_TOKEN
+        phone.accessToken = ACCESS_TOKEN
 
         val parcel = Parcel.obtain()
 
@@ -80,12 +83,14 @@ class PhoneClassTest {
         parcel.setDataPosition(0)
         val readPhone = Desktop.CREATOR.createFromParcel(parcel)
 
-        assertEquals(address, readPhone.address)
-        assertEquals(udpPort, readPhone.udpPort)
-        assertEquals(tcpPort, readPhone.tcpPort)
-        assertEquals(nickname, readPhone.nickname)
-        assertEquals(authToken, readPhone.authToken)
-        assertEquals(accessToken, readPhone.accessToken)
+        with(readPhone) {
+            assertEquals(ADDRESS, address)
+            assertEquals(UDP_PORT, udpPort)
+            assertEquals(TCP_PORT, tcpPort)
+            assertEquals(NICKNAME, nickname)
+            assertEquals(AUTH_TOKEN, authToken)
+            assertEquals(ACCESS_TOKEN, accessToken)
+        }
 
         parcel.recycle()
     }

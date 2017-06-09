@@ -16,12 +16,16 @@ import org.junit.Assert.*
 @RunWith(AndroidJUnit4::class)
 @SmallTest
 class RemoteDeviceWrapperTest {
+    companion object {
+        private const val ADDRESS = "10.101.2.248"
+    }
+
     @Test
     fun test_ParcelableWriteRead() {
         val parcel: Parcel = Parcel.obtain()
 
         val desktop: Desktop = Desktop()
-        desktop.address = "10.101.2.248"
+        desktop.address = ADDRESS
 
         val wrapper: RemoteDeviceWrapper<Desktop> = RemoteDeviceWrapper(desktop)
 
@@ -34,7 +38,7 @@ class RemoteDeviceWrapperTest {
 
         val innerObj = readWrapper.innerObj
         assertEquals(true, innerObj is Desktop)
-        assertEquals("10.101.2.248", innerObj.address)
+        assertEquals(ADDRESS, innerObj.address)
 
         parcel.recycle()
     }
