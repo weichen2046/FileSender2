@@ -12,9 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.SplashActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,11 +23,11 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".service.ServiceManager"
-            android:process=":smg"
-            android:enabled="true"
-            android:exported="false" />
+        <activity
+            android:name=".ui.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
 
         <activity
             android:name=".ui.DesktopListActivity"
@@ -36,6 +37,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.weichen2046.filesender2.ui.MainActivity" />
         </activity>
+
+        <activity
+            android:name=".ui.PendingRecvFilesActivity"
+            android:exported="true"
+            android:label="@string/title_activity_pending_recv_files"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.NotificationDialogHelperActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Translucent" />
+
+        <service
+            android:name=".service.ServiceManager"
+            android:enabled="true"
+            android:exported="false"
+            android:process=":smg" />
 
         <service
             android:name=".service.SocketTaskService"
@@ -63,16 +80,6 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".ui.PendingRecvFilesActivity"
-            android:exported="true"
-            android:label="@string/title_activity_pending_recv_files"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.NotificationDialogHelperActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Translucent" />
-
         <receiver
             android:name=".ui.receiver.NotificationHelperReceiver"
             android:enabled="true"
@@ -82,6 +89,7 @@
                 <action android:name="action.filesender2.RECV_FILE_REQ" />
             </intent-filter>
         </receiver>
+
     </application>
 
 </manifest>

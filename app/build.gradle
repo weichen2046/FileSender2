@@ -40,6 +40,7 @@ dependencies {
     compile 'org.jooq:joor:0.9.5'
     testCompile 'junit:junit:4.12'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation 'com.android.support:support-v4:23.4.0'
 }
 repositories {
     mavenCentral()
