@@ -149,7 +149,7 @@ public class UdpDataMonitor extends IUdpDataMonitor.Stub implements IServiceMana
                         // notify authenticated desktops
                         try {
                             IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub.asInterface(
-                                    mServiceManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                                    mServiceManager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER));
                             List<Desktop> desktops = devicesManager.getAllDesktops();
                             for (Desktop desktop : desktops) {
                                 if (TextUtils.isEmpty(desktop.getAccessToken())) {

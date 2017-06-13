@@ -49,7 +49,7 @@
             android:theme="@style/Theme.AppCompat.Translucent" />
 
         <service
-            android:name=".service.ServiceManager"
+            android:name=".service.ServiceManagerInternal"
             android:enabled="true"
             android:exported="false"
             android:process=":smg" />

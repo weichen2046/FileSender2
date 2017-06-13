@@ -8,7 +8,7 @@ import android.support.test.rule.ServiceTestRule
 import android.support.test.runner.AndroidJUnit4
 
 import com.weichen2046.filesender2.service.IServiceManager
-import com.weichen2046.filesender2.service.ServiceManager
+import com.weichen2046.filesender2.service.ServiceManagerInternal
 
 import org.junit.Rule
 import org.junit.Test
@@ -23,13 +23,13 @@ import java.util.concurrent.TimeoutException
  */
 
 @RunWith(AndroidJUnit4::class)
-class ServiceManagerTest {
+class ServiceManagerInternalTest {
 
     @Rule @JvmField
     val serviceRule = ServiceTestRule()
 
     private var serviceIntent: Intent = Intent(InstrumentationRegistry.getTargetContext(),
-                ServiceManager::class.java)
+                ServiceManagerInternal::class.java)
 
     @Test
     fun testWithBoundService() {
@@ -39,7 +39,7 @@ class ServiceManagerTest {
         } catch (e: TimeoutException) {
             e.printStackTrace()
         }
-        assertNotNull("Can not bind ServiceManager", binder)
+        assertNotNull("Can not bind ServiceManagerInternal", binder)
     }
 
     @Test
@@ -51,31 +51,31 @@ class ServiceManagerTest {
             e.printStackTrace()
         }
         val serviceManager = IServiceManager.Stub.asInterface(binder)
-        assertNotNull("Can not bind ServiceManager", serviceManager)
+        assertNotNull("Can not bind ServiceManagerInternal", serviceManager)
 
         try {
-            binder = serviceManager.getService(ServiceManager.SERVICE_DEVICE_DISCOVERER)
+            binder = serviceManager.getService(ServiceManagerInternal.SERVICE_DEVICE_DISCOVERER)
         } catch (e: RemoteException) {
             e.printStackTrace()
         }
         assertNotNull("Can not get service by SERVICE_DEVICE_DISCOVERER", binder)
 
         try {
-            binder = serviceManager.getService(ServiceManager.SERVICE_UDP_DATA_MONITOR)
+            binder = serviceManager.getService(ServiceManagerInternal.SERVICE_UDP_DATA_MONITOR)
         } catch (e: RemoteException) {
             e.printStackTrace()
         }
         assertNotNull("Can not get service by SERVICE_UDP_DATA_MONITOR", binder)
 
         try {
-            binder = serviceManager.getService(ServiceManager.SERVICE_TCP_DATA_MONITOR)
+            binder = serviceManager.getService(ServiceManagerInternal.SERVICE_TCP_DATA_MONITOR)
         } catch (e: RemoteException) {
             e.printStackTrace()
         }
         assertNotNull("Can not get service by SERVICE_TCP_DATA_MONITOR", binder)
 
         try {
-            binder = serviceManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER)
+            binder = serviceManager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER)
         } catch (e: RemoteException) {
             e.printStackTrace()
         }

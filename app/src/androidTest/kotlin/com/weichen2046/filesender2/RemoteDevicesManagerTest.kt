@@ -76,15 +76,15 @@ class RemoteDevicesManagerTest {
 
     private fun getDeviceManager(): IRemoteDevicesManager {
         val managerIntent = Intent(InstrumentationRegistry.getTargetContext(),
-                ServiceManager::class.java)
+                ServiceManagerInternal::class.java)
         val binder = serviceRule.bindService(managerIntent)
         // FIXME: very curious, all test methods will fail because of null binder here except the
         // first test method, but if we run test method individually all methods succeeded.
-        assertNotNull("Can not bind service ServiceManager, binder: $binder", binder)
+        assertNotNull("Can not bind service ServiceManagerInternal, binder: $binder", binder)
 
         val serviceManager = IServiceManager.Stub.asInterface(binder)
         val devicesManager = IRemoteDevicesManager.Stub
-                .asInterface(serviceManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER))
+                .asInterface(serviceManager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER))
         assertNotNull("Can not get service RemoteDevicesManager, devicesManager: $devicesManager",
                 devicesManager)
         return devicesManager

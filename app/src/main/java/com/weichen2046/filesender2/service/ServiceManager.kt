@@ -9,7 +9,7 @@ import android.os.IBinder
 /**
  * Created by chenwei on 2017/6/12.
  */
-object ServiceManagerHelper {
+object ServiceManager {
     var serviceManager: IServiceManager? = null
         private set
 
@@ -26,7 +26,7 @@ object ServiceManagerHelper {
         private set
 
     fun init(context: Context, connectedCallback: () -> Unit, disconnectedCallback: () -> Unit) {
-        val serviceIntent = Intent(context, ServiceManager::class.java)
+        val serviceIntent = Intent(context, ServiceManagerInternal::class.java)
         context.bindService(serviceIntent, object: ServiceConnection {
             override fun onServiceDisconnected(name: ComponentName?) {
                 serviceManager = null
@@ -35,13 +35,13 @@ object ServiceManagerHelper {
 
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
                 serviceManager = IServiceManager.Stub.asInterface(service)
-                var binder = serviceManager?.getService(ServiceManager.SERVICE_DEVICES_MANAGER)
+                var binder = serviceManager?.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER)
                 remoteDevicesManager = IRemoteDevicesManager.Stub.asInterface(binder)
-                binder = serviceManager?.getService((ServiceManager.SERVICE_UDP_DATA_MONITOR))
+                binder = serviceManager?.getService((ServiceManagerInternal.SERVICE_UDP_DATA_MONITOR))
                 udpDataMonitor = IUdpDataMonitor.Stub.asInterface(binder)
-                binder = serviceManager?.getService((ServiceManager.SERVICE_TCP_DATA_MONITOR))
+                binder = serviceManager?.getService((ServiceManagerInternal.SERVICE_TCP_DATA_MONITOR))
                 tcpDataMonitor = ITcpDataMonitor.Stub.asInterface(binder)
-                binder = serviceManager?.getService((ServiceManager.SERVICE_DEVICE_DISCOVERER))
+                binder = serviceManager?.getService((ServiceManagerInternal.SERVICE_DEVICE_DISCOVERER))
                 deviceDiscoverer = IRemoteDeviceDiscoverer.Stub.asInterface(binder)
                 connectedCallback()
             }

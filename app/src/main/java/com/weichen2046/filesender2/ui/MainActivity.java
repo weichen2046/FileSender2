@@ -2,15 +2,12 @@ package com.weichen2046.filesender2.ui;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,7 +28,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.R;
 import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.service.Desktop;
@@ -40,9 +36,7 @@ import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.ITcpDataMonitor;
 import com.weichen2046.filesender2.service.IUdpDataMonitor;
 import com.weichen2046.filesender2.service.IRemoteDeviceDiscoverer;
-import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
-import com.weichen2046.filesender2.service.ServiceManagerHelper;
 import com.weichen2046.filesender2.service.SocketTaskService;
 
 import java.util.ArrayList;
@@ -93,10 +87,10 @@ public class MainActivity extends BaseActivity
         mAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mAdapter);
 
-        mUdpDataMonitor = ServiceManagerHelper.INSTANCE.getUdpDataMonitor();
-        mTcpDataMonitor = ServiceManagerHelper.INSTANCE.getTcpDataMonitor();
-        mDesktopDiscoverer = ServiceManagerHelper.INSTANCE.getDeviceDiscoverer();
-        mDevicesManager = ServiceManagerHelper.INSTANCE.getRemoteDevicesManager();
+        mUdpDataMonitor = ServiceManager.INSTANCE.getUdpDataMonitor();
+        mTcpDataMonitor = ServiceManager.INSTANCE.getTcpDataMonitor();
+        mDesktopDiscoverer = ServiceManager.INSTANCE.getDeviceDiscoverer();
+        mDevicesManager = ServiceManager.INSTANCE.getRemoteDevicesManager();
         try {
             mUdpDataMonitor.start();
             mTcpDataMonitor.start();

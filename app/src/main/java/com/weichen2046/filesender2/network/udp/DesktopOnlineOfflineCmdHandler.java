@@ -7,7 +7,7 @@ import com.weichen2046.filesender2.network.INetworkDefs;
 import com.weichen2046.filesender2.service.IRemoteDeviceDiscoverer;
 import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.IServiceManager;
-import com.weichen2046.filesender2.service.ServiceManager;
+import com.weichen2046.filesender2.service.ServiceManagerInternal;
 
 import java.nio.ByteBuffer;
 
@@ -76,7 +76,7 @@ public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
         IServiceManager manager = getServiceManager();
         try {
             IRemoteDeviceDiscoverer discoverer = IRemoteDeviceDiscoverer.Stub.asInterface(
-                    manager.getService(ServiceManager.SERVICE_DEVICE_DISCOVERER));
+                    manager.getService(ServiceManagerInternal.SERVICE_DEVICE_DISCOVERER));
             discoverer.sayHello(address, port);
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -87,7 +87,7 @@ public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
         IServiceManager manager = getServiceManager();
         try {
             IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub.asInterface(
-                    manager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                    manager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER));
             boolean res = devicesManager.deleteDesktopByPort(address, port);
             Log.d(TAG, "delete desktop " + address + " " + (res ? "ok" : "fail"));
         } catch (RemoteException e) {
@@ -99,7 +99,7 @@ public class DesktopOnlineOfflineCmdHandler extends UdpCmdHandler {
         IServiceManager manager = getServiceManager();
         try {
             IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub.asInterface(
-                    manager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                    manager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER));
             boolean res = devicesManager.deleteDesktopByAuthToken(address, authToken);
             Log.d(TAG, "delete desktop " + address + " " + (res ? "ok" : "fail"));
         } catch (RemoteException e) {

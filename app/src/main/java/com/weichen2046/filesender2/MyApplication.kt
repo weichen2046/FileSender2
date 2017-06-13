@@ -3,7 +3,7 @@ package com.weichen2046.filesender2
 import android.app.Application
 import android.util.Log
 
-import com.weichen2046.filesender2.service.ServiceManagerHelper
+import com.weichen2046.filesender2.service.ServiceManager
 
 /**
  * Created by chenwei on 2017/1/31.
@@ -14,7 +14,7 @@ class MyApplication : Application() {
         super.onCreate()
         instance = this
 
-        ServiceManagerHelper.init(this, {
+        ServiceManager.init(this, {
             initialized = true
             Log.d(TAG, "global service connected")
             for (callback in waitList) {

@@ -10,7 +10,7 @@ import com.weichen2046.filesender2.network.tcp.state.StringStateConsumer;
 import com.weichen2046.filesender2.service.Desktop;
 import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.IServiceManager;
-import com.weichen2046.filesender2.service.ServiceManager;
+import com.weichen2046.filesender2.service.ServiceManagerInternal;
 
 /**
  * Created by chenwei on 2017/4/27.
@@ -41,7 +41,7 @@ public class AuthTcpDataHandler extends TcpDataHandler {
                 IServiceManager manager = getServiceManager();
                 try {
                     IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub.asInterface(
-                            manager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                            manager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER));
                     mAuthedDevice = devicesManager.findDesktopByAuthToken(mRemoteHost, mToken);
                     Log.d(TAG, "authed device: " + mAuthedDevice);
                     if (mAuthedDevice == null) {

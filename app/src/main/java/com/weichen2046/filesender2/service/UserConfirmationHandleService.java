@@ -56,7 +56,7 @@ public class UserConfirmationHandleService extends Service {
 
         // start bind IServiceManager
         if (mServiceManager == null) {
-            Intent service = new Intent(this, ServiceManager.class);
+            Intent service = new Intent(this, ServiceManagerInternal.class);
             bindService(service, mConnection, Context.BIND_AUTO_CREATE);
         }
 
@@ -111,7 +111,7 @@ public class UserConfirmationHandleService extends Service {
         try {
             // update desktop
             IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub.asInterface(
-                    mServiceManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                    mServiceManager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER));
             devicesManager.updateDesktop(desktop);
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -125,7 +125,7 @@ public class UserConfirmationHandleService extends Service {
         try {
             // delete from desktop manager
             IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub.asInterface(
-                    mServiceManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                    mServiceManager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER));
             devicesManager.deleteDesktop(desktop);
         } catch (RemoteException e) {
             e.printStackTrace();

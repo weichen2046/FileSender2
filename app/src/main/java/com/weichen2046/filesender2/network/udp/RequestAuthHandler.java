@@ -11,7 +11,7 @@ import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.RemoteDevice;
 import com.weichen2046.filesender2.service.RemoteDeviceWrapper;
-import com.weichen2046.filesender2.service.ServiceManager;
+import com.weichen2046.filesender2.service.ServiceManagerInternal;
 import com.weichen2046.filesender2.ui.NotificationHelper;
 
 import java.nio.ByteBuffer;
@@ -57,7 +57,7 @@ public class RequestAuthHandler extends UdpCmdHandler {
         IServiceManager manager = getServiceManager();
         try {
             IRemoteDeviceDiscoverer discoverer = IRemoteDeviceDiscoverer.Stub
-                    .asInterface(manager.getService(ServiceManager.SERVICE_DEVICE_DISCOVERER));
+                    .asInterface(manager.getService(ServiceManagerInternal.SERVICE_DEVICE_DISCOVERER));
             authPass = discoverer.checkTempAccessToken(tempAuthToken);
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -74,7 +74,7 @@ public class RequestAuthHandler extends UdpCmdHandler {
         Desktop desktop = null;
         try {
             IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub
-                    .asInterface(manager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                    .asInterface(manager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER));
             desktop = devicesManager.findDesktop(remoteAddress, udpPort);
             if (desktop == null) {
                 // TODO: create remote device instance according to remote device type

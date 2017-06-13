@@ -6,7 +6,7 @@ import com.weichen2046.filesender2.MyApplication;
 import com.weichen2046.filesender2.service.Desktop;
 import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.IServiceManager;
-import com.weichen2046.filesender2.service.ServiceManager;
+import com.weichen2046.filesender2.service.ServiceManagerInternal;
 import com.weichen2046.filesender2.service.SocketTaskService;
 
 /**
@@ -34,7 +34,7 @@ public class ExchangeTcpPortHandler extends UdpAuthCmdHandler {
         IServiceManager manager = getServiceManager();
         try {
             IRemoteDevicesManager devicesManager = IRemoteDevicesManager.Stub.asInterface(
-                    manager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                    manager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER));
             devicesManager.updateDesktop(desktop);
         } catch (RemoteException e) {
             e.printStackTrace();

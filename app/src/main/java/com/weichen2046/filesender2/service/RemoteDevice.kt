@@ -8,14 +8,14 @@ import android.os.Parcelable
  */
 open class RemoteDevice: Parcelable {
 
-    var nickname: String = ""
-    var address: String = ""
+    var nickname: String? = null
+    var address: String? = null
     var udpPort: Int = 0
     var tcpPort: Int = 0
     // token use to access remote device, we send this to remove device for authenticating
-    var accessToken: String = ""
+    var accessToken: String? = null
     // token use to authenticate remote device, remote device will send this back for authenticating
-    var authToken: String = ""
+    var authToken: String? = null
     var type: Int = DEVICE_TYPE_UNKNOWN
 
     constructor()

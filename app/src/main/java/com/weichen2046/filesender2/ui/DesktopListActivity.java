@@ -32,7 +32,7 @@ import com.weichen2046.filesender2.service.Desktop;
 import com.weichen2046.filesender2.service.RemoteDevicesManager;
 import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.IServiceManager;
-import com.weichen2046.filesender2.service.ServiceManager;
+import com.weichen2046.filesender2.service.ServiceManagerInternal;
 import com.weichen2046.filesender2.service.SocketTaskService;
 
 import java.util.ArrayList;
@@ -69,7 +69,7 @@ public class DesktopListActivity extends BaseActivity {
         mDesktopListView.setAdapter(mDesktopAdapter);
         mDesktopListView.setOnItemClickListener(mItemClickListener);
 
-        Intent intent = new Intent(this, ServiceManager.class);
+        Intent intent = new Intent(this, ServiceManagerInternal.class);
         bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
 
         Message msg = mHandler.obtainMessage(MSG_SHOW_PROGRESS_DIALOG);
@@ -170,7 +170,7 @@ public class DesktopListActivity extends BaseActivity {
 
             try {
                 mDevicesManager = IRemoteDevicesManager.Stub.asInterface(
-                        mServiceManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                        mServiceManager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER));
                 mDesktopAdapter.setData(mDevicesManager.getAllDesktops());
 
                 if (mDialog != null) {

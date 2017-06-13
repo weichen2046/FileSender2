@@ -14,7 +14,7 @@ import android.util.Log;
 import com.weichen2046.filesender2.service.Desktop;
 import com.weichen2046.filesender2.service.IRemoteDevicesManager;
 import com.weichen2046.filesender2.service.IServiceManager;
-import com.weichen2046.filesender2.service.ServiceManager;
+import com.weichen2046.filesender2.service.ServiceManagerInternal;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class DebugService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Intent service = new Intent(this, ServiceManager.class);
+        Intent service = new Intent(this, ServiceManagerInternal.class);
         bindService(service, mConnection, Context.BIND_AUTO_CREATE);
     }
 
@@ -99,7 +99,7 @@ public class DebugService extends Service {
     private void handleDumpDesktops() {
         try {
             IRemoteDevicesManager desktopManager =  IRemoteDevicesManager.Stub.asInterface(
-                    mManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER));
+                    mManager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER));
             List<Desktop> desktops = desktopManager.getAllDesktops();
             StringBuffer buffer = new StringBuffer();
             buffer.append("=================== Dump desktops ===================").append("\n");
