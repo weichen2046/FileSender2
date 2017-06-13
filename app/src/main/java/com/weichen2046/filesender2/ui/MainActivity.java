@@ -42,6 +42,7 @@ import com.weichen2046.filesender2.service.IUdpDataMonitor;
 import com.weichen2046.filesender2.service.IRemoteDeviceDiscoverer;
 import com.weichen2046.filesender2.service.IServiceManager;
 import com.weichen2046.filesender2.service.ServiceManager;
+import com.weichen2046.filesender2.service.ServiceManagerHelper;
 import com.weichen2046.filesender2.service.SocketTaskService;
 
 import java.util.ArrayList;
@@ -54,8 +55,6 @@ public class MainActivity extends BaseActivity
     private static final String TAG = "MainActivity";
 
     private boolean mRegisteredReceiver = false;
-    private boolean mBoundToService = false;
-    private IServiceManager mServiceManager = null;
     private IRemoteDeviceDiscoverer mDesktopDiscoverer = null;
     private IUdpDataMonitor mUdpDataMonitor = null;
     private ITcpDataMonitor mTcpDataMonitor = null;
@@ -94,8 +93,23 @@ public class MainActivity extends BaseActivity
         mAdapter = new MyAdapter();
         mRecyclerView.setAdapter(mAdapter);
 
-        Intent intent = new Intent(this, ServiceManager.class);
-        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        mUdpDataMonitor = ServiceManagerHelper.INSTANCE.getUdpDataMonitor();
+        mTcpDataMonitor = ServiceManagerHelper.INSTANCE.getTcpDataMonitor();
+        mDesktopDiscoverer = ServiceManagerHelper.INSTANCE.getDeviceDiscoverer();
+        mDevicesManager = ServiceManagerHelper.INSTANCE.getRemoteDevicesManager();
+        try {
+            mUdpDataMonitor.start();
+            mTcpDataMonitor.start();
+            mDesktopDiscoverer.sayHello(null, INetworkDefs.DESKTOP_UDP_LISTEN_PORT);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateDevices();
+            }
+        });
     }
 
     @Override
@@ -195,21 +209,15 @@ public class MainActivity extends BaseActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        if (mBoundToService) {
-            mBoundToService = false;
-            try {
-                if (null != mUdpDataMonitor) {
-                    mUdpDataMonitor.stop();
-                }
-                if (null != mTcpDataMonitor) {
-                    mTcpDataMonitor.stop();
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
+        try {
+            if (null != mUdpDataMonitor) {
+                mUdpDataMonitor.stop();
             }
-
-            unbindService(mServiceConnection);
+            if (null != mTcpDataMonitor) {
+                mTcpDataMonitor.stop();
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
     }
 
@@ -252,44 +260,6 @@ public class MainActivity extends BaseActivity
             SocketTaskService.startActionRequestSendFile(this, uri, mSelectedDevice);
         }
     }
-
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d(TAG, "onServiceConnected");
-            mBoundToService = true;
-            mServiceManager = IServiceManager.Stub.asInterface(service);
-
-            MyApplication.getInstance().setServiceManager(mServiceManager);
-
-            try {
-                IBinder binder = mServiceManager.getService(ServiceManager.SERVICE_UDP_DATA_MONITOR);
-                mUdpDataMonitor = IUdpDataMonitor.Stub.asInterface(binder);
-                mUdpDataMonitor.start();
-
-                binder = mServiceManager.getService(ServiceManager.SERVICE_TCP_DATA_MONITOR);
-                mTcpDataMonitor = ITcpDataMonitor.Stub.asInterface(binder);
-                mTcpDataMonitor.start();
-
-                binder = mServiceManager.getService(ServiceManager.SERVICE_DEVICE_DISCOVERER);
-                mDesktopDiscoverer = IRemoteDeviceDiscoverer.Stub.asInterface(binder);
-                mDesktopDiscoverer.sayHello(null, INetworkDefs.DESKTOP_UDP_LISTEN_PORT);
-
-                binder = mServiceManager.getService(ServiceManager.SERVICE_DEVICES_MANAGER);
-                mDevicesManager = IRemoteDevicesManager.Stub.asInterface(binder);
-
-                updateDevices();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "onServiceDisconnected");
-            MyApplication.getInstance().setServiceManager(null);
-        }
-    };
 
     private BroadcastReceiver mReceiverForDesktop = new BroadcastReceiver() {
         @Override

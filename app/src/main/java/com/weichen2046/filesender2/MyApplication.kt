@@ -3,7 +3,6 @@ package com.weichen2046.filesender2
 import android.app.Application
 import android.util.Log
 
-import com.weichen2046.filesender2.service.IServiceManager
 import com.weichen2046.filesender2.service.ServiceManagerHelper
 
 /**
@@ -11,8 +10,6 @@ import com.weichen2046.filesender2.service.ServiceManagerHelper
  */
 
 class MyApplication : Application() {
-    var serviceManager: IServiceManager? = null
-
     override fun onCreate() {
         super.onCreate()
         instance = this
