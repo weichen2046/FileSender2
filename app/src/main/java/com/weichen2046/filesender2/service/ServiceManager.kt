@@ -47,4 +47,13 @@ object ServiceManager {
             }
         }, Context.BIND_AUTO_CREATE)
     }
+
+    fun getAllRemoteDevices(): List<RemoteDevice> {
+        return arrayListOf<RemoteDevice>().apply {
+            remoteDevicesManager?.allRemoteDevices?.map {
+                val wrapper = it as RemoteDeviceWrapper<RemoteDevice>
+                add(wrapper.innerObj)
+            }
+        }
+    }
 }

@@ -44,11 +44,11 @@ open class RemoteDevice: Parcelable {
         dest?.writeInt(type)
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (o == null) {
+    override fun equals(other: Any?): Boolean {
+        if (other == null) {
             return false
         }
-        val right = o as RemoteDevice
+        val right = other as RemoteDevice
         return type == right.type
                 && udpPort == right.udpPort
                 && address == right.address
