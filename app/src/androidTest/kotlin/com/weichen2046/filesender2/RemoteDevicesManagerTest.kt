@@ -1,92 +1,75 @@
 package com.weichen2046.filesender2
 
-import android.content.Intent
 import android.support.test.InstrumentationRegistry
-import android.support.test.rule.ServiceTestRule
 import android.support.test.runner.AndroidJUnit4
-import com.weichen2046.filesender2.service.*
-import org.junit.Rule
+import com.weichen2046.filesender2.service.Desktop
+import com.weichen2046.filesender2.service.RemoteDevice
+import com.weichen2046.filesender2.service.RemoteDevicesManager
+import com.weichen2046.filesender2.service.ServiceManager
+import org.hamcrest.Matchers.hasItemInArray
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.notNullValue
+import org.junit.Assert.assertThat
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-
-import org.junit.Assert.*
+import java.util.*
+import java.util.concurrent.CountDownLatch
 
 /**
- * Created by chenwei on 2017/6/8.
+ * Created by chenwei on 6/14/17.
  */
 @RunWith(AndroidJUnit4::class)
 class RemoteDevicesManagerTest {
-    @Rule @JvmField
-    val serviceRule = ServiceTestRule()
+    private var deviceManager: RemoteDevicesManager? = null
 
-    private val devicesManager: IRemoteDevicesManager by lazy {
-        getDeviceManager()
+    @Before
+    fun setUp() {
+        val latch = CountDownLatch(1)
+        val context = InstrumentationRegistry.getTargetContext()
+        ServiceManager.init(context, {
+            latch.countDown()
+        }, {})
+        latch.await()
+        deviceManager = ServiceManager.remoteDevicesManager
     }
 
     @Test
     fun test_getAllRemoteDevices() {
-        val wrappers = devicesManager.allRemoteDevices as ArrayList<RemoteDeviceWrapper<RemoteDevice>>
-        assertEquals("Remote devices size should be 0", 0, wrappers.size)
+        var devices = deviceManager?.allRemoteDevices
+        assertThat(devices, notNullValue())
 
+        var sizeOrigin = devices!!.size
         val desktop = Desktop()
-        desktop.udpPort = 6523
-        desktop.address = "10.101.2.248"
-        val res = devicesManager.addDevice(RemoteDeviceWrapper(desktop))
-        assertEquals("Add device failed", true, res)
-        assertEquals("Total device count should be 1", 1, devicesManager.allRemoteDevices.size)
+        desktop.address = UUID.randomUUID().toString()
 
-        var deviceWrappers = devicesManager.allRemoteDevices as ArrayList<RemoteDeviceWrapper<RemoteDevice>>
-        assertEquals("Added device should in returned device list", true,
-                deviceWrappers.any { it.innerObj.equals(desktop) })
-
-        val phone = Phone()
-        phone.udpPort = 6523
-        phone.address = "10.101.2.248"
-        assertEquals("Device that not added should not in returned device list", false,
-                deviceWrappers.any { it.innerObj.equals(phone) })
+        deviceManager?.addDevice(desktop)
+        devices = deviceManager?.allRemoteDevices!!
+        assertThat("device collection should has 1 element", devices.size, `is`(sizeOrigin + 1))
+        assertThat("device collection should contains added desktop $desktop",
+                devices.toTypedArray(), hasItemInArray(desktop as RemoteDevice))
     }
 
     @Test
     fun test_addDevice() {
         val desktop = Desktop()
-        desktop.udpPort = 6523
-        desktop.address = "10.101.2.248"
-        var res = devicesManager.addDevice(RemoteDeviceWrapper(desktop))
-        assertEquals("Add device failed", true, res)
-        assertEquals("Total device count should be 1", 1, devicesManager.allRemoteDevices.size)
+        desktop.address = UUID.randomUUID().toString()
 
-        res = devicesManager.addDevice(RemoteDeviceWrapper(desktop))
-        assertEquals("Add the same device should be failed", false, res)
-        assertEquals("Total device count should be 1", 1, devicesManager.allRemoteDevices.size)
-
-        val desktop2 = Desktop()
-        desktop2.udpPort = 6523
-        desktop2.address = "10.101.2.248"
-        res = devicesManager.addDevice(RemoteDeviceWrapper(desktop2))
-        assertEquals("Add device that equals any exist device should be failed", false, res)
-        assertEquals("Total device count should be 1", 1, devicesManager.allRemoteDevices.size)
-
-        val phone = Phone()
-        phone.udpPort = 6523
-        phone.address = "10.101.2.248"
-        res = devicesManager.addDevice(RemoteDeviceWrapper(phone))
-        assertEquals("Add device with diffrent type should be ok", true, res)
-        assertEquals("Total device count should be 2", 2, devicesManager.allRemoteDevices.size)
+        val size = deviceManager?.allRemoteDevices!!.size
+        deviceManager?.addDevice(desktop)
+        val size2 = deviceManager?.allRemoteDevices!!.size
+        assertThat("after add, size of remote devices not change", size2, `is`(size + 1))
     }
 
-    private fun getDeviceManager(): IRemoteDevicesManager {
-        val managerIntent = Intent(InstrumentationRegistry.getTargetContext(),
-                ServiceManagerInternal::class.java)
-        val binder = serviceRule.bindService(managerIntent)
-        // FIXME: very curious, all test methods will fail because of null binder here except the
-        // first test method, but if we run test method individually all methods succeeded.
-        assertNotNull("Can not bind service ServiceManagerInternal, binder: $binder", binder)
+    @Test
+    fun test_deleteDevice() {
+        val desktop = Desktop()
+        desktop.address = UUID.randomUUID().toString()
 
-        val serviceManager = IServiceManager.Stub.asInterface(binder)
-        val devicesManager = IRemoteDevicesManager.Stub
-                .asInterface(serviceManager.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER))
-        assertNotNull("Can not get service RemoteDevicesManager, devicesManager: $devicesManager",
-                devicesManager)
-        return devicesManager
+        val size = deviceManager?.allRemoteDevices!!.size
+        deviceManager?.addDevice(desktop)
+        deviceManager?.deleteDevice(desktop)
+        val size2 = deviceManager?.allRemoteDevices!!.size
+        assertThat("after delete, size of remote devices not change", size2, `is`(size))
     }
 }

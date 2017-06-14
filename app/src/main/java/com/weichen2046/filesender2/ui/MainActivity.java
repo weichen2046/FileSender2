@@ -42,7 +42,6 @@ import com.weichen2046.filesender2.service.SocketTaskService;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 

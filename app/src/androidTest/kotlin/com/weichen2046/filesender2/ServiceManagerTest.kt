@@ -2,12 +2,10 @@ package com.weichen2046.filesender2
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
-import com.weichen2046.filesender2.service.Desktop
-import com.weichen2046.filesender2.service.RemoteDevice
-import com.weichen2046.filesender2.service.RemoteDeviceWrapper
 import com.weichen2046.filesender2.service.ServiceManager
-import org.hamcrest.Matchers.*
+import org.hamcrest.Matchers.notNullValue
 import org.junit.Assert.assertThat
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.concurrent.CountDownLatch
@@ -17,24 +15,22 @@ import java.util.concurrent.CountDownLatch
  */
 @RunWith(AndroidJUnit4::class)
 class ServiceManagerTest {
-    @Test
-    fun test_getAllRemoteDevices() {
+    @Before
+    fun setUp() {
         val latch = CountDownLatch(1)
         val context = InstrumentationRegistry.getTargetContext()
         ServiceManager.init(context, {
             latch.countDown()
         }, {})
         latch.await()
-        var devices = ServiceManager.getAllRemoteDevices()
-        assertThat("device collection should be empty", 0, `is`(devices.size))
+    }
 
-        val desktop = Desktop()
-        desktop.address = "10.101.2.248"
-
-        ServiceManager.remoteDevicesManager?.addDevice(RemoteDeviceWrapper<RemoteDevice>(desktop))
-        devices = ServiceManager.getAllRemoteDevices()
-        assertThat("device collection should has 1 element", 1, `is`(devices.size))
-        assertThat("device collection should contains added desktop $desktop",
-                devices.toTypedArray(), arrayContaining(desktop as RemoteDevice))
+    @Test
+    fun test_servicesExist() {
+        assertThat(ServiceManager.serviceManager, notNullValue())
+        assertThat(ServiceManager.tcpDataMonitor, notNullValue())
+        assertThat(ServiceManager.udpDataMonitor, notNullValue())
+        assertThat(ServiceManager.remoteDevicesManager, notNullValue())
+        assertThat(ServiceManager.deviceDiscoverer, notNullValue())
     }
 }

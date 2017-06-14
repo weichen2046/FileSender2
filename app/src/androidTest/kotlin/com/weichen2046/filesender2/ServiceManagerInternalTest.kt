@@ -1,6 +1,9 @@
 package com.weichen2046.filesender2
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.IBinder
 import android.os.RemoteException
 import android.support.test.InstrumentationRegistry
@@ -9,12 +12,14 @@ import android.support.test.runner.AndroidJUnit4
 
 import com.weichen2046.filesender2.service.IServiceManager
 import com.weichen2046.filesender2.service.ServiceManagerInternal
+import org.hamcrest.Matchers.notNullValue
 
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import org.junit.Assert.*
+import java.util.concurrent.CountDownLatch
 
 import java.util.concurrent.TimeoutException
 
@@ -33,23 +38,41 @@ class ServiceManagerInternalTest {
 
     @Test
     fun testWithBoundService() {
+        val countDown = CountDownLatch(1)
         var binder: IBinder? = null
         try {
-            binder = serviceRule.bindService(serviceIntent)
+            serviceRule.bindService(serviceIntent, object: ServiceConnection{
+                override fun onServiceDisconnected(name: ComponentName?) {
+                }
+                override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                    binder = service
+                    countDown.countDown()
+                }
+            }, Context.BIND_AUTO_CREATE)
         } catch (e: TimeoutException) {
             e.printStackTrace()
         }
-        assertNotNull("Can not bind ServiceManagerInternal", binder)
+        countDown.await()
+        assertThat(binder, notNullValue())
     }
 
     @Test
     fun test_getService() {
+        val countDown = CountDownLatch(1)
         var binder: IBinder? = null
         try {
-            binder = serviceRule.bindService(serviceIntent)
+            serviceRule.bindService(serviceIntent, object: ServiceConnection{
+                override fun onServiceDisconnected(name: ComponentName?) {
+                }
+                override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                    binder = service
+                    countDown.countDown()
+                }
+            }, Context.BIND_AUTO_CREATE)
         } catch (e: TimeoutException) {
             e.printStackTrace()
         }
+        countDown.await()
         val serviceManager = IServiceManager.Stub.asInterface(binder)
         assertNotNull("Can not bind ServiceManagerInternal", serviceManager)
 

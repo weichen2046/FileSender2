@@ -13,7 +13,7 @@ object ServiceManager {
     var serviceManager: IServiceManager? = null
         private set
 
-    var remoteDevicesManager: IRemoteDevicesManager? = null
+    var remoteDevicesManager: RemoteDevicesManager? = null
         private set
 
     var udpDataMonitor: IUdpDataMonitor? = null
@@ -25,18 +25,30 @@ object ServiceManager {
     var deviceDiscoverer: IRemoteDeviceDiscoverer? = null
         private set
 
+    private var connected: Boolean = false
+
     fun init(context: Context, connectedCallback: () -> Unit, disconnectedCallback: () -> Unit) {
+        if (connected) {
+            connectedCallback()
+            return
+        }
         val serviceIntent = Intent(context, ServiceManagerInternal::class.java)
         context.bindService(serviceIntent, object: ServiceConnection {
             override fun onServiceDisconnected(name: ComponentName?) {
+                connected = false
                 serviceManager = null
+                remoteDevicesManager = null
+                udpDataMonitor = null
+                tcpDataMonitor = null
+                deviceDiscoverer = null
                 disconnectedCallback()
             }
 
             override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+                connected = true
                 serviceManager = IServiceManager.Stub.asInterface(service)
                 var binder = serviceManager?.getService(ServiceManagerInternal.SERVICE_DEVICES_MANAGER)
-                remoteDevicesManager = IRemoteDevicesManager.Stub.asInterface(binder)
+                remoteDevicesManager = RemoteDevicesManager(IRemoteDevicesManager.Stub.asInterface(binder))
                 binder = serviceManager?.getService((ServiceManagerInternal.SERVICE_UDP_DATA_MONITOR))
                 udpDataMonitor = IUdpDataMonitor.Stub.asInterface(binder)
                 binder = serviceManager?.getService((ServiceManagerInternal.SERVICE_TCP_DATA_MONITOR))
@@ -46,14 +58,5 @@ object ServiceManager {
                 connectedCallback()
             }
         }, Context.BIND_AUTO_CREATE)
-    }
-
-    fun getAllRemoteDevices(): List<RemoteDevice> {
-        return arrayListOf<RemoteDevice>().apply {
-            remoteDevicesManager?.allRemoteDevices?.map {
-                val wrapper = it as RemoteDeviceWrapper<RemoteDevice>
-                add(wrapper.innerObj)
-            }
-        }
     }
 }

@@ -41,7 +41,7 @@ class ServiceManagerInternal : Service() {
                     mSubServices.put(SERVICE_TCP_DATA_MONITOR, binder)
                 }
                 SERVICE_DEVICES_MANAGER -> {
-                    binder = RemoteDevicesManager()
+                    binder = RemoteDevicesManagerInternal()
                     mSubServices.put(SERVICE_DEVICES_MANAGER, binder)
                 }
                 else -> throw IllegalArgumentException("invalid service id $serviceId")
